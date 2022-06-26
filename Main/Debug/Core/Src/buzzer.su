@@ -1,0 +1,4 @@
+../Core/Src/buzzer.c:9:6:buzzerInit	16	static
+../Core/Src/buzzer.c:19:6:playNote	16	static
+../Core/Src/buzzer.c:26:6:playNextNote	16	static
+../Core/Src/buzzer.c:37:6:buzzerOnTimerInterrupt	16	static

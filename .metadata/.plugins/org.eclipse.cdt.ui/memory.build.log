@@ -1,0 +1,10 @@
+19:14:34 **** Build of configuration Debug for project memory ****
+make -j12 all 
+arm-none-eabi-size   memory.elf 
+   text	   data	    bss	    dec	    hex	filename
+  17492	    132	   1724	  19348	   4b94	memory.elf
+Finished building: default.size.stdout
+ 
+
+19:14:34 Build Finished. 0 errors, 0 warnings. (took 234ms)
+

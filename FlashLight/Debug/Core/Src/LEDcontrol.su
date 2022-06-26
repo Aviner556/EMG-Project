@@ -1,0 +1,5 @@
+../Core/Src/LEDcontrol.c:6:6:stop	8	static
+../Core/Src/LEDcontrol.c:12:6:start	8	static
+../Core/Src/LEDcontrol.c:18:6:DIM	8	static
+../Core/Src/LEDcontrol.c:25:6:flashing	8	static
+../Core/Src/LEDcontrol.c:34:6:setBrightness	16	static

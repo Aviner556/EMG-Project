@@ -1,0 +1,2 @@
+../Core/Src/buttons.c:8:6:buttInit	24	static
+../Core/Src/buttons.c:16:6:buttonInterrupt	16	static

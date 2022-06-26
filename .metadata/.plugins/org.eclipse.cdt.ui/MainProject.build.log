@@ -1,0 +1,40 @@
+17:31:56 **** Incremental Build of configuration Debug for project MainProject ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/binaryProtocol.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/binaryProtocol.d" -MT"Core/Src/binaryProtocol.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/binaryProtocol.o"
+In file included from ../Core/Src/binaryProtocol.c:1:
+../Core/Inc/binaryProtocol.h:18:2: error: unknown type name 'uint8_t'
+   18 |  uint8_t length;
+      |  ^~~~~~~
+../Core/Inc/binaryProtocol.h:19:2: error: unknown type name 'uint8_t'
+   19 |  uint8_t messageId;
+      |  ^~~~~~~
+../Core/Inc/binaryProtocol.h:20:2: error: unknown type name 'uint8_t'
+   20 |  uint8_t sequenceId;
+      |  ^~~~~~~
+../Core/Inc/binaryProtocol.h:21:2: error: unknown type name 'uint8_t'
+   21 |  uint8_t checksum;
+      |  ^~~~~~~
+../Core/Inc/binaryProtocol.h:27:2: error: unknown type name 'uint8_t'
+   27 |  uint8_t payload[100];
+      |  ^~~~~~~
+../Core/Inc/binaryProtocol.h:31:16: error: unknown type name 'uint8_t'
+   31 | int checkState(uint8_t *ch);
+      |                ^~~~~~~
+../Core/Src/binaryProtocol.c:2:8: error: unknown type name 'State'
+    2 | static State currentState = WIATING_FOR_SOM;
+      |        ^~~~~
+../Core/Src/binaryProtocol.c:3:1: error: unknown type name '_MessageHeader'; use 'struct' keyword to refer to the type
+    3 | _MessageHeader HM;
+      | ^~~~~~~~~~~~~~
+      | struct 
+../Core/Src/binaryProtocol.c:5:16: error: unknown type name 'uint8_t'
+    5 | int checkState(uint8_t ch)
+      |                ^~~~~~~
+../Core/Src/binaryProtocol.c:2:14: warning: 'currentState' defined but not used [-Wunused-variable]
+    2 | static State currentState = WIATING_FOR_SOM;
+      |              ^~~~~~~~~~~~
+make: *** [Core/Src/subdir.mk:40: Core/Src/binaryProtocol.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+
+17:31:56 Build Failed. 10 errors, 1 warnings. (took 370ms)
+

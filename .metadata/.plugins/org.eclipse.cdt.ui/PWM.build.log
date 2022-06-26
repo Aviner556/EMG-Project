@@ -1,0 +1,136 @@
+19:49:07 **** Incremental Build of configuration Debug for project PWM ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/LED.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/LED.d" -MT"Core/Src/LED.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/LED.o"
+arm-none-eabi-gcc "../Core/Src/commTask.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/commTask.d" -MT"Core/Src/commTask.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/commTask.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/LED.c: In function 'setBrightness':
+../Core/Src/commTask.c:3:8: warning: type defaults to 'int' in declaration of 'huart2' [-Wimplicit-int]
+    3 | extern huart2;
+      |        ^~~~~~
+../Core/Src/LED.c:51:3: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   51 |   printf("wrong parameter\r\n");
+      |   ^~~~~~
+../Core/Src/LED.c:51:3: warning: incompatible implicit declaration of built-in function 'printf'
+../Core/Src/commTask.c: In function 'commTask':
+../Core/Src/LED.c:2:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    1 | #include "LED.h"
+  +++ |+#include <stdio.h>
+    2 | 
+../Core/Src/commTask.c:19:46: warning: passing argument 1 of 'HAL_UART_Receive' from incompatible pointer type [-Wincompatible-pointer-types]
+   19 |  HAL_StatusTypeDef Status = HAL_UART_Receive(&huart2, &ch, 1, 10);
+      |                                              ^~~~~~~
+      |                                              |
+      |                                              int *
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:450,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/commTask.c:2:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:1675:56: note: expected 'UART_HandleTypeDef *' {aka 'struct __UART_HandleTypeDef *'} but argument is of type 'int *'
+ 1675 | HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                    ~~~~~~~~~~~~~~~~~~~~^~~~~
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:442,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Inc/LED.h:3,
+                 from ../Core/Src/LED.c:1:
+../Core/Src/LED.c:54:25: error: 'htim4' undeclared (first use in this function)
+   54 |  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, brightness*10);
+      |                         ^~~~~
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim.h:1546:41: note: in definition of macro '__HAL_TIM_SET_COMPARE'
+ 1546 |   (((__CHANNEL__) == TIM_CHANNEL_1) ? ((__HANDLE__)->Instance->CCR1 = (__COMPARE__)) :\
+      |                                         ^~~~~~~~~~
+../Core/Src/commTask.c:22:14: error: request for member 'Instance' in something not a structure or union
+   22 |   if ((huart2.Instance->ISR & USART_ISR_ORE) != 0)
+      |              ^
+../Core/Src/LED.c:54:25: note: each undeclared identifier is reported only once for each function it appears in
+   54 |  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, brightness*10);
+      |                         ^~~~~
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim.h:1546:41: note: in definition of macro '__HAL_TIM_SET_COMPARE'
+ 1546 |   (((__CHANNEL__) == TIM_CHANNEL_1) ? ((__HANDLE__)->Instance->CCR1 = (__COMPARE__)) :\
+      |                                         ^~~~~~~~~~
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:450,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/commTask.c:2:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:904:66: error: request for member 'Instance' in something not a structure or union
+  904 | #define __HAL_UART_CLEAR_FLAG(__HANDLE__, __FLAG__) ((__HANDLE__)->Instance->ICR = (__FLAG__))
+      |                                                                  ^~
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:928:48: note: in expansion of macro '__HAL_UART_CLEAR_FLAG'
+  928 | #define __HAL_UART_CLEAR_OREFLAG(__HANDLE__)   __HAL_UART_CLEAR_FLAG((__HANDLE__), UART_CLEAR_OREF)
+      |                                                ^~~~~~~~~~~~~~~~~~~~~
+../Core/Src/commTask.c:24:4: note: in expansion of macro '__HAL_UART_CLEAR_OREFLAG'
+   24 |    __HAL_UART_CLEAR_OREFLAG(&huart2);
+      |    ^~~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/commTask.c:30:22: warning: passing argument 1 of 'HAL_UART_Transmit' from incompatible pointer type [-Wincompatible-pointer-types]
+   30 |    HAL_UART_Transmit(&huart2, &cmdbuffer[cmdprint++], 1, 0xFFFF);
+      |                      ^~~~~~~
+      |                      |
+      |                      int *
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:450,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/commTask.c:2:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:1674:57: note: expected 'UART_HandleTypeDef *' {aka 'struct __UART_HandleTypeDef *'} but argument is of type 'int *'
+ 1674 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                     ~~~~~~~~~~~~~~~~~~~~^~~~~
+../Core/Src/main.c:71:19: error: storage size of 'ledState' isn't known
+   71 | enum LedTaskState ledState;
+      |                   ^~~~~~~~
+../Core/Src/commTask.c:53:21: warning: passing argument 1 of 'HAL_UART_Transmit' from incompatible pointer type [-Wincompatible-pointer-types]
+   53 |   HAL_UART_Transmit(&huart2, &cmdbuffer[cmdprint++], 1, 0xFFFF);
+      |                     ^~~~~~~
+      |                     |
+      |                     int *
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:450,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/commTask.c:2:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:1674:57: note: expected 'UART_HandleTypeDef *' {aka 'struct __UART_HandleTypeDef *'} but argument is of type 'int *'
+ 1674 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                     ~~~~~~~~~~~~~~~~~~~~^~~~~
+../Core/Src/commTask.c:56:20: warning: passing argument 1 of 'HAL_UART_Transmit' from incompatible pointer type [-Wincompatible-pointer-types]
+   56 |  HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 0xFFFF);
+      |                    ^~~~~~~
+      |                    |
+      |                    int *
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:450,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/commTask.c:2:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:1674:57: note: expected 'UART_HandleTypeDef *' {aka 'struct __UART_HandleTypeDef *'} but argument is of type 'int *'
+ 1674 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                     ~~~~~~~~~~~~~~~~~~~~^~~~~
+make: *** [Core/Src/subdir.mk:40: Core/Src/LED.o] Error 1
+make: *** Waiting for unfinished jobs....
+../Core/Src/commTask.c: In function 'handleCommand':
+../Core/Src/commTask.c:70:16: warning: implicit declaration of function 'sscanf' [-Wimplicit-function-declaration]
+   70 |   int params = sscanf((const char*)cmdbuffer, "%s %d", cmd, &userBright);
+      |                ^~~~~~
+../Core/Src/commTask.c:70:16: warning: incompatible implicit declaration of built-in function 'sscanf'
+../Core/Src/commTask.c:3:1: note: include '<stdio.h>' or provide a declaration of 'sscanf'
+    2 | #include "main.h"
+  +++ |+#include <stdio.h>
+    3 | extern huart2;
+../Core/Src/commTask.c:85:7: warning: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]
+   85 |   if (strcmp(cmd, "full") == 0)
+      |       ^~~~~~
+../Core/Src/commTask.c:87:6: warning: implicit declaration of function 'start' [-Wimplicit-function-declaration]
+   87 |      start();
+      |      ^~~~~
+make: *** [Core/Src/subdir.mk:40: Core/Src/main.o] Error 1
+../Core/Src/commTask.c:91:6: warning: implicit declaration of function 'stop' [-Wimplicit-function-declaration]
+   91 |      stop();
+      |      ^~~~
+../Core/Src/commTask.c:103:7: warning: implicit declaration of function 'setBrightness' [-Wimplicit-function-declaration]
+  103 |       setBrightness(userBright);
+      |       ^~~~~~~~~~~~~
+../Core/Src/commTask.c:107:4: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+  107 |    printf("Invalid command\r\n");
+      |    ^~~~~~
+../Core/Src/commTask.c:107:4: warning: incompatible implicit declaration of built-in function 'printf'
+../Core/Src/commTask.c:107:4: note: include '<stdio.h>' or provide a declaration of 'printf'
+make: *** [Core/Src/subdir.mk:40: Core/Src/commTask.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+
+19:49:08 Build Failed. 8 errors, 15 warnings. (took 421ms)
+

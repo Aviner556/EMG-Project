@@ -1,0 +1,17 @@
+19:14:34 **** Build of configuration Debug for project ringBuffer ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/ringBuffer.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/ringBuffer.d" -MT"Core/Src/ringBuffer.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/ringBuffer.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:310:26: warning: implicit declaration of function 'getButton' [-Wimplicit-function-declaration]
+  310 |    int isButtonPressed = getButton();
+      |                          ^~~~~~~~~
+arm-none-eabi-gcc -o "ringBuffer.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\student\STM32CubeIDE\workspace_1.9.0\ringBuffer\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ringBuffer.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+c:\st\stm32cubeide_1.9.0\stm32cubeide\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\arm-none-eabi\bin\ld.exe: ./Core/Src/main.o: in function `main':
+C:/Users/student/STM32CubeIDE/workspace_1.9.0/ringBuffer/Debug/../Core/Src/main.c:310: undefined reference to `getButton'
+collect2.exe: error: ld returned 1 exit status
+make: *** [makefile:64: ringBuffer.elf] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+
+19:14:35 Build Failed. 3 errors, 1 warnings. (took 1s.47ms)
+

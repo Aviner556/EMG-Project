@@ -1,0 +1,26 @@
+#ifndef _buzzer_
+#define _buzzer_
+#include "main.h"
+
+typedef enum BUZZ_STATE_
+{
+	STATE_MUSIC_ON,
+	STATE_MUSIC_OFF,
+}BUZZ_STATE;
+
+typedef struct BUZZER_
+{
+	int note[50];
+	size_t size;
+	int currentNote;
+	int tone;
+	int periot;
+	int counter;
+}BUZZER;
+
+void buzzerInit(BUZZER *buzz);
+void playNote(int noteIdx);
+void playNextNote();
+
+
+#endif

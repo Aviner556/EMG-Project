@@ -1,0 +1,30 @@
+#include "myMain.h"
+#include "main.h"
+#include "LED.h"
+
+LED blue;
+LED red;
+
+extern htim6;
+extern huart2;
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
+{
+	ledOn(&blue);
+	ledOn(&red);
+}
+
+
+
+void mainloop()
+{
+	ledInit(&blue,LD2_GPIO_Port, LD2_Pin);
+	ledInit(&red,LD3_GPIO_Port, LD3_Pin);
+
+	__HAL_TIM_SET_COUNTER(&htim6, 0);
+	HAL_TIM_Base_Start_IT(&htim6);
+
+	while(1){
+
+	}
+}

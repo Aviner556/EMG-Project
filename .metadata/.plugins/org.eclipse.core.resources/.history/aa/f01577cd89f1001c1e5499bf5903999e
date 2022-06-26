@@ -1,0 +1,18 @@
+#ifndef _clock_
+#define _clock_
+#include "main.h"
+
+typedef struct _CLOCK
+{
+	int tik;
+	int second;
+	int minute;
+	int hour;
+	int day;
+}CLOCK;
+
+void clockInit(CLOCK* clock);
+void workingTime(CLOCK* clock);
+
+
+#endif
