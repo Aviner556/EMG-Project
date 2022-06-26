@@ -1,0 +1,7 @@
+.metadata
+*.o
+*.a
+*.d
+
+Debug
+Release

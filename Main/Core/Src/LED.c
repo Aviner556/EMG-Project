@@ -1,5 +1,7 @@
 #include "LED.h"
 
+extern TIM_HandleTypeDef htim4;
+
 void ledInit(LED* led,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
 	led ->state = STATE_LED_OFF;
@@ -38,6 +40,17 @@ void ledOnTimerInterrupt(LED* led)
 			led ->counter = 0;
 		}
 	}
+}
+
+void ledBrightness(int bright)
+{
+	if(bright > 10){
+		printf("invalid command\r\n");
+		return;
+	}
+	HAL_TIM_Base_Start_IT(&htim4);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, bright);
 }
 
 void ledOnPeriodicTask(LED* led)

@@ -13,6 +13,7 @@ typedef struct _CLOCK
 
 void clockInit(CLOCK* clock);
 void workingTime(CLOCK* clock);
+void showTime(CLOCK* clock);
 
 
 #endif

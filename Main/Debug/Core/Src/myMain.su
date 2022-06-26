@@ -1,4 +1,0 @@
-../Core/Src/myMain.c:10:5:_write	24	static
-../Core/Src/myMain.c:26:6:HAL_TIM_PeriodElapsedCallback	16	static
-../Core/Src/myMain.c:41:6:HAL_GPIO_EXTI_Callback	16	static
-../Core/Src/myMain.c:78:6:mainloop	8	static

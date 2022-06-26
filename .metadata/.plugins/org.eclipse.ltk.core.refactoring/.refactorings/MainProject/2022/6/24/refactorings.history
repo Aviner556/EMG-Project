@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;MainProject/Core/Src/binaryProtocol&apos; to &apos;binaryProtocol.c&apos;" description="Rename resource &apos;binaryProtocol&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Src/binaryProtocol" name="binaryProtocol.c" stamp="1654616766698" updateReferences="true"/>
-</session>

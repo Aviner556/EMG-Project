@@ -24,6 +24,6 @@ void ledOff(LED* led);
 void ledBlink(LED* led, int period);
 void ledOnTimerInterrupt(LED* led);
 void ledOnPeriodicTask(LED* led);
-void brightness(LED* led);
+void ledBrightness(int bright);
 
 #endif

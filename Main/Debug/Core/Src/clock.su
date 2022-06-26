@@ -1,2 +1,0 @@
-../Core/Src/clock.c:3:6:clockInit	16	static
-../Core/Src/clock.c:12:6:workingTime	16	static

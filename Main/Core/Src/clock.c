@@ -11,9 +11,16 @@ void clockInit(CLOCK* clock)
 
 void workingTime(CLOCK* clock)
 {
-	clock ->tik = HAL_GetTick();
-	clock ->seconds = clock ->tik/1000;
-	clock ->minutes = clock ->tik/60000;
-	clock ->hours = clock ->tik/360000;
-	clock ->days = clock ->tik/8640000;
+	clock->tik = HAL_GetTick();
+	clock->seconds = clock->tik/1000;
+	clock->minutes = clock->tik/60000;
+	clock->hours = clock->tik/3600000;
+	clock->days = clock->tik/86400000;
+}
+
+
+void showTime(CLOCK* clock)
+{
+	workingTime(clock);
+	printf("%d:%d:%d:%d\n\r",clock->days,clock->hours%24,clock->minutes%60,clock->seconds%60);
 }

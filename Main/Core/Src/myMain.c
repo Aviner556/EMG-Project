@@ -4,6 +4,7 @@
 #include "buttons.h"
 #include "buzzer.h"
 #include "clock.h"
+#include <stdio.h>
 
 extern UART_HandleTypeDef huart2;
 
@@ -15,11 +16,12 @@ int _write(int fd, char* ptr, int len)
 
 LED blue;
 LED red;
-BUTTON B3;
-BUTTON B2;
+BUTTON B3; //red
+BUTTON B2; //blue
 BUZZER buzzer;
 CLOCK clc1;
 extern TIM_HandleTypeDef htim6;
+extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim3;
 
 
@@ -27,6 +29,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
 	if(htim == &htim6){
 	/////////// clock /////////////////////////////////////////////////////////////////
+		buttTimeCnt(&B2);
 		workingTime(&clc1);
 
 	/////////// led ///////////////////////////////////////////////////////////////////
@@ -55,7 +58,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			ledOff(&blue);
 			ledOff(&red);
 		}
+		showTime(&clc1);
 	}
+
+	ledBrightness(5);
+
 	///////////////////////////////////////////////////////////////////////////////////
 	////buzzer
 	///////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +96,23 @@ void mainloop()
 	__HAL_TIM_SET_COUNTER(&htim6, 0);
 	HAL_TIM_Base_Start_IT(&htim6);
 
-	while(1){
+//	BUTT_STATE sw1State;
 
+	while(1){
+//		sw1State = Button_checkState(&B2);
+//		if(B2.butt_state != STATE_NONE){
+//			switch(sw1State){
+//			case STATE_SHORT:
+//				printf("short\r\n");
+//				break;
+//			case STATE_LONG:
+//				printf("long\r\n");
+//				break;
+//			case STATE_DOUBLE:
+//				printf("double\r\n");
+//				break;
+//			}
+//			B2.butt_state = STATE_NONE;
+//		}
 	}
 }
