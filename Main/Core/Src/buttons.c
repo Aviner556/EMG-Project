@@ -57,7 +57,7 @@ void buttTimeCnt(BUTTON* butt)
 	}
 }
 
-BUTT_STATE Button_checkState(BUTTON* butt)
-{
-	return butt->butt_state;
-}
+//BUTT_STATE Button_checkState(BUTTON* butt)
+//{
+//	return butt->butt_state;
+//}

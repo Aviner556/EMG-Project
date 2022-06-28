@@ -1,6 +1,7 @@
 #ifndef _buzzer_
 #define _buzzer_
-#include "main.h"
+
+#include <stdio.h>
 
 typedef enum BUZZ_STATE_
 {

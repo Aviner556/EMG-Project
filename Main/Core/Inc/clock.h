@@ -1,6 +1,7 @@
 #ifndef _clock_
 #define _clock_
-#include "main.h"
+
+#include <stdio.h>
 
 typedef struct _CLOCK
 {

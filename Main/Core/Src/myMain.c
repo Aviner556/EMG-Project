@@ -4,6 +4,7 @@
 #include "buttons.h"
 #include "buzzer.h"
 #include "clock.h"
+#include "ADC.h"
 #include <stdio.h>
 
 extern UART_HandleTypeDef huart2;
@@ -20,9 +21,11 @@ BUTTON B3; //red
 BUTTON B2; //blue
 BUZZER buzzer;
 CLOCK clc1;
+ADC lightSensor;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim3;
+extern ADC_HandleTypeDef hadc2;
 
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
@@ -35,6 +38,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 	/////////// led ///////////////////////////////////////////////////////////////////
 		ledOnTimerInterrupt(&blue);
 		ledOnTimerInterrupt(&red);
+
+		ledBrightness((lightSensor.value*10)/4095);
+		adcPrint(&hadc2);
 
 	/////////// buzzer ////////////////////////////////////////////////////////////////
 		buzzerOnTimerInterrupt(&buzzer);
@@ -61,7 +67,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		showTime(&clc1);
 	}
 
-	ledBrightness(5);
+	//ledBrightness(5);
 
 	///////////////////////////////////////////////////////////////////////////////////
 	////buzzer
@@ -80,7 +86,19 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
-
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+//	if(hadc == &hadc1){
+//		if(HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK ){
+//			potentiometer = HAL_ADC_GetValue(&hadc1);
+//		}
+//	}
+	if(hadc == &hadc2){
+		if(HAL_ADC_PollForConversion(&hadc2, HAL_MAX_DELAY) == HAL_OK ){
+			lightSensor.value = HAL_ADC_GetValue(&hadc2);
+		}
+	}
+}
 
 void mainloop()
 {
@@ -95,6 +113,10 @@ void mainloop()
 
 	__HAL_TIM_SET_COUNTER(&htim6, 0);
 	HAL_TIM_Base_Start_IT(&htim6);
+
+	HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
+	HAL_ADC_Start_IT(&hadc2);
+
 
 //	BUTT_STATE sw1State;
 
