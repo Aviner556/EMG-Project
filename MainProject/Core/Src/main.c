@@ -160,57 +160,50 @@ void ledStop()
 uint8_t cmdbuffer[MAX_BUFFER_LENGTH];
 int cmdcount = 0;
 int cmdprint = 0;
-uint8_t ch;
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	// in this callback we know that we have received the data
-	if (ch == '\r')
-	{
-		// this is the end of the input
-		// notify that we ready to handle new command
-		cmdcount = RING_BUFFER_SIZE - RingBuffer_FreeSpace(&rxrb);
-	}
-	else
-	{
-		// put char to rx buffer
-		if (RingBuffer_Write(&rxrb, &ch, 1) != 1)
-		{
-			// no more space in buffer, clear it
-			RingBuffer_Init(&rxrb);
-		}
-
-		// we can echo it because echo will use interrupt and will not stop this interrupt
-		UART_Transmit(&huart2, &ch, 1);
-	}
-
-	// clear error if we have
-	if ((huart2.Instance->ISR & USART_ISR_ORE) != 0)
-	{
-		__HAL_UART_CLEAR_OREFLAG(&huart2);
-	}
-
-	// start reading again
-	/*HAL_StatusTypeDef Status = */HAL_UART_Receive_IT(&huart2, &ch, 1);
-}
 
 int commTask()
 {
-	// just wait for interrupt to set cmdcount
-	if (!cmdcount)
+	uint8_t ch;
+
+	HAL_StatusTypeDef Status = HAL_UART_Receive(&huart2, &ch, 1, 10);
+	if (Status != HAL_OK)
 	{
+		if ((huart2.Instance->ISR & USART_ISR_ORE) != 0)
+		{
+			__HAL_UART_CLEAR_OREFLAG(&huart2);
+		}
+
+		// here we have a time to print the command
+		while (cmdprint < cmdcount)
+		{
+			HAL_UART_Transmit(&huart2, &cmdbuffer[cmdprint++], 1, 0xFFFF);
+		}
+
 		return 0;
 	}
 
-	// read the command in buffer
-	RingBuffer_Read(&rxrb, cmdbuffer, cmdcount);
+	if (ch != '\r' && ch != '\n')
+	{
+		//HAL_UART_Transmit(&huart2, &ch, 1, 0xFFFF);
 
-	//UART_Transmit(&huart2, cmdbuffer, cmdcount);
+		if (cmdcount >= MAX_BUFFER_LENGTH)
+		{
+			cmdcount = 0;
+			cmdprint = 0;
+		}
 
-	// echo EOL
-	UART_Transmit(&huart2, (uint8_t*)"\r\n", 2);
+		cmdbuffer[cmdcount++] = ch;
+		return 0;
+	}
 
-	// now we can notify that command is received
+	// here we have a time to print the command
+	while (cmdprint < cmdcount)
+	{
+		HAL_UART_Transmit(&huart2, &cmdbuffer[cmdprint++], 1, 0xFFFF);
+	}
+
+	HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 0xFFFF);
+
 	cmdbuffer[cmdcount] = 0;
 	cmdcount = 0;
 	cmdprint = 0;
@@ -231,11 +224,11 @@ void handleCommand()
 
   if (strcmp(cmd, "start") == 0)
   {
-	  ledStart(maxCount);
+	  //ledStart(maxCount);
   }
   else if (strcmp(cmd, "stop") == 0)
   {
-	  ledStop();
+	  //ledStop();
   }
   else
   {
@@ -292,7 +285,7 @@ int main(void)
 
   //
   // start communication be receiving one byte
-  /*HAL_StatusTypeDef Status = */HAL_UART_Receive_IT(&huart2, &ch, 1);
+  /*HAL_StatusTypeDef Status = */ HAL_UART_Receive_IT(&huart2, &ch, 1);
 
   /* USER CODE END 2 */
 

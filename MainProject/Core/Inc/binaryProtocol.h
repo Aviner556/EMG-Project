@@ -1,6 +1,8 @@
 #ifndef _BINARY_PROTOCOL_H_
 #define _BINARY_PROTOCOL_H_
 
+#include <stdio.h>
+
 enum State
 {
 	WIATING_FOR_SOM,

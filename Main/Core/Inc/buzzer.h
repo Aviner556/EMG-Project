@@ -20,6 +20,8 @@ typedef struct BUZZER_
 }BUZZER;
 
 void buzzerInit(BUZZER *buzz);
+void buzzerStart(BUZZER* buzzer);
+void buzzerStop(BUZZER* buzzer);
 void buzzerOnTimerInterrupt(BUZZER* buzz);
 void playNote(BUZZER *buzz);
 void playNextNote(BUZZER *buzz);

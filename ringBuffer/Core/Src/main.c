@@ -307,7 +307,7 @@ int main(void)
 		  handleCommand();
 	  }
 
-	  int isButtonPressed = getButton();
+	  //int isButtonPressed = getButton();
 
 	  switch (currentState)
 	  {

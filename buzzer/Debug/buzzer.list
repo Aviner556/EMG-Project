@@ -351,9 +351,9 @@ Disassembly of section .text:
  80004ca:	bf00      	nop
 
 080004cc <playNote>:
+int currentNote = 0;
+int tone = 3;
 int sec = 9999;
-
-
 
 void playNote(int noteIdx)
 {

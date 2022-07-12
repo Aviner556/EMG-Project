@@ -16,6 +16,21 @@ void buzzerInit(BUZZER* buzz)
 	buzz ->tone = 1;
 }
 
+void buzzerStart(BUZZER* buzzer)
+{
+	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	buzzer->state = STATE_MUSIC_ON;
+	playNote(buzzer);
+}
+
+void buzzerStop(BUZZER* buzzer)
+{
+	HAL_TIM_Base_Stop(&htim3);
+	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+	buzzer->state = STATE_MUSIC_OFF;
+}
+
 void playNote(BUZZER* buzz)
 {
 	__HAL_TIM_SET_COUNTER(&htim3, 0);

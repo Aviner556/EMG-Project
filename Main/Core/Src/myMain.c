@@ -6,6 +6,7 @@
 #include "clock.h"
 #include "ADC.h"
 #include <stdio.h>
+#include "CLI.h"
 
 extern UART_HandleTypeDef huart2;
 
@@ -40,7 +41,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 		ledOnTimerInterrupt(&red);
 
 		ledBrightness((lightSensor.value*10)/4095);
-		adcPrint(&hadc2);
+		//adcPrint(&hadc2);
 
 	/////////// buzzer ////////////////////////////////////////////////////////////////
 		buzzerOnTimerInterrupt(&buzzer);
@@ -73,16 +74,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	////buzzer
 	///////////////////////////////////////////////////////////////////////////////////
 	if(buzzer.state == STATE_MUSIC_OFF){
-		HAL_TIM_Base_Start(&htim3);
-		HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-		buzzer.state = STATE_MUSIC_ON;
-		playNote(&buzzer);
+		buzzerStart(&buzzer);
 	}
 	else
 	{
-		HAL_TIM_Base_Stop(&htim3);
-		HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
-		buzzer.state = STATE_MUSIC_OFF;
+		buzzerStop(&buzzer);
 	}
 }
 
@@ -99,6 +95,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 		}
 	}
 }
+
 
 void mainloop()
 {
@@ -117,24 +114,14 @@ void mainloop()
 	HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
 	HAL_ADC_Start_IT(&hadc2);
 
-
-//	BUTT_STATE sw1State;
+	//RegisterCallbacks(ledOn,ledOff,&red);
+	cliInit();
 
 	while(1){
-//		sw1State = Button_checkState(&B2);
-//		if(B2.butt_state != STATE_NONE){
-//			switch(sw1State){
-//			case STATE_SHORT:
-//				printf("short\r\n");
-//				break;
-//			case STATE_LONG:
-//				printf("long\r\n");
-//				break;
-//			case STATE_DOUBLE:
-//				printf("double\r\n");
-//				break;
-//			}
-//			B2.butt_state = STATE_NONE;
-//		}
+
+		if (commTask()){
+			handleCommand();
+		}
+
 	}
 }

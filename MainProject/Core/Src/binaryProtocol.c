@@ -1,4 +1,5 @@
 #include "binaryProtocol.h"
+/*
 static State currentState = WIATING_FOR_SOM;
 _MessageHeader HM;
 
@@ -29,3 +30,4 @@ int checkState(uint8_t ch)
 
 	}
 }
+*/
