@@ -3,18 +3,19 @@
 #include <main.h>
 
 #define MAX_BUFFER_LENGTH 100
-#define MAX_COMMANS_LENGTH 20
+#define MAX_COMMANS_LENGTH 25
 
 extern UART_HandleTypeDef huart2;
 
 COMMAND commands[MAX_COMMANS_LENGTH];
+//char help[20][20];
 
 /////////////////////////////////////////////////////////////////////////
 // Communication task definitions and functions
 /////////////////////////////////////////////////////////////////////////
 
 uint8_t cmdbuffer[MAX_BUFFER_LENGTH];
-int CNT_COMMANDS = 0;
+int cnt_commands = 0;
 int cmdcount = 0;
 int cmdprint = 0;
 
@@ -80,12 +81,16 @@ void handleCommand()
   {
 	  return;
   }
-
-  for(int i=0; i<CNT_COMMANDS; i++){
-	  if(strcmp(cmd, commands[i].commandName) == 0){
-		  commands[i].commandPointer(commands[i].obj);
+  if(cnt_commands != 0){
+	  for(int i=0; i<cnt_commands; i++){
+	  	  if(strcmp(cmd, commands[i].commandName) == 0){
+	  		  commands[i].commandPointer(commands[i].obj);
+	  	  }
 	  }
   }
+  else
+	  printf("0 commands\r\n");
+
   /*
   if (strcmp(cmd, "on") == 0)
   {
@@ -113,17 +118,36 @@ void handleCommand()
   */
 }
 
+void printHelpInIt()
+{
+
+}
+
+void printHelp(){
+	printf("available commands:\r\n");
+	for(int i = 0; i < cnt_commands; i++){
+		char* space;
+		if(i > 8){
+			space = " ";
+		}
+		else{
+			space = "  ";
+		}
+		printf("%d%s- %s\r\n", i+1, space, commands[i].commandName);
+	}
+	printf("\r\n");
+}
+
 
 void registerCommand(char* commandName, HandlerFunc func, void* obj)
 {
-	if(CNT_COMMANDS < MAX_COMMANS_LENGTH){
-		commands[CNT_COMMANDS].commandName = commandName;
-		commands[CNT_COMMANDS].commandPointer = func;
-		commands[CNT_COMMANDS].obj = obj;
-		CNT_COMMANDS++;
+	if(cnt_commands < MAX_COMMANS_LENGTH){
+		commands[cnt_commands].commandName = commandName;
+		commands[cnt_commands].commandPointer = func;
+		commands[cnt_commands].obj = obj;
+		cnt_commands++;
 	}
 	else{
 		printf("error\r\n");
 	}
 }
-

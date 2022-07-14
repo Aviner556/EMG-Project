@@ -4,6 +4,7 @@
 
 int commTask();
 void handleCommand();
+void printHelp();
 typedef void (*HandlerFunc)();
 
 void registerCommand(char* commandName, HandlerFunc offFunc, void* obj);

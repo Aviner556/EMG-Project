@@ -352,10 +352,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  //ledTask();
-//	  	  if (commTask())
-//	  	  {
-//	  		  handleCommand();
-//	  	  }
+	  	  if (commTask())
+	  	  {
+	  		  handleCommand();
+	  	  }
   }
   /* USER CODE END 3 */
 }
