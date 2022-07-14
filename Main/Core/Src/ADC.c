@@ -1,9 +1,9 @@
-#include "ADC.h"
+#include "Adc.h"
 #include "main.h"
 
 extern ADC_HandleTypeDef hadc2;
 
-void adcInit(ADC* adc)
+void Adc_Init(Adc* adc)
 {
 	adc->value = 0;
 	adc->count = 0;

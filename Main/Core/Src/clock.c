@@ -1,6 +1,6 @@
-#include "clock.h"
+#include "Clock.h"
 
-void clockInit(CLOCK* clock)
+void Clock_init(Clock* clock)
 {
 	clock ->tik = 0;
 	clock ->seconds = 0;
@@ -9,7 +9,7 @@ void clockInit(CLOCK* clock)
 	clock ->days = 0;
 }
 
-void workingTime(CLOCK* clock)
+void Clock_workingTime(Clock* clock)
 {
 	clock->tik = HAL_GetTick();
 	clock->seconds = clock->tik/1000;
@@ -19,8 +19,8 @@ void workingTime(CLOCK* clock)
 }
 
 
-void showTime(CLOCK* clock)
+void Clock_showTime(Clock* clock)
 {
-	workingTime(clock);
+	Clock_workingTime(clock);
 	printf("%d:%d:%d:%d\n\r",clock->days,clock->hours%24,clock->minutes%60,clock->seconds%60);
 }

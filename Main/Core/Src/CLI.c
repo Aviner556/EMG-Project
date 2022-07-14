@@ -1,25 +1,54 @@
-#include <CLI.h>
-#include <LED.h>
-#include <buzzer.h>
-#include <commTask.h>
+#include <Cli.h>
+#include <Led.h>
+#include <Buzzer.h>
+#include <Communication.h>
 #include "stdio.h"
+#include <stdlib.h>
 
-extern LED blue;
-extern LED red;
-extern BUZZER buzzer;
+extern Led blue;
+extern Led red;
+extern Buzzer buzzer;
 
-
-void cliInit()
+void Cli_cmdLedOn(void * obj, char * param)
 {
-	registerCommand("ledson",ledOn,&red);
-	registerCommand("ledson",ledOn,&blue);
-	registerCommand("ledsoff",ledOff,&red);
-	registerCommand("ledsoff",ledOff,&blue);
-	registerCommand("redledon",ledOn,&red);
-	registerCommand("redledoff",ledOff,&red);
-	registerCommand("blueledon",ledOn,&blue);
-	registerCommand("blueledoff",ledOff,&blue);
-	registerCommand("buzzeron",buzzerStart,&buzzer);
-	registerCommand("buzzeroff",buzzerStop,&buzzer);
-	registerCommand("help",printHelp,NULL);
+	Led * led = (Led *)obj;
+	Led_on(led);
+}
+
+void Cli_cmdLedOff(void * obj, char * param)
+{
+	Led * led = (Led *)obj;
+	Led_off(led);
+}
+
+void Cli_cmdLedBlink(void * obj, char * param)
+{
+	Led * led = (Led *)obj;
+	int maxPeriod = atoi(param);
+	Led_blink(led,maxPeriod);
+}
+
+void Cli_cmdBuzzerOn(void * obj, char * param)
+{
+	Buzzer * buzzer = (Buzzer *)obj;
+	Buzzer_start(buzzer);
+}
+
+void Cli_cmdBuzzerOff(void * obj, char * param)
+{
+	Buzzer * buzzer = (Buzzer *)obj;
+	Buzzer_stop(buzzer);
+}
+
+void Cli_init()
+{
+	RegisterCommand("redledon",Cli_cmdLedOn,&red);
+	RegisterCommand("redledoff",Cli_cmdLedOff,&red);
+	RegisterCommand("redledblink",Cli_cmdLedBlink,&red);
+	RegisterCommand("blueledon",Cli_cmdLedOn,&blue);
+	RegisterCommand("blueledoff",Cli_cmdLedOff,&blue);
+	RegisterCommand("blueledblink",Cli_cmdLedBlink,&blue);
+	RegisterCommand("buzzeron",Cli_cmdBuzzerOn,&buzzer);
+	RegisterCommand("buzzeroff",Cli_cmdBuzzerOff,&buzzer);
+	RegisterCommand("help",Communication_printHelp,NULL);
 }

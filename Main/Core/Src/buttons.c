@@ -1,58 +1,58 @@
-#include "buttons.h"
 #include "main.h"
-#include "LED.h"
+#include "Led.h"
+#include "Buttons.h"
 
-extern BUTTON B2;
+extern Button B2;
 
 int delayTik = 0;
 
-void buttInit(BUTTON* butt,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+void Button_init(Button * button,GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin)
 {
-	butt->butt_state = STATE_NONE;
-	butt->tik = 0;
-	butt->countPress = 0;
-	butt->countTik = 0;
-	butt->GPIO_Pin = GPIO_Pin;
-	butt->GPIOx = GPIOx;
+	button->buttonState = STATE_NONE;
+	button->tik = 0;
+	button->countPress = 0;
+	button->countTik = 0;
+	button->gpioPin = GPIO_Pin;
+	button->gpioPort = GPIOx;
 }
 
-void buttonInterrupt(BUTTON* butt)
+void Button_interrupt(Button* button)
 {
-	if(HAL_GPIO_ReadPin(butt->GPIOx, butt->GPIO_Pin) == 0){
-		butt->tik = HAL_GetTick();
-		butt->countPress++;
+	if(HAL_GPIO_ReadPin(button->gpioPort, button->gpioPin) == 0){
+		button->tik = HAL_GetTick();
+		button->countPress++;
 	}
-	else if(HAL_GPIO_ReadPin(butt->GPIOx, butt->GPIO_Pin) == 1){
-		butt->butt_state = STATE_PRESS;
-		if((HAL_GetTick() - butt->tik) > 500){
-			butt->butt_state = STATE_LONG;
-			butt->countPress = 0;
-			butt->countTik = 0;
+	else if(HAL_GPIO_ReadPin(button->gpioPort, button->gpioPin) == 1){
+		button->buttonState = STATE_PRESS;
+		if((HAL_GetTick() - button->tik) > 500){
+			button->buttonState = STATE_LONG;
+			button->countPress = 0;
+			button->countTik = 0;
 			printf("long\r\n");
 		}
 	}
 }
 
-void buttonDecision(BUTTON* butt)
+void Button_decision(Button* button)
 {
-	if(butt->countPress >= 2){
-		butt->butt_state = STATE_DOUBLE;
+	if(button->countPress >= 2){
+		button->buttonState = STATE_DOUBLE;
 		printf("double\r\n");
 	}
-	else if(butt->countTik > 200){
-		butt->butt_state = STATE_SHORT;
+	else if(button->countTik > 200){
+		button->buttonState = STATE_SHORT;
 		printf("short\r\n");
 	}
-	butt->countPress = 0;
-	butt->countTik = 0;
+	button->countPress = 0;
+	button->countTik = 0;
 }
 
-void buttTimeCnt(BUTTON* butt)
+void Button_timeCnt(Button* butt)
 {
-	if(B2.butt_state == STATE_PRESS){
+	if(B2.buttonState == STATE_PRESS){
 		butt->countTik++;
 		if(butt->countTik > 200){
-			buttonDecision(butt);
+			Button_decision(butt);
 		}
 	}
 }

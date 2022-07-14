@@ -1,20 +1,20 @@
-#ifndef _clock_
-#define _clock_
+#ifndef _Clock_
+#define _Clock_
 
 #include <stdio.h>
 
-typedef struct _CLOCK
+typedef struct _Clock
 {
 	uint32_t tik;
 	int seconds;
 	int minutes;
 	int hours;
 	int days;
-}CLOCK;
+}Clock;
 
-void clockInit(CLOCK* clock);
-void workingTime(CLOCK* clock);
-void showTime(CLOCK* clock);
+void Clock_init(Clock * clock);
+void Clock_workingTime(Clock * clock);
+void Clock_showTime(Clock * clock);
 
 
 #endif

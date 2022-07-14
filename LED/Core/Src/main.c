@@ -47,9 +47,9 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
-LED blue;
-LED red;
-BUTTON B2;
+Led blue;
+Led red;
+Button B2;
 
 /* USER CODE END PV */
 
@@ -75,14 +75,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, pulse);
 		cnt = 0;
 	}
-	ledOn(&blue);
+	Led_on(&blue);
 //	ledOnTimerInterrupt(&red);
 //	ledOnTimerInterrupt(&blue);
 }
 
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 {
-	ledOff(&blue);
+	Led_off(&blue);
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -131,10 +131,10 @@ int main(void)
   HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
 
 
-  ledInit(&blue,LD2_GPIO_Port, LD2_Pin);
-  ledInit(&red,LD3_GPIO_Port, LD3_Pin);
+  Led_init(&blue,LD2_GPIO_Port, LD2_Pin);
+  Led_init(&red,LD3_GPIO_Port, LD3_Pin);
 
-  buttInit(&B2,B2_GPIO_Port,B2_Pin);
+  Button_init(&B2,B2_GPIO_Port,B2_Pin);
 
   //__HAL_TIM_SET_COUNTER(&htim6, 0);
   //HAL_TIM_Base_Start_IT(&htim6);

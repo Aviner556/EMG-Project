@@ -1,8 +1,13 @@
-#ifndef _CLI_
-#define _CLI_
+#ifndef _Cli_
+#define _Cli_
 
 
-void cliInit();
+void Cli_init();
+void Cli_cmdLedOn(void * obj, char * param);
+void Cli_cmdLedOff(void * obj, char * param);
+void Cli_cmdLedBlink(void * obj, char * param);
+void Cli_cmdBuzzerOn(void * obj, char * param);
+void Cli_cmdBuzzerOff(void * obj, char * param);
 
 
 #endif

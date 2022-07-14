@@ -1,48 +1,49 @@
-#include "LED.h"
+#include "Led.h"
+#include <stdio.h>
 
 extern TIM_HandleTypeDef htim4;
 
-void ledInit(LED* led,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+void Led_init(Led * led,GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin)
 {
-	led ->state = STATE_LED_OFF;
-	led ->counter = 0;
-	led ->GPIOx = GPIOx;
-	led ->GPIO_Pin = GPIO_Pin;
-	led ->maxPeriod = 0;
-	HAL_GPIO_WritePin(led ->GPIOx, led ->GPIO_Pin, 0);
+	led->state = STATE_LED_OFF;
+	led->counter = 0;
+	led->gpioPort = GPIOx;
+	led->gpioPin = GPIO_Pin;
+	led->maxPeriod = 0;
+	HAL_GPIO_WritePin(led->gpioPort, led->gpioPin, 0);
 }
 
-void ledOn(LED* led)
+void Led_on(Led * led)
 {
 	led ->state = STATE_LED_ON;
-	HAL_GPIO_WritePin(led ->GPIOx, led ->GPIO_Pin, 1);
+	HAL_GPIO_WritePin(led->gpioPort, led->gpioPin, 1);
 }
 
-void ledOff(LED* led)
+void Led_off(Led * led)
 {
 	led ->state = STATE_LED_OFF;
-	HAL_GPIO_WritePin(led ->GPIOx, led ->GPIO_Pin, 0);
+	HAL_GPIO_WritePin(led->gpioPort, led->gpioPin, 0);
 }
 
-void ledBlink(LED* led, int maxPeriod)
+void Led_blink(Led * led, int maxPeriod)
 {
 	led ->counter = 0;
 	led ->state = STATE_LED_BLINK;
 	led ->maxPeriod = maxPeriod;
 }
 
-void ledOnTimerInterrupt(LED* led)
+void Led_onTimerInterrupt(Led * led)
 {
 	if(led ->state == STATE_LED_BLINK){
 		led ->counter++;
 		if(led ->counter >= led ->maxPeriod){
-			HAL_GPIO_TogglePin(led ->GPIOx, led ->GPIO_Pin);
+			HAL_GPIO_TogglePin(led->gpioPort, led->gpioPin);
 			led ->counter = 0;
 		}
 	}
 }
 
-void ledBrightness(int bright)
+void Led_brightness(int bright)
 {
 	if(bright > 10){
 		printf("invalid command\r\n");
@@ -53,7 +54,7 @@ void ledBrightness(int bright)
 	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, bright);
 }
 
-void ledOnPeriodicTask(LED* led)
+void Led_onPeriodicTask(Led* led)
 {
 
 }

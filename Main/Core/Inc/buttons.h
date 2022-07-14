@@ -1,30 +1,30 @@
-#ifndef _buttons_
-#define _buttons_
+#ifndef _Buttons_
+#define _Buttons_
 #include "main.h"
 
-typedef enum BUTT_STATE_
+typedef enum Butt_State_
 {
 	STATE_NONE,
 	STATE_PRESS,
 	STATE_SHORT,
 	STATE_LONG,
 	STATE_DOUBLE,
-}BUTT_STATE;
+}Button_State;
 
-typedef struct _BUTTON
+typedef struct _Button
 {
-	BUTT_STATE butt_state;
-	GPIO_TypeDef* GPIOx;
-	uint16_t GPIO_Pin;
+	Button_State buttonState;
+	GPIO_TypeDef * gpioPort;
+	uint16_t gpioPin;
 	int tik;
 	int countPress;
 	int countTik;
-}BUTTON;
+}Button;
 
-void buttInit(BUTTON* butt,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
-void buttonInterrupt(BUTTON* butt);
-void buttonDecision(BUTTON* butt);
-void buttTimeCnt(BUTTON* butt);
-BUTT_STATE Button_checkState(BUTTON* butt);
+void Button_init(Button * button,GPIO_TypeDef * gpioPort, uint16_t gpioPin);
+void Button_interrupt(Button * button);
+void Button_decision(Button * button);
+void Button_timeCnt(Button * button);
+Button_State Button_checkState(Button * button);
 
 #endif

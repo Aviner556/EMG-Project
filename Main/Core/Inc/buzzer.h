@@ -1,30 +1,30 @@
-#ifndef _buzzer_
-#define _buzzer_
+#ifndef _Buzzer_
+#define _Buzzer_
 
 #include <stdio.h>
 
-typedef enum BUZZ_STATE_
+typedef enum Buzz_State_
 {
 	STATE_MUSIC_ON,
 	STATE_MUSIC_OFF,
-}BUZZ_STATE;
+}Buzz_State;
 
-typedef struct BUZZER_
+typedef struct Buzzer_
 {
-	BUZZ_STATE state;
+	Buzz_State state;
 	size_t size;
 	int currentNote;
 	int tone;
 	int maxCount;
 	int counter;
-}BUZZER;
+}Buzzer;
 
-void buzzerInit(BUZZER *buzz);
-void buzzerStart(BUZZER* buzzer);
-void buzzerStop(BUZZER* buzzer);
-void buzzerOnTimerInterrupt(BUZZER* buzz);
-void playNote(BUZZER *buzz);
-void playNextNote(BUZZER *buzz);
+void Buzzer_init(Buzzer * buzzer);
+void Buzzer_start(Buzzer * buzzer);
+void Buzzer_stop(Buzzer * buzzer);
+void Buzzer_onTimerInterrupt(Buzzer * buzzer);
+void Buzzer_playNote(Buzzer * buzzer);
+void Buzzer_playNextNote(Buzzer * buzzer);
 
 
 #endif

@@ -1,15 +1,15 @@
-#ifndef _ADC_
-#define _ADC_
+#ifndef _Adc_
+#define _Adc_
 
 #include <stdio.h>
 
-typedef struct _ADC
+typedef struct _Adc
 {
 	uint32_t value;
 	int count;
-}ADC;
+}Adc;
 
-void adcInit(ADC* adc);
-void adcPrint(ADC* adc);
+void Adc_Init(Adc * adc);
+void Adc_Print(Adc * adc);
 
 #endif

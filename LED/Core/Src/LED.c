@@ -1,6 +1,6 @@
 #include "LED.h"
 
-void ledInit(LED* led,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+void Led_init(Led* led,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
 	led ->state = STATE_LED_OFF;
 	led ->counter = 0;
@@ -10,26 +10,26 @@ void ledInit(LED* led,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 	HAL_GPIO_WritePin(led ->GPIOx, led ->GPIO_Pin, 0);
 }
 
-void ledOn(LED* led)
+void Led_on(Led* led)
 {
 	led ->state = STATE_LED_ON;
 	HAL_GPIO_WritePin(led ->GPIOx, led ->GPIO_Pin, 1);
 }
 
-void ledOff(LED* led)
+void Led_off(Led* led)
 {
 	led ->state = STATE_LED_OFF;
 	HAL_GPIO_WritePin(led ->GPIOx, led ->GPIO_Pin, 0);
 }
 
-void ledBlink(LED* led, int period)
+void Led_blink(Led* led, int period)
 {
 	led ->counter = 0;
 	led ->state = STATE_LED_BLINK;
 	led ->period = period;
 }
 
-void ledOnTimerInterrupt(LED* led)
+void Led_onTimerInterrupt(Led* led)
 {
 	if(led ->state == STATE_LED_BLINK){
 		led ->counter++;
@@ -40,7 +40,7 @@ void ledOnTimerInterrupt(LED* led)
 	}
 }
 
-void ledOnPeriodicTask(LED* led)
+void Led_onPeriodicTask(Led* led)
 {
 
 }

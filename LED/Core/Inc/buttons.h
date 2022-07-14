@@ -6,17 +6,17 @@ typedef enum BUTT_STATE_
 {
 	STATE_BUTT_UP,
 	STATE_BUTT_DOWN,
-}BUTT_STATE;
+}Button_State;
 
 typedef struct _BUTTON
 {
-	BUTT_STATE butt_state;
+	Button_State butt_state;
 	GPIO_TypeDef* GPIOx;
 	uint16_t GPIO_Pin;
 	int tik;
-}BUTTON;
+}Button;
 
-void buttInit(BUTTON* butt,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
-void buttonInterrupt(BUTTON* butt);
+void Button_init(Button* butt,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+void Button_interrupt(Button* butt);
 
 #endif

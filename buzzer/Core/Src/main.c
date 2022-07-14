@@ -77,7 +77,7 @@ int currentNote = 0;
 int tone = 3;
 int sec = 9999;
 
-void playNote(int noteIdx)
+void Buzzer_playNote(int noteIdx)
 {
 	currentNote = noteIdx;
 
@@ -89,13 +89,13 @@ void playNote(int noteIdx)
 	__HAL_TIM_SET_AUTORELOAD(&htim6, sec/lenght[currentNote]);
 }
 
-void playNextNote()
+void Buzzer_playNextNote()
 {
 	currentNote++;
 	if(currentNote >= size){
 		currentNote = 0;
 	}
-	playNote(currentNote);
+	Buzzer_playNote(currentNote);
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -103,7 +103,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	if(play == STATE_MUSIC_OFF){
 		HAL_TIM_Base_Start_IT(&htim3);
 		HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
-		playNote(0);
+		Buzzer_playNote(0);
 		play = STATE_MUSIC_ON;
 	}
 	else
@@ -117,7 +117,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
 	if(htim == &htim6){
-		playNextNote();
+		Buzzer_playNextNote();
 	}
 }
 

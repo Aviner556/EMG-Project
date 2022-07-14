@@ -161,7 +161,7 @@ uint8_t cmdbuffer[MAX_BUFFER_LENGTH];
 int cmdcount = 0;
 int cmdprint = 0;
 
-int commTask()
+int Communication_commTask()
 {
 	uint8_t ch;
 
@@ -210,7 +210,7 @@ int commTask()
 	return 1;
 }
 
-void handleCommand()
+void Communication_handleCommand()
 {
   char cmd[20];
   int maxCount;
@@ -297,9 +297,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  ledTask();
-	  if (commTask())
+	  if (Communication_commTask())
 	  {
-		  handleCommand();
+		  Communication_handleCommand();
 	  }
   }
   /* USER CODE END 3 */

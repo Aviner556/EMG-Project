@@ -1,12 +1,13 @@
-#include "myMain.h"
+#include "Adc.h"
+#include "MyMain.h"
 #include "main.h"
-#include "LED.h"
-#include "buttons.h"
-#include "buzzer.h"
-#include "clock.h"
-#include "ADC.h"
+#include "Led.h"
+#include "Buttons.h"
+#include "Buzzer.h"
+#include "Clock.h"
 #include <stdio.h>
-#include "CLI.h"
+#include "Cli.h"
+#include "Communication.h"
 
 extern UART_HandleTypeDef huart2;
 
@@ -16,13 +17,13 @@ int _write(int fd, char* ptr, int len)
 	return len;
 }
 
-LED blue;
-LED red;
-BUTTON B3; //red
-BUTTON B2; //blue
-BUZZER buzzer;
-CLOCK clc1;
-ADC lightSensor;
+Led blue;
+Led red;
+Button B3; //red
+Button B2; //blue
+Buzzer buzzer;
+Clock clc1;
+Adc lightSensor;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim3;
@@ -33,18 +34,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
 	if(htim == &htim6){
 	/////////// clock /////////////////////////////////////////////////////////////////
-		buttTimeCnt(&B2);
-		workingTime(&clc1);
+		Button_timeCnt(&B2);
+		Clock_workingTime(&clc1);
 
 	/////////// led ///////////////////////////////////////////////////////////////////
-		ledOnTimerInterrupt(&blue);
-		ledOnTimerInterrupt(&red);
+		Led_onTimerInterrupt(&blue);
+		Led_onTimerInterrupt(&red);
 
-		ledBrightness((lightSensor.value*10)/4095);
+		Led_brightness((lightSensor.value*10)/4095);
 		//adcPrint(&hadc2);
 
 	/////////// buzzer ////////////////////////////////////////////////////////////////
-		buzzerOnTimerInterrupt(&buzzer);
+		Buzzer_onTimerInterrupt(&buzzer);
 	}
 }
 
@@ -54,18 +55,18 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	////buttons
 	///////////////////////////////////////////////////////////////////////////////////
 	if(GPIO_Pin == B2_Pin){
-		buttonInterrupt(&B2);
+		Button_interrupt(&B2);
 	}
 	else{
 		if(blue.state == STATE_LED_OFF && red.state == STATE_LED_OFF){
-			ledOn(&blue);
-			ledOn(&red);
+			Led_on(&blue);
+			Led_on(&red);
 		}
 		else{
-			ledOff(&blue);
-			ledOff(&red);
+			Led_off(&blue);
+			Led_off(&red);
 		}
-		showTime(&clc1);
+		Clock_showTime(&clc1);
 	}
 
 	//ledBrightness(5);
@@ -74,11 +75,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	////buzzer
 	///////////////////////////////////////////////////////////////////////////////////
 	if(buzzer.state == STATE_MUSIC_OFF){
-		buzzerStart(&buzzer);
+		Buzzer_start(&buzzer);
 	}
 	else
 	{
-		buzzerStop(&buzzer);
+		Buzzer_stop(&buzzer);
 	}
 }
 
@@ -99,14 +100,14 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 
 void mainloop()
 {
-	ledInit(&blue,LD2_GPIO_Port, LD2_Pin);
-	ledInit(&red,LD3_GPIO_Port, LD3_Pin);
+	Led_init(&blue,LD2_GPIO_Port, LD2_Pin);
+	Led_init(&red,LD3_GPIO_Port, LD3_Pin);
 
-	buttInit(&B2,B2_GPIO_Port,B2_Pin);
-	buttInit(&B3,B3_GPIO_Port,B3_Pin);
+	Button_init(&B2,B2_GPIO_Port,B2_Pin);
+	Button_init(&B3,B3_GPIO_Port,B3_Pin);
 
-	clockInit(&clc1);
-	buzzerInit(&buzzer);
+	Clock_init(&clc1);
+	Buzzer_init(&buzzer);
 
 	__HAL_TIM_SET_COUNTER(&htim6, 0);
 	HAL_TIM_Base_Start_IT(&htim6);
@@ -115,12 +116,12 @@ void mainloop()
 	HAL_ADC_Start_IT(&hadc2);
 
 	//RegisterCallbacks(ledOn,ledOff,&red);
-	cliInit();
+	Cli_init();
 
 	while(1){
 
-		if (commTask()){
-			handleCommand();
+		if (Communication_commTask()){
+			Communication_handleCommand();
 		}
 
 	}

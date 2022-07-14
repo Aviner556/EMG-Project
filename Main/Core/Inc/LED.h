@@ -1,29 +1,29 @@
-#ifndef _LED_
-#define _LED_
+#ifndef _Led_
+#define _Led_
 #include "main.h"
 
-typedef enum LED_STATE_
+typedef enum LedState_
 {
 	STATE_LED_OFF,
 	STATE_LED_ON,
 	STATE_LED_BLINK
-}LED_STATE;
+}LedState;
 
-typedef struct _led
+typedef struct _Led
 {
-	LED_STATE state;
-	GPIO_TypeDef* GPIOx;
-	uint16_t GPIO_Pin;
+	LedState state;
+	GPIO_TypeDef * gpioPort;
+	uint16_t gpioPin;
 	int counter;
 	int maxPeriod;
-} LED;
+}Led;
 
-void ledInit(LED* led,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
-void ledOn(LED* led);
-void ledOff(LED* led);
-void ledBlink(LED* led, int period);
-void ledOnTimerInterrupt(LED* led);
-void ledOnPeriodicTask(LED* led);
-void ledBrightness(int bright);
+void Led_init(Led * led,GPIO_TypeDef * gpioPort, uint16_t gpioPin);
+void Led_on(Led * led);
+void Led_off(Led * led);
+void Led_blink(Led * led, int period);
+void Led_onTimerInterrupt(Led * led);
+void Led_onPeriodicTask(Led * led);
+void Led_brightness(int bright);
 
 #endif
