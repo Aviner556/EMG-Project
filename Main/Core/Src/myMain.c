@@ -5,17 +5,15 @@
 #include "Buttons.h"
 #include "Buzzer.h"
 #include "Clock.h"
-#include <stdio.h>
 #include "Cli.h"
 #include "Communication.h"
+#include <stdio.h>
 
 extern UART_HandleTypeDef huart2;
-
-int _write(int fd, char* ptr, int len)
-{
-	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
-	return len;
-}
+extern TIM_HandleTypeDef htim6;
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim3;
+extern ADC_HandleTypeDef hadc2;
 
 Led blue;
 Led red;
@@ -24,10 +22,12 @@ Button B2; //blue
 Buzzer buzzer;
 Clock clc1;
 Adc lightSensor;
-extern TIM_HandleTypeDef htim6;
-extern TIM_HandleTypeDef htim4;
-extern TIM_HandleTypeDef htim3;
-extern ADC_HandleTypeDef hadc2;
+
+int _write(int fd, char* ptr, int len)
+{
+	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
+	return len;
+}
 
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)

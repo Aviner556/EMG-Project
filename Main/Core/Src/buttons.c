@@ -1,6 +1,7 @@
 #include "main.h"
 #include "Led.h"
 #include "Buttons.h"
+#include <stdio.h>
 
 extern Button B2;
 

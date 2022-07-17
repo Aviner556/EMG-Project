@@ -3,16 +3,16 @@
 
 extern TIM_HandleTypeDef htim3;
 
-int note[] = {390, 340, 303, 286, 255, 227, 202};
-int lenght[] = {300, 300, 300, 300, 300, 300, 500};
+static int _note[] = {390, 340, 303, 286, 255, 227, 202};
+static int _length[] = {300, 300, 300, 300, 300, 300, 500};
 
 void Buzzer_init(Buzzer* buzz)
 {
 	buzz ->state = STATE_MUSIC_OFF;
-	buzz ->size = sizeof(note)/sizeof(note[0]);
+	buzz ->size = sizeof(_note)/sizeof(_note[0]);
 	buzz ->counter = 0;
 	buzz ->currentNote = 0;
-	buzz ->maxCount = lenght[0];
+	buzz ->maxCount = _length[0];
 	buzz ->tone = 1;
 }
 
@@ -34,8 +34,8 @@ void Buzzer_stop(Buzzer* buzzer)
 void Buzzer_playNote(Buzzer* buzz)
 {
 	__HAL_TIM_SET_COUNTER(&htim3, 0);
-	__HAL_TIM_SET_AUTORELOAD(&htim3, note[buzz ->currentNote]);
-	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (note[buzz ->currentNote])/2);
+	__HAL_TIM_SET_AUTORELOAD(&htim3, _note[buzz ->currentNote]);
+	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (_note[buzz ->currentNote])/2);
 }
 
 void Buzzer_playNextNote(Buzzer* buzz)
@@ -44,7 +44,7 @@ void Buzzer_playNextNote(Buzzer* buzz)
 	if(buzz ->currentNote >= buzz ->size){
 		buzz ->currentNote = 0;
 	}
-	buzz ->maxCount = lenght[buzz ->currentNote];
+	buzz ->maxCount = _length[buzz ->currentNote];
 
 	Buzzer_playNote(buzz);
 }

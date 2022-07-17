@@ -3,15 +3,15 @@
 
 #include <stdio.h>
 
-typedef enum Buzz_State_
+typedef enum BuzzState_
 {
 	STATE_MUSIC_ON,
 	STATE_MUSIC_OFF,
-}Buzz_State;
+}BuzzerState;
 
 typedef struct Buzzer_
 {
-	Buzz_State state;
+	BuzzerState state;
 	size_t size;
 	int currentNote;
 	int tone;

@@ -1,6 +1,6 @@
-#include <Communication.h>
-#include "stdio.h"
-#include <main.h>
+#include "Communication.h"
+#include "main.h"
+#include <stdio.h>
 #include <string.h>
 
 #define MAX_BUFFER_LENGTH 100
@@ -16,9 +16,9 @@ Command commands[MAX_COMMANS_LENGTH];
 /////////////////////////////////////////////////////////////////////////
 
 uint8_t cmdbuffer[MAX_BUFFER_LENGTH];
-int cnt_commands = 0;
-int cmdcount = 0;
-int cmdprint = 0;
+static int _cnt_commands = 0;
+static int _cmdcount = 0;
+static int _cmdprint = 0;
 
 int Communication_commTask()
 {
@@ -33,9 +33,9 @@ int Communication_commTask()
 		}
 
 		// here we have a time to print the command
-		while (cmdprint < cmdcount)
+		while (_cmdprint < _cmdcount)
 		{
-			HAL_UART_Transmit(&huart2, &cmdbuffer[cmdprint++], 1, 0xFFFF);
+			HAL_UART_Transmit(&huart2, &cmdbuffer[_cmdprint++], 1, 0xFFFF);
 		}
 
 		return 0;
@@ -45,27 +45,27 @@ int Communication_commTask()
 	{
 		//HAL_UART_Transmit(&huart2, &ch, 1, 0xFFFF);
 
-		if (cmdcount >= MAX_BUFFER_LENGTH)
+		if (_cmdcount >= MAX_BUFFER_LENGTH)
 		{
-			cmdcount = 0;
-			cmdprint = 0;
+			_cmdcount = 0;
+			_cmdprint = 0;
 		}
 
-		cmdbuffer[cmdcount++] = ch;
+		cmdbuffer[_cmdcount++] = ch;
 		return 0;
 	}
 
 	// here we have a time to print the command
-	while (cmdprint < cmdcount)
+	while (_cmdprint < _cmdcount)
 	{
-		HAL_UART_Transmit(&huart2, &cmdbuffer[cmdprint++], 1, 0xFFFF);
+		HAL_UART_Transmit(&huart2, &cmdbuffer[_cmdprint++], 1, 0xFFFF);
 	}
 
 	HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 0xFFFF);
 
-	cmdbuffer[cmdcount] = 0;
-	cmdcount = 0;
-	cmdprint = 0;
+	cmdbuffer[_cmdcount] = 0;
+	_cmdcount = 0;
+	_cmdprint = 0;
 	return 1;
 }
 
@@ -83,15 +83,20 @@ void Communication_handleCommand()
   {
 	  return;
   }
-  if(cnt_commands != 0){
-	  for(int i=0; i<cnt_commands; i++){
+  if(_cnt_commands != 0){
+	  for(int i=0; i<_cnt_commands; i++){
 	  	  if(strcmp(cmd, commands[i].commandName) == 0){
 	  		  commands[i].commandPointer(commands[i].obj, param);
+	  		  return;
 	  	  }
 	  }
   }
-  else
+  else{
 	  printf("0 commands\r\n");
+	  return;
+  }
+
+  printf("Invalid command\r\n");
 
   /*
   if (strcmp(cmd, "on") == 0)
@@ -122,7 +127,7 @@ void Communication_handleCommand()
 
 void Communication_printHelp(){
 	printf("available commands:\r\n");
-	for(int i = 0; i < cnt_commands; i++){
+	for(int i = 0; i < _cnt_commands; i++){
 		char* space;
 		if(i > 8){
 			space = " ";
@@ -138,11 +143,11 @@ void Communication_printHelp(){
 
 void RegisterCommand(char* commandName, HandlerFunc func, void* obj)
 {
-	if(cnt_commands < MAX_COMMANS_LENGTH){
-		commands[cnt_commands].commandName = commandName;
-		commands[cnt_commands].commandPointer = func;
-		commands[cnt_commands].obj = obj;
-		cnt_commands++;
+	if(_cnt_commands < MAX_COMMANS_LENGTH){
+		commands[_cnt_commands].commandName = commandName;
+		commands[_cnt_commands].commandPointer = func;
+		commands[_cnt_commands].obj = obj;
+		_cnt_commands++;
 	}
 	else{
 		printf("error\r\n");

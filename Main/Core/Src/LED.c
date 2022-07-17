@@ -45,7 +45,7 @@ void Led_onTimerInterrupt(Led * led)
 
 void Led_brightness(int bright)
 {
-	if(bright > 10){
+	if(bright > 10 || bright < 0){
 		printf("invalid command\r\n");
 		return;
 	}

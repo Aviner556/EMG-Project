@@ -1,5 +1,7 @@
 #include <communication.h>
 #include "stdio.h"
+#include <string.h>
+#include <codes.h>
 #include <main.h>
 
 extern UART_HandleTypeDef huart2;
