@@ -2,11 +2,11 @@
 
 void Clock_init(Clock* clock)
 {
-	clock ->tik = 0;
-	clock ->seconds = 0;
-	clock ->minutes = 0;
-	clock ->hours = 0;
-	clock ->days = 0;
+	clock->tik = 0;
+	clock->seconds = 0;
+	clock->minutes = 0;
+	clock->hours = 0;
+	clock->days = 0;
 }
 
 void Clock_workingTime(Clock* clock)

@@ -8,12 +8,12 @@ static int _length[] = {300, 300, 300, 300, 300, 300, 500};
 
 void Buzzer_init(Buzzer* buzz)
 {
-	buzz ->state = STATE_MUSIC_OFF;
-	buzz ->size = sizeof(_note)/sizeof(_note[0]);
-	buzz ->counter = 0;
-	buzz ->currentNote = 0;
-	buzz ->maxCount = _length[0];
-	buzz ->tone = 1;
+	buzz->state = STATE_MUSIC_OFF;
+	buzz->size = sizeof(_note)/sizeof(_note[0]);
+	buzz->counter = 0;
+	buzz->currentNote = 0;
+	buzz->maxCount = _length[0];
+	buzz->tone = 1;
 }
 
 void Buzzer_start(Buzzer* buzzer)
@@ -40,22 +40,22 @@ void Buzzer_playNote(Buzzer* buzz)
 
 void Buzzer_playNextNote(Buzzer* buzz)
 {
-	buzz ->currentNote++;
-	if(buzz ->currentNote >= buzz ->size){
-		buzz ->currentNote = 0;
+	buzz->currentNote++;
+	if(buzz->currentNote >= buzz ->size){
+		buzz->currentNote = 0;
 	}
-	buzz ->maxCount = _length[buzz ->currentNote];
+	buzz->maxCount = _length[buzz ->currentNote];
 
 	Buzzer_playNote(buzz);
 }
 
 void Buzzer_onTimerInterrupt(Buzzer* buzz)
 {
-	if(buzz ->state == STATE_MUSIC_ON){
-		buzz ->counter++;
-		if(buzz ->counter >= buzz ->maxCount){
+	if(buzz->state == STATE_MUSIC_ON){
+		buzz->counter++;
+		if(buzz->counter >= buzz ->maxCount){
 			Buzzer_playNextNote(buzz);
-			buzz ->counter = 0;
+			buzz->counter = 0;
 		}
 	}
 }

@@ -1,18 +1,20 @@
 #include "Adc.h"
 #include "MyMain.h"
-#include "main.h"
 #include "Led.h"
 #include "Buttons.h"
 #include "Buzzer.h"
 #include "Clock.h"
 #include "Cli.h"
 #include "Communication.h"
+#include "Dht11.h"
+#include "main.h"
 #include <stdio.h>
 
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim16;
 extern ADC_HandleTypeDef hadc2;
 
 Led blue;
@@ -22,6 +24,7 @@ Button B2; //blue
 Buzzer buzzer;
 Clock clc1;
 Adc lightSensor;
+Dht11 TempHum;
 
 int _write(int fd, char* ptr, int len)
 {
@@ -111,9 +114,14 @@ void mainloop()
 
 	__HAL_TIM_SET_COUNTER(&htim6, 0);
 	HAL_TIM_Base_Start_IT(&htim6);
+	__HAL_TIM_SET_COUNTER(&htim16, 0);
+	HAL_TIM_Base_Start(&htim16);
 
 	HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
 	HAL_ADC_Start_IT(&hadc2);
+
+	Dht11_init(&TempHum);
+	Dht11_Start(&TempHum);
 
 	//RegisterCallbacks(ledOn,ledOff,&red);
 	Cli_init();
