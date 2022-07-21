@@ -54,36 +54,40 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+	if(GPIO_Pin == TempHum.gpioPin){
+		Dht11_onGpioInterrupt(&TempHum, TempHum.gpioPin);
+	}
+
 	///////////////////////////////////////////////////////////////////////////////////
 	////buttons
 	///////////////////////////////////////////////////////////////////////////////////
-	if(GPIO_Pin == B2_Pin){
-		Button_interrupt(&B2);
-	}
-	else{
-		if(blue.state == STATE_LED_OFF && red.state == STATE_LED_OFF){
-			Led_on(&blue);
-			Led_on(&red);
-		}
-		else{
-			Led_off(&blue);
-			Led_off(&red);
-		}
-		Clock_showTime(&clc1);
-	}
+//	if(GPIO_Pin == B2_Pin){
+//		Button_interrupt(&B2);
+//	}
+//	else{
+//		if(blue.state == STATE_LED_OFF && red.state == STATE_LED_OFF){
+//			Led_on(&blue);
+//			Led_on(&red);
+//		}
+//		else{
+//			Led_off(&blue);
+//			Led_off(&red);
+//		}
+//		Clock_showTime(&clc1);
+//	}
 
 	//ledBrightness(5);
 
 	///////////////////////////////////////////////////////////////////////////////////
 	////buzzer
 	///////////////////////////////////////////////////////////////////////////////////
-	if(buzzer.state == STATE_MUSIC_OFF){
-		Buzzer_start(&buzzer);
-	}
-	else
-	{
-		Buzzer_stop(&buzzer);
-	}
+//	if(buzzer.state == STATE_MUSIC_OFF){
+//		Buzzer_start(&buzzer);
+//	}
+//	else
+//	{
+//		Buzzer_stop(&buzzer);
+//	}
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
