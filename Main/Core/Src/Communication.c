@@ -15,7 +15,7 @@ Command commands[MAX_COMMANS_LENGTH];
 // Communication task definitions and functions
 /////////////////////////////////////////////////////////////////////////
 
-uint8_t cmdbuffer[MAX_BUFFER_LENGTH];
+static uint8_t _cmdbuffer[MAX_BUFFER_LENGTH];
 static int _cnt_commands = 0;
 static int _cmdcount = 0;
 static int _cmdprint = 0;
@@ -35,38 +35,47 @@ int Communication_commTask()
 		// here we have a time to print the command
 		while (_cmdprint < _cmdcount)
 		{
-			HAL_UART_Transmit(&huart2, &cmdbuffer[_cmdprint++], 1, 0xFFFF);
+			HAL_UART_Transmit(&huart2, &_cmdbuffer[_cmdprint++], 1, 0xFFFF);
 		}
 
 		return 0;
 	}
 
-	if (ch != '\r' && ch != '\n')
-	{
-		//HAL_UART_Transmit(&huart2, &ch, 1, 0xFFFF);
-
-		if (_cmdcount >= MAX_BUFFER_LENGTH)
+	if (ch == '\r' || ch == '\n')
 		{
+			// here we have a time to print the command
+			while (_cmdprint < _cmdcount)
+			{
+				HAL_UART_Transmit(&huart2, &_cmdbuffer[_cmdprint++], 1, 0xFFFF);
+			}
+
+			HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 0xFFFF);
+
+			_cmdbuffer[_cmdcount] = 0;
 			_cmdcount = 0;
 			_cmdprint = 0;
+
+			// command is ready
+			return 1;
 		}
+	else if (ch == '\b')
+		{
+			char bs[] = "\b \b";
+			_cmdcount--;
+			_cmdprint--;
+			HAL_UART_Transmit(&huart2, (uint8_t*)bs, strlen(bs), 0xFFFF);
+		}
+		else
+		{
+			if (_cmdcount >= MAX_BUFFER_LENGTH)
+			{
+				_cmdcount = 0;
+				_cmdprint = 0;
+			}
 
-		cmdbuffer[_cmdcount++] = ch;
-		return 0;
-	}
-
-	// here we have a time to print the command
-	while (_cmdprint < _cmdcount)
-	{
-		HAL_UART_Transmit(&huart2, &cmdbuffer[_cmdprint++], 1, 0xFFFF);
-	}
-
-	HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 0xFFFF);
-
-	cmdbuffer[_cmdcount] = 0;
-	_cmdcount = 0;
-	_cmdprint = 0;
-	return 1;
+			_cmdbuffer[_cmdcount++] = ch;
+		}
+	return 0;
 }
 
 
@@ -77,7 +86,7 @@ void Communication_handleCommand()
   //uint32_t userCode;
   char param[20];
 
-  int params = sscanf((const char*)cmdbuffer, "%s %s", cmd, param);
+  int params = sscanf((const char*)_cmdbuffer, "%s %s", cmd, param);
 
   if (params == 0)
   {

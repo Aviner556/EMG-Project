@@ -23,6 +23,7 @@ Button B3; //red
 Button B2; //blue
 Buzzer buzzer;
 Clock clc1;
+Clock clcDht;
 Adc lightSensor;
 Dht11 TempHum;
 
@@ -39,6 +40,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 	/////////// clock /////////////////////////////////////////////////////////////////
 		Button_timeCnt(&B2);
 		Clock_workingTime(&clc1);
+		Dht11_onTimerInterrupt(&TempHum);
 
 	/////////// led ///////////////////////////////////////////////////////////////////
 		Led_onTimerInterrupt(&blue);
@@ -114,6 +116,7 @@ void mainloop()
 	Button_init(&B3,B3_GPIO_Port,B3_Pin);
 
 	Clock_init(&clc1);
+	Clock_init(&clcDht);
 	Buzzer_init(&buzzer);
 
 	__HAL_TIM_SET_COUNTER(&htim6, 0);
@@ -125,7 +128,6 @@ void mainloop()
 	HAL_ADC_Start_IT(&hadc2);
 
 	Dht11_init(&TempHum);
-	Dht11_Start(&TempHum);
 
 	//RegisterCallbacks(ledOn,ledOff,&red);
 	Cli_init();

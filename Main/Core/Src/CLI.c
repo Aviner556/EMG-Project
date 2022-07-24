@@ -1,6 +1,7 @@
 #include "Cli.h"
 #include "Led.h"
 #include "Buzzer.h"
+#include "Dht11.h"
 #include "Communication.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +9,7 @@
 extern Led blue;
 extern Led red;
 extern Buzzer buzzer;
+extern Dht11 TempHum;
 
 void Cli_cmdLedOn(void * obj, char * param)
 {
@@ -40,6 +42,18 @@ void Cli_cmdBuzzerOff(void * obj, char * param)
 	Buzzer_stop(buzzer);
 }
 
+void Cli_cmdDht11Start(void * obj, char * param)
+{
+	Dht11 * dht = (Dht11 *)obj;
+	Dht11_start(dht);
+}
+
+void Cli_cmdDht11Print(void * obj, char * param)
+{
+	Dht11 * dht = (Dht11 *)obj;
+	Dht11_print(dht);
+}
+
 void Cli_init()
 {
 	RegisterCommand("redledon",Cli_cmdLedOn,&red);
@@ -50,5 +64,7 @@ void Cli_init()
 	RegisterCommand("blueledblink",Cli_cmdLedBlink,&blue);
 	RegisterCommand("buzzeron",Cli_cmdBuzzerOn,&buzzer);
 	RegisterCommand("buzzeroff",Cli_cmdBuzzerOff,&buzzer);
+	RegisterCommand("dhtstart",Cli_cmdDht11Start,&TempHum);
+	RegisterCommand("dhtprint",Cli_cmdDht11Print,&TempHum);
 	RegisterCommand("help",Communication_printHelp,NULL);
 }

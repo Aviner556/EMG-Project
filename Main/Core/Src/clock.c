@@ -1,4 +1,5 @@
 #include "Clock.h"
+#include "main.h"
 
 void Clock_init(Clock* clock)
 {
