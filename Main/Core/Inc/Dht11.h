@@ -11,6 +11,7 @@ typedef enum _Dht11State
 	STATE_WAITING_RESPONSE_START,
 	STATE_WAITING_RESPONSE_END,
 	STATE_RECIVING_BIT,
+	STATE_HAS_DATA,
 }Dht11State;
 
 typedef struct Dht11_
@@ -30,7 +31,8 @@ void Dht11_init(Dht11 * dht);
 void Dht11_start(Dht11 * dht);
 void Dht11_startRead(Dht11 * dht);
 void Dht11_onGpioInterrupt(Dht11 * dht, uint16_t pin);
-int Dht11_hasData(Dht11 * dht);
+int Dht11_returnedValue(Dht11 * dht);
+void Dht11_hasData(Dht11 * dht);
 void Dht11_onTimerInterrupt(Dht11 * dht);
 void Dht11_print(Dht11 * dht);
 void Dht11_setGpioExti(Dht11 * dht);

@@ -72,16 +72,18 @@ void Dht11_onTimerInterrupt(Dht11 * dht)
 void Dht11_startRead(Dht11 * dht)
 {
 	dht->DhtBuffer[dht->bitCount/8] <<= 1;
-	dht->DhtBuffer[dht->bitCount/8] |= Dht11_hasData(dht);
+	dht->DhtBuffer[dht->bitCount/8] |= Dht11_returnedValue(dht);
 	dht->bitCount++;
 	__HAL_TIM_SET_COUNTER(&htim16, 0);
 	if(dht->bitCount >= 40){
-		dht->DhtState = STATE_SLEEP;
-		Dht11_print(dht);
+		dht->DhtState = STATE_HAS_DATA;
+		dht->humidity = dht->DhtBuffer[0]+(dht->DhtBuffer[1]*0.1);
+		dht->temperature = dht->DhtBuffer[2]+(dht->DhtBuffer[3]*0.1);
+		dht->checkSum = dht->DhtBuffer[4];
 	}
 }
 
-int Dht11_hasData(Dht11 * dht)
+int Dht11_returnedValue(Dht11 * dht)
 {
 	if(__HAL_TIM_GET_COUNTER(&htim16) > 100){ //1 write, 0 ignore
 		return 1;
@@ -89,9 +91,17 @@ int Dht11_hasData(Dht11 * dht)
 	return 0;
 }
 
+void Dht11_hasData(Dht11 * dht)
+{
+	if(dht->DhtState == STATE_HAS_DATA){
+		Dht11_print(dht);
+		dht->DhtState = STATE_SLEEP;
+	}
+}
+
 void Dht11_print(Dht11 * dht)
 {
-	printf("Humidity - %u.%u\r\nTemperature - %u.%u\r\nChekSum - %u\r\n\n",dht->DhtBuffer[0],dht->DhtBuffer[1],dht->DhtBuffer[2],dht->DhtBuffer[3],dht->DhtBuffer[4]);
+	printf("Humidity - %.2f\r\nTemperature - %.2f\r\nChekSum - %d\r\n\n",dht->humidity,dht->temperature,dht->checkSum);
 }
 
 void Dht11_start(Dht11 * dht)

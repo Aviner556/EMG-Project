@@ -1,13 +1,7 @@
 #ifndef _Communication_
 #define _Communication_
 
-
-int Communication_commTask();
-void Communication_handleCommand();
-void Communication_printHelp();
 typedef void (* HandlerFunc)(void *, char *);
-
-void RegisterCommand(char * commandName, HandlerFunc offFunc, void * obj);
 
 typedef struct _Command
 {
@@ -15,5 +9,11 @@ typedef struct _Command
 	HandlerFunc commandPointer;
 	void * obj;
 }Command;
+
+int Communication_commTask();
+void Communication_handleCommand();
+void Communication_printHelp();
+
+void RegisterCommand(char * commandName, HandlerFunc offFunc, void * obj);
 
 #endif

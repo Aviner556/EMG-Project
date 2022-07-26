@@ -134,6 +134,8 @@ void mainloop()
 
 	while(1){
 
+		Dht11_hasData(&TempHum);
+
 		if (Communication_commTask()){
 			Communication_handleCommand();
 		}
