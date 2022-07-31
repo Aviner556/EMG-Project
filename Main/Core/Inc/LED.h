@@ -23,7 +23,7 @@ void Led_init(Led * led,GPIO_TypeDef * gpioPort, uint16_t gpioPin);
 void Led_on(Led * led);
 void Led_off(Led * led);
 void Led_blink(Led * led, int period);
-void Led_onTimerInterrupt(Led * led);
+void Led_onTimerInterrupt(void * obj);
 void Led_onPeriodicTask(Led * led);
 void Led_brightness(int bright);
 

@@ -4,11 +4,11 @@
 #include <string.h>
 
 #define MAX_BUFFER_LENGTH 100
-#define MAX_COMMANS_LENGTH 25
+#define MAX_COMMANDS_LENGTH 25
 
 extern UART_HandleTypeDef huart2;
 
-Command commands[MAX_COMMANS_LENGTH];
+Command commands[MAX_COMMANDS_LENGTH];
 //char help[20][20];
 
 /////////////////////////////////////////////////////////////////////////
@@ -150,9 +150,9 @@ void Communication_printHelp(){
 }
 
 
-void RegisterCommand(char* commandName, HandlerFunc func, void* obj)
+void RegisterCommand(char * commandName, HandlerFunc func, void * obj)
 {
-	if(_cnt_commands < MAX_COMMANS_LENGTH){
+	if(_cnt_commands < MAX_COMMANDS_LENGTH){
 		commands[_cnt_commands].commandName = commandName;
 		commands[_cnt_commands].commandPointer = func;
 		commands[_cnt_commands].obj = obj;

@@ -1,4 +1,5 @@
 #include "Led.h"
+#include "MainTimerIT.h"
 #include <stdio.h>
 
 extern TIM_HandleTypeDef htim4;
@@ -17,12 +18,14 @@ void Led_on(Led * led)
 {
 	led ->state = STATE_LED_ON;
 	HAL_GPIO_WritePin(led->gpioPort, led->gpioPin, 1);
+	MainTimerIT_registerCallbackRemove(Led_onTimerInterrupt, led);
 }
 
 void Led_off(Led * led)
 {
 	led ->state = STATE_LED_OFF;
 	HAL_GPIO_WritePin(led->gpioPort, led->gpioPin, 0);
+	MainTimerIT_registerCallbackRemove(Led_onTimerInterrupt, led);
 }
 
 void Led_blink(Led * led, int maxPeriod)
@@ -30,10 +33,12 @@ void Led_blink(Led * led, int maxPeriod)
 	led ->counter = 0;
 	led ->state = STATE_LED_BLINK;
 	led ->maxPeriod = maxPeriod;
+	MainTimerIT_registerCallback(Led_onTimerInterrupt, led);
 }
 
-void Led_onTimerInterrupt(Led * led)
+void Led_onTimerInterrupt(void * obj)
 {
+	Led * led = (Led *)obj;
 	if(led ->state == STATE_LED_BLINK){
 		led ->counter++;
 		if(led ->counter >= led ->maxPeriod){

@@ -22,7 +22,7 @@ typedef struct Buzzer_
 void Buzzer_init(Buzzer * buzzer);
 void Buzzer_start(Buzzer * buzzer);
 void Buzzer_stop(Buzzer * buzzer);
-void Buzzer_onTimerInterrupt(Buzzer * buzzer);
+void Buzzer_onTimerInterrupt(void * obj);
 void Buzzer_playNote(Buzzer * buzzer);
 void Buzzer_playNextNote(Buzzer * buzzer);
 

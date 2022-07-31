@@ -1,4 +1,5 @@
 #include "Dht11.h"
+#include "MainTimerIT.h"
 #include "main.h"
 #include <stdio.h>
 #include <string.h>
@@ -57,8 +58,9 @@ void Dht11_onGpioInterrupt(Dht11 * dht, uint16_t pin)
 	}
 }
 
-void Dht11_onTimerInterrupt(Dht11 * dht)
+void Dht11_onTimerInterrupt(void * obj)
 {
+	Dht11 * dht = (Dht11 *)obj;
 	if(dht->DhtState == STATE_WAKEUP_START){
 		dht->msCount++;
 	}
@@ -76,6 +78,7 @@ void Dht11_startRead(Dht11 * dht)
 	dht->bitCount++;
 	__HAL_TIM_SET_COUNTER(&htim16, 0);
 	if(dht->bitCount >= 40){
+
 		dht->DhtState = STATE_HAS_DATA;
 		dht->humidity = dht->DhtBuffer[0]+(dht->DhtBuffer[1]*0.1);
 		dht->temperature = dht->DhtBuffer[2]+(dht->DhtBuffer[3]*0.1);
@@ -94,6 +97,7 @@ int Dht11_returnedValue(Dht11 * dht)
 void Dht11_hasData(Dht11 * dht)
 {
 	if(dht->DhtState == STATE_HAS_DATA){
+		MainTimerIT_registerCallbackRemove(Dht11_onTimerInterrupt, dht);
 		Dht11_print(dht);
 		dht->DhtState = STATE_SLEEP;
 	}
@@ -107,6 +111,7 @@ void Dht11_print(Dht11 * dht)
 void Dht11_start(Dht11 * dht)
 {
 	if(dht->DhtState == STATE_SLEEP){
+		MainTimerIT_registerCallback(Dht11_onTimerInterrupt, dht);
 		Dht11_setGpioOutput(dht);
 		HAL_GPIO_WritePin(dht->gpioPort, dht->gpioPin, 0);
 		__HAL_TIM_SET_COUNTER(&htim16, 0);

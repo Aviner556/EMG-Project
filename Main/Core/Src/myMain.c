@@ -7,6 +7,7 @@
 #include "Cli.h"
 #include "Communication.h"
 #include "Dht11.h"
+#include "MainTimerIT.h"
 #include "main.h"
 #include <stdio.h>
 
@@ -37,20 +38,23 @@ int _write(int fd, char* ptr, int len)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
 	if(htim == &htim6){
+
+		MainTimerIT_handleInterrupt();
+
 	/////////// clock /////////////////////////////////////////////////////////////////
 		Button_timeCnt(&B2);
-		Clock_workingTime(&clc1);
-		Dht11_onTimerInterrupt(&TempHum);
+//		Clock_workingTime(&clc1);
+//		Dht11_onTimerInterrupt(&TempHum);
 
 	/////////// led ///////////////////////////////////////////////////////////////////
-		Led_onTimerInterrupt(&blue);
-		Led_onTimerInterrupt(&red);
+//		Led_onTimerInterrupt(&blue);
+//		Led_onTimerInterrupt(&red);
 
 		Led_brightness((lightSensor.value*10)/4095);
 		//adcPrint(&hadc2);
 
 	/////////// buzzer ////////////////////////////////////////////////////////////////
-		Buzzer_onTimerInterrupt(&buzzer);
+//		Buzzer_onTimerInterrupt(&buzzer);
 	}
 }
 
@@ -128,6 +132,8 @@ void mainloop()
 	HAL_ADC_Start_IT(&hadc2);
 
 	Dht11_init(&TempHum);
+
+	MainTimerIT_init();
 
 	//RegisterCallbacks(ledOn,ledOff,&red);
 	Cli_init();

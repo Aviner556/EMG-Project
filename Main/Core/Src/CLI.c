@@ -2,6 +2,7 @@
 #include "Led.h"
 #include "Buzzer.h"
 #include "Dht11.h"
+#include "Clock.h"
 #include "Communication.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +11,7 @@ extern Led blue;
 extern Led red;
 extern Buzzer buzzer;
 extern Dht11 TempHum;
+extern Clock clc1;
 
 void Cli_cmdLedOn(void * obj, char * param)
 {
@@ -54,6 +56,12 @@ void Cli_cmdDht11Print(void * obj, char * param)
 	Dht11_print(dht);
 }
 
+void Cli_cmdClockShowTime(void * obj, char * param)
+{
+	Clock * clock = (Clock *)obj;
+	Clock_showTime(clock);
+}
+
 void Cli_init()
 {
 	RegisterCommand("redledon",Cli_cmdLedOn,&red);
@@ -66,5 +74,6 @@ void Cli_init()
 	RegisterCommand("buzzeroff",Cli_cmdBuzzerOff,&buzzer);
 	RegisterCommand("dhtstart",Cli_cmdDht11Start,&TempHum);
 	RegisterCommand("dhtprint",Cli_cmdDht11Print,&TempHum);
+	RegisterCommand("showtime",Cli_cmdClockShowTime,&clc1);
 	RegisterCommand("help",Communication_printHelp,NULL);
 }
