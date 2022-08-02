@@ -42,9 +42,9 @@ void MainTimerIT_handleInterrupt()
 		if(commandsIT[i].isOn == 1){
 			commandsIT[i].funcPointer(commandsIT[i].obj);
 		}
-//		if(commandsIT[i] == 0){
-//			return;
-//		}
+		if(commandsIT[i].funcPointer == 0){
+			return;
+		}
 	}
 }
 
@@ -55,10 +55,18 @@ void MainTimerIT_registerCallbackRemove(TimerHandler funcPointer, void * obj)
 	}
 	for(int i = 0; i < MAX_COMMANDS_IT_LENGTH; i++){
 		if(commandsIT[i].funcPointer == funcPointer && commandsIT[i].obj == obj){
-			commandsIT[i] = commandsIT[_cnt_commandsIT-1];
-			_cnt_commandsIT--;
-			//printf("removed from %d. last in %d\r\n",i,_cnt_commandsIT);
-			return;
+			if(i == _cnt_commandsIT-1){
+				memset(&commandsIT[i], 0, sizeof(commandsIT[i]));
+				_cnt_commandsIT--;
+				return;
+			}
+			else{
+				commandsIT[i] = commandsIT[_cnt_commandsIT-1];
+				memset(&_cnt_commandsIT-1, 0, sizeof(_cnt_commandsIT-1));
+				_cnt_commandsIT--;
+				//printf("removed from %d. last in %d\r\n",i,_cnt_commandsIT);
+				return;
+			}
 		}
 	}
 }

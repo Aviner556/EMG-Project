@@ -5,7 +5,7 @@
 
 extern Button B2;
 
-int delayTik = 0;
+static int delayTik = 0;
 
 void Button_init(Button * button,GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin)
 {
@@ -34,6 +34,16 @@ void Button_interrupt(Button* button)
 	}
 }
 
+void Button_timeCnt(Button* butt)
+{
+	if(B2.buttonState == STATE_PRESS){
+		butt->countTik++;
+		if(butt->countTik > 200){
+			Button_decision(butt);
+		}
+	}
+}
+
 void Button_decision(Button* button)
 {
 	if(button->countPress >= 2){
@@ -46,16 +56,6 @@ void Button_decision(Button* button)
 	}
 	button->countPress = 0;
 	button->countTik = 0;
-}
-
-void Button_timeCnt(Button* butt)
-{
-	if(B2.buttonState == STATE_PRESS){
-		butt->countTik++;
-		if(butt->countTik > 200){
-			Button_decision(butt);
-		}
-	}
 }
 
 //BUTT_STATE Button_checkState(BUTTON* butt)

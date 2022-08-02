@@ -67,9 +67,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	///////////////////////////////////////////////////////////////////////////////////
 	////buttons
 	///////////////////////////////////////////////////////////////////////////////////
-//	if(GPIO_Pin == B2_Pin){
-//		Button_interrupt(&B2);
-//	}
+	if(GPIO_Pin == B2_Pin){
+		Button_interrupt(&B2);
+	}
 //	else{
 //		if(blue.state == STATE_LED_OFF && red.state == STATE_LED_OFF){
 //			Led_on(&blue);
@@ -113,6 +113,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 
 void mainloop()
 {
+	MainTimerIT_init();
+
 	Led_init(&blue,LD2_GPIO_Port, LD2_Pin);
 	Led_init(&red,LD3_GPIO_Port, LD3_Pin);
 
@@ -132,8 +134,6 @@ void mainloop()
 	HAL_ADC_Start_IT(&hadc2);
 
 	Dht11_init(&TempHum);
-
-	MainTimerIT_init();
 
 	//RegisterCallbacks(ledOn,ledOff,&red);
 	Cli_init();

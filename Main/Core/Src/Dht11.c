@@ -44,6 +44,24 @@ void Dht11_setGpioExti(Dht11 * dht)
 	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
+void Dht11_start(Dht11 * dht)
+{
+	if(dht->DhtState == STATE_SLEEP){
+		MainTimerIT_registerCallback(Dht11_onTimerInterrupt, dht);
+		Dht11_setGpioOutput(dht);
+		HAL_GPIO_WritePin(dht->gpioPort, dht->gpioPin, 0);
+		__HAL_TIM_SET_COUNTER(&htim16, 0);
+		//MCU lowering the signal for 18ms
+		dht->msCount = 0;
+		dht->DhtState = STATE_WAKEUP_START;
+	}
+	else if(dht->DhtState == STATE_WAKEUP_END){
+		HAL_GPIO_WritePin(dht->gpioPort, dht->gpioPin, 1);
+		Dht11_setGpioExti(dht);
+		dht->DhtState = STATE_WAITING_RESPONSE_START;
+	}
+}
+
 void Dht11_onGpioInterrupt(Dht11 * dht, uint16_t pin)
 {
 	if(dht->DhtState == STATE_WAITING_RESPONSE_START){
@@ -65,6 +83,7 @@ void Dht11_onTimerInterrupt(void * obj)
 		dht->msCount++;
 	}
 	if(dht->msCount >= 18){
+		MainTimerIT_registerCallbackRemove(Dht11_onTimerInterrupt, dht);
 		dht->DhtState = STATE_WAKEUP_END;
 		dht->msCount = 0;
 		Dht11_start(dht);
@@ -97,7 +116,6 @@ int Dht11_returnedValue(Dht11 * dht)
 void Dht11_hasData(Dht11 * dht)
 {
 	if(dht->DhtState == STATE_HAS_DATA){
-		MainTimerIT_registerCallbackRemove(Dht11_onTimerInterrupt, dht);
 		Dht11_print(dht);
 		dht->DhtState = STATE_SLEEP;
 	}
@@ -106,24 +124,6 @@ void Dht11_hasData(Dht11 * dht)
 void Dht11_print(Dht11 * dht)
 {
 	printf("Humidity - %.2f\r\nTemperature - %.2f\r\nChekSum - %d\r\n\n",dht->humidity,dht->temperature,dht->checkSum);
-}
-
-void Dht11_start(Dht11 * dht)
-{
-	if(dht->DhtState == STATE_SLEEP){
-		MainTimerIT_registerCallback(Dht11_onTimerInterrupt, dht);
-		Dht11_setGpioOutput(dht);
-		HAL_GPIO_WritePin(dht->gpioPort, dht->gpioPin, 0);
-		__HAL_TIM_SET_COUNTER(&htim16, 0);
-		//MCU lowering the signal for 18ms
-		dht->msCount = 0;
-		dht->DhtState = STATE_WAKEUP_START;
-	}
-	else if(dht->DhtState == STATE_WAKEUP_END){
-		HAL_GPIO_WritePin(dht->gpioPort, dht->gpioPin, 1);
-		Dht11_setGpioExti(dht);
-		dht->DhtState = STATE_WAITING_RESPONSE_START;
-	}
 }
 
 /*****************************************************************************/

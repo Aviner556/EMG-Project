@@ -5,3 +5,23 @@
 
 Debug
 Release
+/ADC/.settings/language.settings.xml
+/Clock/.settings/language.settings.xml
+/Codes/.settings/language.settings.xml
+/FlashLight/.settings/language.settings.xml
+/I2C/.settings/language.settings.xml
+/Inturrupts/.settings/language.settings.xml
+/LED/.settings/language.settings.xml
+/Main/.settings/language.settings.xml
+/Main/.settings/stm32cubeide.project.prefs
+/MainProject/.settings/language.settings.xml
+/PWM/.settings/language.settings.xml
+/SpeedTest/.settings/language.settings.xml
+/Terminal/.settings/language.settings.xml
+/buzzer/.settings/language.settings.xml
+/hello/.settings/language.settings.xml
+/hello/.settings/stm32cubeide.project.prefs
+/memory/.settings/language.settings.xml
+/memory/.settings/stm32cubeide.project.prefs
+/ringBuffer/.settings/language.settings.xml
+/strtok/.settings/language.settings.xml
