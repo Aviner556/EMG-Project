@@ -39,11 +39,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_line   00010d63  00000000  00000000  0005c2ab  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000f58b6  00000000  00000000  0006d00e  2**0
+ 18 .debug_str    000f58d2  00000000  00000000  0006d00e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  001628c4  2**0
+ 19 .comment      00000050  00000000  00000000  001628e0  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000049fc  00000000  00000000  00162914  2**2
+ 20 .debug_frame  000049fc  00000000  00000000  00162930  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -443,12 +443,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
  80005ac:	bd80      	pop	{r7, pc}
 	...
 
-080005b0 <commTask>:
+080005b0 <Communication_commTask>:
 
 uint8_t cmdbuffer[MAX_BUFFER_LENGTH];
 int cmdcount = 0;
 
-int commTask()
+int Communication_commTask()
 {
  80005b0:	b580      	push	{r7, lr}
  80005b2:	b082      	sub	sp, #8
@@ -459,75 +459,75 @@ int commTask()
  80005b6:	1db9      	adds	r1, r7, #6
  80005b8:	2300      	movs	r3, #0
  80005ba:	2201      	movs	r2, #1
- 80005bc:	481d      	ldr	r0, [pc, #116]	; (8000634 <commTask+0x84>)
+ 80005bc:	481d      	ldr	r0, [pc, #116]	; (8000634 <Communication_commTask+0x84>)
  80005be:	f002 feb3 	bl	8003328 <HAL_UART_Receive>
  80005c2:	4603      	mov	r3, r0
  80005c4:	71fb      	strb	r3, [r7, #7]
 	if (Status != HAL_OK) {
  80005c6:	79fb      	ldrb	r3, [r7, #7]
  80005c8:	2b00      	cmp	r3, #0
- 80005ca:	d001      	beq.n	80005d0 <commTask+0x20>
+ 80005ca:	d001      	beq.n	80005d0 <Communication_commTask+0x20>
 		return 0;
  80005cc:	2300      	movs	r3, #0
- 80005ce:	e02d      	b.n	800062c <commTask+0x7c>
+ 80005ce:	e02d      	b.n	800062c <Communication_commTask+0x7c>
 	}
 
 	if (ch != '\r' && ch != '\n')
  80005d0:	79bb      	ldrb	r3, [r7, #6]
  80005d2:	2b0d      	cmp	r3, #13
- 80005d4:	d01a      	beq.n	800060c <commTask+0x5c>
+ 80005d4:	d01a      	beq.n	800060c <Communication_commTask+0x5c>
  80005d6:	79bb      	ldrb	r3, [r7, #6]
  80005d8:	2b0a      	cmp	r3, #10
- 80005da:	d017      	beq.n	800060c <commTask+0x5c>
+ 80005da:	d017      	beq.n	800060c <Communication_commTask+0x5c>
 	{
 		HAL_UART_Transmit(&huart2, &ch, 1, 0xFFFF);
  80005dc:	1db9      	adds	r1, r7, #6
  80005de:	f64f 73ff 	movw	r3, #65535	; 0xffff
  80005e2:	2201      	movs	r2, #1
- 80005e4:	4813      	ldr	r0, [pc, #76]	; (8000634 <commTask+0x84>)
+ 80005e4:	4813      	ldr	r0, [pc, #76]	; (8000634 <Communication_commTask+0x84>)
  80005e6:	f002 fe0b 	bl	8003200 <HAL_UART_Transmit>
 
 		if (cmdcount >= MAX_BUFFER_LENGTH)
- 80005ea:	4b13      	ldr	r3, [pc, #76]	; (8000638 <commTask+0x88>)
+ 80005ea:	4b13      	ldr	r3, [pc, #76]	; (8000638 <Communication_commTask+0x88>)
  80005ec:	681b      	ldr	r3, [r3, #0]
  80005ee:	2b63      	cmp	r3, #99	; 0x63
- 80005f0:	dd02      	ble.n	80005f8 <commTask+0x48>
+ 80005f0:	dd02      	ble.n	80005f8 <Communication_commTask+0x48>
 		{
 			cmdcount = 0;
- 80005f2:	4b11      	ldr	r3, [pc, #68]	; (8000638 <commTask+0x88>)
+ 80005f2:	4b11      	ldr	r3, [pc, #68]	; (8000638 <Communication_commTask+0x88>)
  80005f4:	2200      	movs	r2, #0
  80005f6:	601a      	str	r2, [r3, #0]
 		}
 
 		cmdbuffer[cmdcount++] = ch;
- 80005f8:	4b0f      	ldr	r3, [pc, #60]	; (8000638 <commTask+0x88>)
+ 80005f8:	4b0f      	ldr	r3, [pc, #60]	; (8000638 <Communication_commTask+0x88>)
  80005fa:	681b      	ldr	r3, [r3, #0]
  80005fc:	1c5a      	adds	r2, r3, #1
- 80005fe:	490e      	ldr	r1, [pc, #56]	; (8000638 <commTask+0x88>)
+ 80005fe:	490e      	ldr	r1, [pc, #56]	; (8000638 <Communication_commTask+0x88>)
  8000600:	600a      	str	r2, [r1, #0]
  8000602:	79b9      	ldrb	r1, [r7, #6]
- 8000604:	4a0d      	ldr	r2, [pc, #52]	; (800063c <commTask+0x8c>)
+ 8000604:	4a0d      	ldr	r2, [pc, #52]	; (800063c <Communication_commTask+0x8c>)
  8000606:	54d1      	strb	r1, [r2, r3]
 		return 0;
  8000608:	2300      	movs	r3, #0
- 800060a:	e00f      	b.n	800062c <commTask+0x7c>
+ 800060a:	e00f      	b.n	800062c <Communication_commTask+0x7c>
 	}
 
 	HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 0xFFFF);
  800060c:	f64f 73ff 	movw	r3, #65535	; 0xffff
  8000610:	2202      	movs	r2, #2
- 8000612:	490b      	ldr	r1, [pc, #44]	; (8000640 <commTask+0x90>)
- 8000614:	4807      	ldr	r0, [pc, #28]	; (8000634 <commTask+0x84>)
+ 8000612:	490b      	ldr	r1, [pc, #44]	; (8000640 <Communication_commTask+0x90>)
+ 8000614:	4807      	ldr	r0, [pc, #28]	; (8000634 <Communication_commTask+0x84>)
  8000616:	f002 fdf3 	bl	8003200 <HAL_UART_Transmit>
 
 	cmdbuffer[cmdcount] = 0;
- 800061a:	4b07      	ldr	r3, [pc, #28]	; (8000638 <commTask+0x88>)
+ 800061a:	4b07      	ldr	r3, [pc, #28]	; (8000638 <Communication_commTask+0x88>)
  800061c:	681b      	ldr	r3, [r3, #0]
- 800061e:	4a07      	ldr	r2, [pc, #28]	; (800063c <commTask+0x8c>)
+ 800061e:	4a07      	ldr	r2, [pc, #28]	; (800063c <Communication_commTask+0x8c>)
  8000620:	2100      	movs	r1, #0
  8000622:	54d1      	strb	r1, [r2, r3]
 	cmdcount = 0;
- 8000624:	4b04      	ldr	r3, [pc, #16]	; (8000638 <commTask+0x88>)
+ 8000624:	4b04      	ldr	r3, [pc, #16]	; (8000638 <Communication_commTask+0x88>)
  8000626:	2200      	movs	r2, #0
  8000628:	601a      	str	r2, [r3, #0]
 	return 1;
@@ -542,9 +542,9 @@ int commTask()
  800063c:	2000015c 	.word	0x2000015c
  8000640:	080050d8 	.word	0x080050d8
 
-08000644 <handleCommand>:
+08000644 <Communication_handleCommand>:
 
-void handleCommand()
+void Communication_handleCommand()
 {
  8000644:	b580      	push	{r7, lr}
  8000646:	b086      	sub	sp, #24
@@ -554,8 +554,8 @@ void handleCommand()
 
   //int params = sscanf((const char*)cmdbuffer, "%s %d", cmd, &maxCount);
   char *token = strtok(cmdbuffer," ");
- 800064a:	4927      	ldr	r1, [pc, #156]	; (80006e8 <handleCommand+0xa4>)
- 800064c:	4827      	ldr	r0, [pc, #156]	; (80006ec <handleCommand+0xa8>)
+ 800064a:	4927      	ldr	r1, [pc, #156]	; (80006e8 <Communication_handleCommand+0xa4>)
+ 800064c:	4827      	ldr	r0, [pc, #156]	; (80006ec <Communication_handleCommand+0xa8>)
  800064e:	f003 fc51 	bl	8003ef4 <strtok>
  8000652:	4603      	mov	r3, r0
  8000654:	617b      	str	r3, [r7, #20]
@@ -563,30 +563,30 @@ void handleCommand()
   if (token == NULL)
  8000656:	697b      	ldr	r3, [r7, #20]
  8000658:	2b00      	cmp	r3, #0
- 800065a:	d040      	beq.n	80006de <handleCommand+0x9a>
+ 800065a:	d040      	beq.n	80006de <Communication_handleCommand+0x9a>
   {
 	  return;
   }
 
   if (strcmp(token, "start") == 0)
- 800065c:	4924      	ldr	r1, [pc, #144]	; (80006f0 <handleCommand+0xac>)
+ 800065c:	4924      	ldr	r1, [pc, #144]	; (80006f0 <Communication_handleCommand+0xac>)
  800065e:	6978      	ldr	r0, [r7, #20]
  8000660:	f7ff fdb6 	bl	80001d0 <strcmp>
  8000664:	4603      	mov	r3, r0
  8000666:	2b00      	cmp	r3, #0
- 8000668:	d124      	bne.n	80006b4 <handleCommand+0x70>
+ 8000668:	d124      	bne.n	80006b4 <Communication_handleCommand+0x70>
   {
 	  token = strtok(NULL," ");
- 800066a:	491f      	ldr	r1, [pc, #124]	; (80006e8 <handleCommand+0xa4>)
+ 800066a:	491f      	ldr	r1, [pc, #124]	; (80006e8 <Communication_handleCommand+0xa4>)
  800066c:	2000      	movs	r0, #0
  800066e:	f003 fc41 	bl	8003ef4 <strtok>
  8000672:	4603      	mov	r3, r0
  8000674:	617b      	str	r3, [r7, #20]
 	  HAL_TIM_Base_Start_IT(&htim6);
- 8000676:	481f      	ldr	r0, [pc, #124]	; (80006f4 <handleCommand+0xb0>)
+ 8000676:	481f      	ldr	r0, [pc, #124]	; (80006f4 <Communication_handleCommand+0xb0>)
  8000678:	f002 fa4e 	bl	8002b18 <HAL_TIM_Base_Start_IT>
 	  __HAL_TIM_SET_COUNTER(&htim6, 0);
- 800067c:	4b1d      	ldr	r3, [pc, #116]	; (80006f4 <handleCommand+0xb0>)
+ 800067c:	4b1d      	ldr	r3, [pc, #116]	; (80006f4 <Communication_handleCommand+0xb0>)
  800067e:	681b      	ldr	r3, [r3, #0]
  8000680:	2200      	movs	r2, #0
  8000682:	625a      	str	r2, [r3, #36]	; 0x24
@@ -599,7 +599,7 @@ void handleCommand()
  8000690:	4413      	add	r3, r2
  8000692:	005b      	lsls	r3, r3, #1
  8000694:	461a      	mov	r2, r3
- 8000696:	4b17      	ldr	r3, [pc, #92]	; (80006f4 <handleCommand+0xb0>)
+ 8000696:	4b17      	ldr	r3, [pc, #92]	; (80006f4 <Communication_handleCommand+0xb0>)
  8000698:	681b      	ldr	r3, [r3, #0]
  800069a:	62da      	str	r2, [r3, #44]	; 0x2c
  800069c:	6978      	ldr	r0, [r7, #20]
@@ -610,34 +610,34 @@ void handleCommand()
  80006a8:	4413      	add	r3, r2
  80006aa:	005b      	lsls	r3, r3, #1
  80006ac:	461a      	mov	r2, r3
- 80006ae:	4b11      	ldr	r3, [pc, #68]	; (80006f4 <handleCommand+0xb0>)
+ 80006ae:	4b11      	ldr	r3, [pc, #68]	; (80006f4 <Communication_handleCommand+0xb0>)
  80006b0:	60da      	str	r2, [r3, #12]
- 80006b2:	e015      	b.n	80006e0 <handleCommand+0x9c>
+ 80006b2:	e015      	b.n	80006e0 <Communication_handleCommand+0x9c>
   }
   else if (strcmp(token, "stop") == 0)
- 80006b4:	4910      	ldr	r1, [pc, #64]	; (80006f8 <handleCommand+0xb4>)
+ 80006b4:	4910      	ldr	r1, [pc, #64]	; (80006f8 <Communication_handleCommand+0xb4>)
  80006b6:	6978      	ldr	r0, [r7, #20]
  80006b8:	f7ff fd8a 	bl	80001d0 <strcmp>
  80006bc:	4603      	mov	r3, r0
  80006be:	2b00      	cmp	r3, #0
- 80006c0:	d109      	bne.n	80006d6 <handleCommand+0x92>
+ 80006c0:	d109      	bne.n	80006d6 <Communication_handleCommand+0x92>
   {
 	  HAL_TIM_Base_Stop_IT(&htim6);
- 80006c2:	480c      	ldr	r0, [pc, #48]	; (80006f4 <handleCommand+0xb0>)
+ 80006c2:	480c      	ldr	r0, [pc, #48]	; (80006f4 <Communication_handleCommand+0xb0>)
  80006c4:	f002 fa98 	bl	8002bf8 <HAL_TIM_Base_Stop_IT>
 	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
  80006c8:	2200      	movs	r2, #0
  80006ca:	2120      	movs	r1, #32
  80006cc:	f04f 4090 	mov.w	r0, #1207959552	; 0x48000000
  80006d0:	f000 fe78 	bl	80013c4 <HAL_GPIO_WritePin>
- 80006d4:	e004      	b.n	80006e0 <handleCommand+0x9c>
+ 80006d4:	e004      	b.n	80006e0 <Communication_handleCommand+0x9c>
   }
   else
   {
 	  printf("Invalid command\r\n");
- 80006d6:	4809      	ldr	r0, [pc, #36]	; (80006fc <handleCommand+0xb8>)
+ 80006d6:	4809      	ldr	r0, [pc, #36]	; (80006fc <Communication_handleCommand+0xb8>)
  80006d8:	f003 fc04 	bl	8003ee4 <puts>
- 80006dc:	e000      	b.n	80006e0 <handleCommand+0x9c>
+ 80006dc:	e000      	b.n	80006e0 <Communication_handleCommand+0x9c>
 	  return;
  80006de:	bf00      	nop
   }
@@ -697,14 +697,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	if (commTask()){
- 800071e:	f7ff ff47 	bl	80005b0 <commTask>
+	if (Communication_commTask()){
+ 800071e:	f7ff ff47 	bl	80005b0 <Communication_commTask>
  8000722:	4603      	mov	r3, r0
  8000724:	2b00      	cmp	r3, #0
  8000726:	d0fa      	beq.n	800071e <main+0x1e>
-		handleCommand();
- 8000728:	f7ff ff8c 	bl	8000644 <handleCommand>
-	if (commTask()){
+		Communication_handleCommand();
+ 8000728:	f7ff ff8c 	bl	8000644 <Communication_handleCommand>
+	if (Communication_commTask()){
  800072c:	e7f7      	b.n	800071e <main+0x1e>
 
 0800072e <SystemClock_Config>:
