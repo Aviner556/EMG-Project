@@ -2,6 +2,8 @@
 #include "Buttons.h"
 #include "Buzzer.h"
 #include "Clock.h"
+#include "AlarmManager.h"
+#include "Communication.h"
 #include "main.h"
 #include <stdio.h>
 
@@ -24,14 +26,14 @@ int _write(int fd, char* ptr, int len)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
 	if(htim == &htim6){
-
+		AlarmManager_onTimerIntterupt();
+		AlarmManager_ringOnTimerIntterupt();
 	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	Buzzer_stop(&buzzer);
 }
-
 
 void mainloop()
 {
@@ -45,6 +47,8 @@ void mainloop()
 	HAL_TIM_Base_Start(&htim16);
 
 	HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
+
+	AlarmManager_init();
 
 	while(1){
 

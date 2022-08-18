@@ -21,6 +21,7 @@ typedef struct DateDime_
 }DateTime;
 
 int Clock_getTime(uint8_t* readBuff);
+void Clock_printTime(uint8_t* readBuff);
 
 
 #endif

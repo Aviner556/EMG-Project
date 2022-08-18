@@ -1,4 +1,6 @@
 #include "Communication.h"
+#include "AlarmManager.h"
+#include "Clock.h"
 #include "main.h"
 #include <stdio.h>
 #include <string.h>
@@ -7,14 +9,14 @@
 #define MAX_COMMANDS_LENGTH 25
 
 extern UART_HandleTypeDef huart2;
-
+extern uint8_t readBuff[7];
+extern I2C_HandleTypeDef hi2c1;
 
 /////////////////////////////////////////////////////////////////////////
 // Communication task definitions and functions
 /////////////////////////////////////////////////////////////////////////
 
 static uint8_t _cmdbuffer[MAX_BUFFER_LENGTH];
-static int _cnt_commands = 0;
 static int _cmdcount = 0;
 static int _cmdprint = 0;
 
@@ -77,16 +79,15 @@ int Communication_commTask()
 }
 
 
-
 void Communication_handleCommand()
 {
-  char cmd[25];
-  char alarmName[10];
-  int alarmHour;
-  int alarmMinutes;
-  int alarmRepeat;
+  char cmd[25] = {0};
+  char alarmName[10] = {0};
+  int alarmHour = 0;
+  int alarmMinutes = 0;
+  int alarmRepeat = 0;
 
-  int params = sscanf((const char*)_cmdbuffer, "%s %s %d:%d %d", cmd, alarmName, alarmHour, alarmMinutes, alarmRepeat);
+  int params = sscanf((const char*)_cmdbuffer, "%s %s %d:%d %d", cmd, alarmName, &alarmHour, &alarmMinutes, &alarmRepeat);
 
   if (params == 0)
   {
@@ -94,6 +95,15 @@ void Communication_handleCommand()
   }
   if (strcmp(cmd, "add") == 0){
 	  AlarmManager_add(alarmName, alarmHour, alarmMinutes, alarmRepeat);
+	  printf("added\r\n");
+  }
+  else if (strcmp(cmd, "delete") == 0){
+	  AlarmManager_delete(alarmName);
+	  printf("deleted\r\n");
+  }
+  else if (strcmp(cmd, "print") == 0){
+	  HAL_I2C_Mem_Read(&hi2c1, 0xD0, 0, 1, readBuff, 7, 0Xff);
+	  Clock_printTime(readBuff);
   }
   else{
 	  printf("Invalid command\r\n");
