@@ -19,6 +19,11 @@ void AlarmManager_init(){
 
 void AlarmManager_add(char * name, int hour, int minutes, int stateRepeat)
 {
+	if (hour>24|| hour<1 || minutes>59){
+		printf("Invalid hour\r\n");
+		return;
+	}
+
 	if(_cnt_alarms < MAX_ALARMS){
 		strcpy(alarms[_cnt_alarms].alarmName, name);
 		alarms[_cnt_alarms].time = (hour * 3600) + (minutes * 60);
@@ -29,6 +34,7 @@ void AlarmManager_add(char * name, int hour, int minutes, int stateRepeat)
 		alarms[_cnt_alarms].cntTimerWait = 0;
 		alarms[_cnt_alarms].cntSnooz = 0;
 		_cnt_alarms++;
+		printf("added successfully\r\n");
 	}
 	else{
 		printf("no room for the alarm");
@@ -57,7 +63,25 @@ void AlarmManager_delete(char * name)
 	}
 	printf("alarm not exist\r\n");
 }
-void AlarmManager_edit(char * time, char * text, bool * stateRepeat);
+void AlarmManager_edit(char * name, int hour, int minutes, int stateRepeat)
+{
+	if(_cnt_alarms == 0){
+			return;
+	}
+	for(int i = 0; i < MAX_ALARMS; i++){
+		if(strcmp(alarms[i].alarmName, name) == 0){
+			alarms[i].time = (hour * 3600) + (minutes * 60);
+			alarms[i].isActive = ON;
+			alarms[i].isOnRepeat = stateRepeat;
+			alarms[i].alarmState = ALARM_STATE_OFF;
+			alarms[i].cntTimerRing = 0;
+			alarms[i].cntTimerWait = 0;
+			alarms[i].cntSnooz = 0;
+			return;
+		}
+	}
+	printf("alarm not exist\r\n");
+}
 
 void AlarmManager_onTimerIntterupt()
 {
@@ -73,11 +97,11 @@ void AlarmManager_onTimerIntterupt()
 
 int AlarmManager_alarmIsOnTime()
 {
+	HAL_I2C_Mem_Read(&hi2c1, 0xD0, 0, 1, readBuff, 7, 0Xff);
 	for(int i = 0; i < _cnt_alarms; i++){
 		if(alarms[i].isActive == 0){
 			continue;
 		}
-		HAL_I2C_Mem_Read(&hi2c1, 0xD0, 0, 1, readBuff, 7, 0Xff);
 		if(alarms[i].time == Clock_getTime(readBuff)){
 			return i;
 		}
@@ -91,7 +115,7 @@ void AlarmManager_ringOnTimerIntterupt()
 		if(alarms[i].alarmState == ALARM_STATE_RINGING){
 			alarms[i].cntTimerRing++;
 		}
-		if(alarms[i].cntTimerRing >= 300){
+		if(alarms[i].cntTimerRing >= 30){
 			alarms[i].cntTimerRing = 0;
 			Buzzer_stop(&buzzer);
 			alarms[i].alarmState = ALARM_STATE_WAITING;
@@ -104,12 +128,33 @@ void AlarmManager_ringOnTimerIntterupt()
 				return;
 			}
 			alarms[i].cntTimerWait++;
-			if(alarms[i].cntTimerWait >= 600){
+			if(alarms[i].cntTimerWait >= 60){
 				Buzzer_start(&buzzer);
 				alarms[i].alarmState = ALARM_STATE_RINGING;
 				alarms[i].cntTimerWait = 0;
 			}
 		}
+	}
+}
+void AlarmManager_stopRing()
+{
+	for(int i = 0; i < _cnt_alarms; i++){
+		if(alarms[i].alarmState == ALARM_STATE_RINGING){
+			Buzzer_stop(&buzzer);
+			alarms[i].alarmState = ALARM_STATE_OFF;
+			if(alarms[i].isOnRepeat == OFF){
+				AlarmManager_delete(alarms[i].alarmName);
+			}
+		}
+	}
+}
+void AlarmManager_printAllAlarms()
+{
+	if(_cnt_alarms == 0){
+		return;
+	}
+	for(int i = 0; i < _cnt_alarms; i++){
+		printf("%d alarm:%s time: %d \r\n",i, alarms[i].alarmName ,alarms[i].time );
 	}
 }
 

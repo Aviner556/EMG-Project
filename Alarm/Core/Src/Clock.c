@@ -1,10 +1,10 @@
 #include "Clock.h"
 #include <stdio.h>
 
-DateTime T;
-
+//get time
 int Clock_getTime(uint8_t* readBuff)
 {
+	DateTime T;
 	T.second1 = readBuff[0]&15;
 	T.second10 = readBuff[0]>>4;
 	T.minute1 = readBuff[1]&15;
@@ -20,6 +20,7 @@ int Clock_getTime(uint8_t* readBuff)
 
 void Clock_printTime(uint8_t* readBuff)
 {
+	DateTime T;
 	T.second1 = readBuff[0]&15;
 	T.second10 = readBuff[0]>>4;
 	T.minute1 = readBuff[1]&15;

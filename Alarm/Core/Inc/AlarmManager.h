@@ -30,10 +30,12 @@ typedef struct _Alarm
 void AlarmManager_init();
 void AlarmManager_add(char * name, int hour, int minutes, int stateRepeat);
 void AlarmManager_delete(char * name);
-void AlarmManager_edit(char * time, char * text, bool * stateRepeat);
+void AlarmManager_edit(char * name, int hour, int minutes, int stateRepeat);
 void AlarmManager_onTimerIntterupt();
 int AlarmManager_alarmIsOnTime();
 void AlarmManager_ringOnTimerIntterupt();
 void AlarmManager_ring(Alarm alarm);
+void AlarmManager_stopRing();
+void AlarmManager_printAllAlarms();
 
 #endif

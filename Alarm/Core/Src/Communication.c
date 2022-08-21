@@ -89,52 +89,30 @@ void Communication_handleCommand()
 
   int params = sscanf((const char*)_cmdbuffer, "%s %s %d:%d %d", cmd, alarmName, &alarmHour, &alarmMinutes, &alarmRepeat);
 
-  if (params == 0)
-  {
+  if (params == 0){
 	  return;
   }
+
   if (strcmp(cmd, "add") == 0){
 	  AlarmManager_add(alarmName, alarmHour, alarmMinutes, alarmRepeat);
-	  printf("added\r\n");
   }
   else if (strcmp(cmd, "delete") == 0){
 	  AlarmManager_delete(alarmName);
-	  printf("deleted\r\n");
+	  printf("deleted successfully\r\n");
+  }
+  else if (strcmp(cmd, "edit") == 0){
+	  AlarmManager_edit(alarmName, alarmHour, alarmMinutes, alarmRepeat);
+  	  printf("edited successfully\r\n");
   }
   else if (strcmp(cmd, "print") == 0){
 	  HAL_I2C_Mem_Read(&hi2c1, 0xD0, 0, 1, readBuff, 7, 0Xff);
 	  Clock_printTime(readBuff);
   }
+  else if (strcmp(cmd, "help") == 0){
+	  AlarmManager_printAllAlarms();
+    }
   else{
 	  printf("Invalid command\r\n");
   }
 }
-//
-//void Communication_printHelp(){
-//	printf("available commands:\r\n");
-//	for(int i = 0; i < _cnt_commands; i++){
-//		char* space;
-//		if(i > 8){
-//			space = " ";
-//		}
-//		else{
-//			space = "  ";
-//		}
-//		printf("%d%s-  %s\r\n", i+1, space, commands[i].commandName);
-//	}
-//	printf("\r\n");
-//}
-//
-//
-//void RegisterCommand(char * commandName, HandlerFunc func, void * obj)
-//{
-//	if(_cnt_commands < MAX_COMMANDS_LENGTH){
-//		commands[_cnt_commands].commandName = commandName;
-//		commands[_cnt_commands].commandPointer = func;
-//		commands[_cnt_commands].obj = obj;
-//		_cnt_commands++;
-//	}
-//	else{
-//		printf("error\r\n");
-//	}
-//}
+

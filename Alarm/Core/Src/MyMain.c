@@ -28,11 +28,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 	if(htim == &htim6){
 		AlarmManager_onTimerIntterupt();
 		AlarmManager_ringOnTimerIntterupt();
+		Buzzer_onTimerInterrupt(&buzzer);
 	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-	Buzzer_stop(&buzzer);
+	AlarmManager_stopRing();
 }
 
 void mainloop()
