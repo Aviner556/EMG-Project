@@ -43,7 +43,9 @@
  UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+ uint32_t * gpioa = (uint32_t *)(0x48000000); // all the PA* in the chip
+ uint32_t * rcc = (uint32_t *)(0x40021000); // clock
+ uint32_t * tim6 = (uint32_t *)(0x40001000); // timer
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,6 +62,11 @@ int _write(int fd, char* ptr, int len)
 {
 	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
 	return len;
+}
+
+void TIM6_DAC_IRQHandler(){
+	tim6[4] = 0;
+	printf("interrupt\r\n");
 }
 /* USER CODE END 0 */
 
@@ -93,20 +100,37 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  uint32_t * gpioa = (uint32_t *)(0x48000000); // all the PA* in the chip
-  uint32_t * rcc = (uint32_t *)(0x40021000); //
 
+  HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+
+  // Mask
+  uint32_t bit4Mask = (1<<4); // move the bit 1 - 4 steps left
   uint32_t bit6Mask = (1<<6); // move the bit 1 - 6 steps left
   uint32_t bit10Mask = (1<<10); // move the bit 1 - 10 steps left
-  //uint32_t bit12Mask = (1<<12); // move the bit 1 - 12 steps left
+  uint32_t bit12Mask = (1<<12); // move the bit 1 - 12 steps left
 
-  uint32_t mode10Mask = (3<<20); // move the bits 11 - 20 steps left
+  uint32_t mode5Mask = (3<<10); // move the bits 11 - 10 steps left
   uint32_t mode6Mask = (3<<12); // move the bits 11 - 12 steps left
+  uint32_t mode10Mask = (3<<20); // move the bits 11 - 20 steps left
 
-  gpioa[0] &= ~mode10Mask; // set the bits in places 20-21 to 00 (~ = NOT). (MODER)
-  gpioa[0] = (gpioa[0] & ~mode6Mask) | (0x01 << 12); // set the bits in places 12-13 to 01. (MODER)
 
-  rcc[0] |= 1; // attach to clock. (RCC)
+  //define the Moder
+  gpioa[0] &= ~mode10Mask; // set the bits in places 20-21 to 00 (~ = NOT). (MODER - input)
+  gpioa[0] = (gpioa[0] & ~mode6Mask) | bit12Mask; // set the bits in places 12-13 to 01. (MODER - output)
+
+
+  // attaching clock
+  rcc[19] |= 1; // attach gpioA to clock. (RCC)
+  rcc[22] |= bit4Mask; // attach TIM6 to clock. (RCC)
+
+  // define the timer
+  tim6[0] |= 1; // enable the timer (CR1)
+  tim6[3] |= 1; // enable interrupt(DIER)
+  tim6[5] |= 1; // re-initializes the timer counter (EGR)
+  tim6[10] = 7999; // prescaler (PSC)
+  tim6[11] = 9999; // auto reload register (ARR)
+
+
 
   /* USER CODE END 2 */
 
@@ -117,14 +141,24 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if((gpioa[4] & bit10Mask) == 0){ // checking if
-		  printf("0\r\n");
-		  gpioa[6] |= bit6Mask;
-	  }
-	  else{
-		  printf("1\r\n");
-		  gpioa[6] &= (~bit6Mask << 16);
-	  }
+
+
+
+	  //Timer 6
+//	  if(tim6[4] != 0){
+//		  tim6[4] = 0;
+//		  printf("tik\r\n");
+//	  }
+
+	  //GPIO button and LED
+//	  if((gpioa[4] & bit10Mask) == 0){
+//		  //printf("0\r\n");
+//		  gpioa[6] |= bit6Mask; // turn on the led
+//	  }
+//	  else{
+//		  //printf("1\r\n");
+//		  gpioa[6] |= (bit6Mask << 16); // turn off the led
+//	  }
   }
   /* USER CODE END 3 */
 }
