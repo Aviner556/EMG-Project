@@ -4,6 +4,7 @@
 #include "Dht11.h"
 #include "Clock.h"
 #include "Communication.h"
+#include "Flash.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,6 +13,7 @@ extern Led red;
 extern Buzzer buzzer;
 extern Dht11 TempHum;
 extern Clock clc1;
+extern Flash flashRW;
 
 void Cli_cmdLedOn(void * obj, char * param)
 {
@@ -62,6 +64,12 @@ void Cli_cmdClockShowTime(void * obj, char * param)
 	Clock_showTime(clock);
 }
 
+void Cli_cmdFlashEraseWrite(void * obj, char * param)
+{
+	Flash * flashRW = (Flash *)obj;
+	Flash_erase(flashRW);
+}
+
 void Cli_init()
 {
 	RegisterCommand("redledon",Cli_cmdLedOn,&red);
@@ -75,5 +83,6 @@ void Cli_init()
 	RegisterCommand("dhtstart",Cli_cmdDht11Start,&TempHum);
 	RegisterCommand("dhtprint",Cli_cmdDht11Print,&TempHum);
 	RegisterCommand("showtime",Cli_cmdClockShowTime,&clc1);
+	RegisterCommand("flash",Cli_cmdFlashEraseWrite,&flashRW);
 	RegisterCommand("help",Communication_printHelp,NULL);
 }

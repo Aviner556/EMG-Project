@@ -97,7 +97,6 @@ void Dht11_startRead(Dht11 * dht)
 	dht->bitCount++;
 	__HAL_TIM_SET_COUNTER(&htim16, 0);
 	if(dht->bitCount >= 40){
-
 		dht->DhtState = STATE_HAS_DATA;
 		dht->humidity = dht->DhtBuffer[0]+(dht->DhtBuffer[1]*0.1);
 		dht->temperature = dht->DhtBuffer[2]+(dht->DhtBuffer[3]*0.1);
@@ -125,6 +124,9 @@ void Dht11_print(Dht11 * dht)
 {
 	printf("Humidity - %.2f\r\nTemperature - %.2f\r\nChekSum - %d\r\n\n",dht->humidity,dht->temperature,dht->checkSum);
 }
+
+
+
 
 /*****************************************************************************/
 //not working in interrupt mode

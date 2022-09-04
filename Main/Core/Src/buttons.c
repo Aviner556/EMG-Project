@@ -5,7 +5,7 @@
 
 extern Button B2;
 
-static int delayTik = 0;
+//static int delayTik = 0;  //error define but not used
 
 void Button_init(Button * button,GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin)
 {

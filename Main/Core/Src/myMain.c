@@ -8,6 +8,7 @@
 #include "Communication.h"
 #include "Dht11.h"
 #include "MainTimerIT.h"
+#include "Flash.h"
 #include "main.h"
 #include <stdio.h>
 
@@ -27,6 +28,7 @@ Clock clc1;
 Clock clcDht;
 Adc lightSensor;
 Dht11 TempHum;
+Flash flashRW;
 
 int _write(int fd, char* ptr, int len)
 {
@@ -110,6 +112,14 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 	}
 }
 
+void MyFlashInterruptHandler()
+{
+	if(flashRW.flashState == STATE_WRITE){
+		Flash_write(&flashRW);
+	}
+}
+
+
 
 void mainloop()
 {
@@ -134,6 +144,10 @@ void mainloop()
 	HAL_ADC_Start_IT(&hadc2);
 
 	Dht11_init(&TempHum);
+
+	HAL_NVIC_EnableIRQ(FLASH_IRQn);
+	Flash_init(&flashRW);
+	//Flash_erase(&flashRW);
 
 	//RegisterCallbacks(ledOn,ledOff,&red);
 	Cli_init();
