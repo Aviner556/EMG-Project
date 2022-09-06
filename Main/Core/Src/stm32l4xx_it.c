@@ -61,7 +61,7 @@ extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim6;
 extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
-extern void MyFlashInterruptHandler();
+void MyFlashInterruptHandler();
 /* USER CODE END EV */
 
 /******************************************************************************/

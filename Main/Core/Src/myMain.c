@@ -112,7 +112,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 	}
 }
 
-void MyFlashInterruptHandler()
+extern void MyFlashInterruptHandler()
 {
 	if(flashRW.flashState == STATE_WRITE){
 		Flash_write(&flashRW);
