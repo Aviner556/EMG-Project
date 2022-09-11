@@ -3,9 +3,10 @@
 
 typedef enum _FlashState
 {
-	STATE_IDLE,
-	STATE_ERASE,
 	STATE_WRITE,
+	STATE_WRITING,
+	STATE_ERASE,
+	STATE_INIT,
 }FlashState;
 
 typedef struct _Flash

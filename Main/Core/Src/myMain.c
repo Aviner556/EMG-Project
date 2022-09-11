@@ -114,8 +114,11 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 
 extern void MyFlashInterruptHandler()
 {
-	if(flashRW.flashState == STATE_WRITE){
-		Flash_write(&flashRW);
+	if(flashRW.flashState == STATE_WRITING){
+		flashRW.flashState = STATE_WRITE;
+	}
+	else if(flashRW.flashState == STATE_ERASE){
+		flashRW.flashState = STATE_WRITE;
 	}
 }
 
@@ -158,6 +161,13 @@ void mainloop()
 
 		if (Communication_commTask()){
 			Communication_handleCommand();
+		}
+
+		if(flashRW.flashState == STATE_WRITE){
+			Flash_erase(&flashRW);
+		}
+		else if(flashRW.flashState == STATE_ERASE){
+			Flash_erase(&flashRW);
 		}
 
 	}
