@@ -61,6 +61,8 @@ void Flash_erase(Flash * flash)
 
 	// erase the page from the flash (interrupt)
 	HAL_FLASHEx_Erase_IT(&basicFlash);
+
+	flash->flashState = STATE_WRITING;
 }
 
 void Flash_write(Flash * flash)

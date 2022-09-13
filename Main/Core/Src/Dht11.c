@@ -115,7 +115,8 @@ int Dht11_returnedValue(Dht11 * dht)
 void Dht11_hasData(Dht11 * dht)
 {
 	if(dht->DhtState == STATE_HAS_DATA){
-		Dht11_print(dht);
+		//Dht11_print(dht);
+
 		dht->DhtState = STATE_SLEEP;
 	}
 }

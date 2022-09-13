@@ -164,7 +164,7 @@ void mainloop()
 		}
 
 		if(flashRW.flashState == STATE_WRITE){
-			Flash_erase(&flashRW);
+			Flash_write(&flashRW);
 		}
 		else if(flashRW.flashState == STATE_ERASE){
 			Flash_erase(&flashRW);
