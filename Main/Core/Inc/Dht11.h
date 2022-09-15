@@ -32,7 +32,7 @@ void Dht11_start(Dht11 * dht);
 void Dht11_startRead(Dht11 * dht);
 void Dht11_onGpioInterrupt(Dht11 * dht, uint16_t pin);
 int Dht11_returnedValue(Dht11 * dht);
-void Dht11_hasData(Dht11 * dht);
+int Dht11_hasData(Dht11 * dht);
 void Dht11_onTimerInterrupt(void * obj);
 void Dht11_print(Dht11 * dht);
 void Dht11_setGpioExti(Dht11 * dht);

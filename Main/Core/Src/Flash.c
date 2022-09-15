@@ -4,7 +4,7 @@
 
 #define PAGE_SIZE 2048
 
-static char text[256] = "hello world";
+//static char text[256] = "hello world";
 
 FLASH_EraseInitTypeDef basicFlash;
 
@@ -16,9 +16,12 @@ void Flash_init(Flash * flash)
 {
 	flash->flashState = STATE_INIT;
 	flash->writeCnt = 0;
-	flash->ind = 0;
+	flash->bufferSize = 8;
+	flash->lenght = 8;
+	flash->bufferCnt = 0;
 	//define the values of "currentPage" and "pageOffset";
 	Flash_locPage(flash);
+	//memset(flash->flashBuffer, 0, sizeof(flash->flashBuffer));
 }
 
 void Flash_locPage(Flash * flash){
@@ -47,42 +50,45 @@ void Flash_locPage(Flash * flash){
 void Flash_erase(Flash * flash)
 {
 	//uint32_t pageError;  // used without interrupt
-	//flash->flashState = STATE_ERASE;
+	flash->flashState = STATE_ERASE;
 
 	basicFlash.TypeErase = FLASH_TYPEERASE_PAGES;
 	basicFlash.Banks = FLASH_BANK_2;
 	basicFlash.Page = flash->currentPage;
 	basicFlash.NbPages = 1;
 
-	// unlock the flash
+//	// unlock the flash
 	HAL_FLASH_Unlock();
-
-	//flash->flashState = STATE_WRITE;
 
 	// erase the page from the flash (interrupt)
 	HAL_FLASHEx_Erase_IT(&basicFlash);
 
-	flash->flashState = STATE_WRITING;
 }
 
 void Flash_write(Flash * flash)
 {
-	flash->flashState = STATE_WRITING;
+	// unlock the flash
+	HAL_FLASH_Unlock();
+
+	flash->flashState = STATE_PROGRAM;
+	//flash->lenght = lenght;
 	// program one byte to the flash (interrupt)
-	HAL_FLASH_Program_IT(FLASH_TYPEPROGRAM_DOUBLEWORD, (uint32_t)page_256_addr + flash->pageOffset, *(uint64_t *)(text + flash->ind));
+	HAL_FLASH_Program_IT(FLASH_TYPEPROGRAM_DOUBLEWORD, (uint32_t)page_256_addr + flash->pageOffset, *(uint64_t *)(flash->flashBuffer));
 	flash->pageOffset += 8;
-	flash->ind += 8;
+	flash->bufferCnt++;
 	/////////////////////////////////
 	/////////////////////////////////
-	if(flash->ind >= 256){
-		flash->ind = 0;
-		if(flash->pageOffset <= 2048){
-			printf("printed from flash: %s. page: %d\r\n",(char *)(page_256_addr),flash->currentPage);
+	if(flash->bufferCnt >= 8){
+//		// lock the flash
+//		HAL_FLASH_Lock();
+		flash->bufferCnt = 0;
+//		if(flash->pageOffset <= 2048){
+//			printf("printed from flash: %s. page: %d\r\n",(char *)(page_256_addr),flash->currentPage);
+//		}
+//		else{
+//			printf("printed from flash: %s. page: %d\r\n",(char *)(page_257_addr),flash->currentPage);
 		}
-		else{
-			printf("printed from flash: %s. page: %d\r\n",(char *)(page_257_addr),flash->currentPage);
-		}
-	}
+//	}
 	/////////////////////////////////
 	/////////////////////////////////
 	if(flash->pageOffset == PAGE_SIZE){
@@ -96,16 +102,29 @@ void Flash_write(Flash * flash)
 		flash->flashState = STATE_ERASE;
 		printf("4096\r\n");
 	}
-
-//	// when finished to write 32 bytes
-//	if(flash->writeCnt >= 32){
-//		// lock flash
-//		HAL_FLASH_Lock();
-//
-//		flash->flashState = STATE_IDLE;
-//		flash->writeCnt = 0;
-//		flash->ind = 0;
-//
-//		printf("printed from flash: %s\r\n",(char *)(page_256_addr));
-//	}
 }
+
+void Flash_Task(Flash * flash)
+{
+	switch(flash->flashState)
+	{
+		case STATE_INIT:
+				break;
+		case STATE_ERASE_END:
+				Flash_write(flash);
+				break;
+		case STATE_PROGRAM_END:
+//				if(flash->bufferCnt == flash->lenght){
+//					flash->flashState = STATE_INIT;
+//					break;
+//				}
+				flash->flashState = STATE_INIT;
+				//Flash_write(flash);
+				break;
+		default:
+				break;
+	}
+}
+
+
+

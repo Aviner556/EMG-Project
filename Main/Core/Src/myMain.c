@@ -25,10 +25,11 @@ Button B3; //red
 Button B2; //blue
 Buzzer buzzer;
 Clock clc1;
-Clock clcDht;
+//Clock clcDht;
 Adc lightSensor;
-Dht11 TempHum;
+Dht11 dht;
 Flash flashRW;
+
 
 int _write(int fd, char* ptr, int len)
 {
@@ -40,6 +41,9 @@ int _write(int fd, char* ptr, int len)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
 	if(htim == &htim6){
+
+		// increase clock tick by 1 second
+		clc1.tick++;
 
 		MainTimerIT_handleInterrupt();
 
@@ -62,8 +66,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if(GPIO_Pin == TempHum.gpioPin){
-		Dht11_onGpioInterrupt(&TempHum, TempHum.gpioPin);
+	if(GPIO_Pin == dht.gpioPin){
+		Dht11_onGpioInterrupt(&dht, dht.gpioPin);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -114,11 +118,11 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 
 extern void MyFlashInterruptHandler()
 {
-	if(flashRW.flashState == STATE_WRITING){
-		flashRW.flashState = STATE_WRITE;
+	if(flashRW.flashState == STATE_ERASE){
+		flashRW.flashState = STATE_ERASE_END;
 	}
-	else if(flashRW.flashState == STATE_ERASE){
-		flashRW.flashState = STATE_WRITE;
+	else if(flashRW.flashState == STATE_PROGRAM){
+		flashRW.flashState = STATE_PROGRAM_END;
 	}
 }
 
@@ -135,7 +139,7 @@ void mainloop()
 	Button_init(&B3,B3_GPIO_Port,B3_Pin);
 
 	Clock_init(&clc1);
-	Clock_init(&clcDht);
+	//Clock_init(&clcDht);
 	Buzzer_init(&buzzer);
 
 	__HAL_TIM_SET_COUNTER(&htim6, 0);
@@ -146,7 +150,7 @@ void mainloop()
 	HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
 	HAL_ADC_Start_IT(&hadc2);
 
-	Dht11_init(&TempHum);
+	Dht11_init(&dht);
 
 	HAL_NVIC_EnableIRQ(FLASH_IRQn);
 	Flash_init(&flashRW);
@@ -155,20 +159,40 @@ void mainloop()
 	//RegisterCallbacks(ledOn,ledOff,&red);
 	Cli_init();
 
-	while(1){
+	// check when 1 second passed
+	int secondPass = clc1.tick;
 
-		Dht11_hasData(&TempHum);
+	// erasing the flash on startup
+	//Flash_erase(&flashRW);
+
+	while(1){
 
 		if (Communication_commTask()){
 			Communication_handleCommand();
 		}
 
-		if(flashRW.flashState == STATE_WRITE){
-			Flash_write(&flashRW);
-		}
-		else if(flashRW.flashState == STATE_ERASE){
-			Flash_erase(&flashRW);
-		}
+		if(secondPass - clc1.tick >= 3000){
+			if(flashRW.flashState == STATE_INIT && dht.DhtState == STATE_SLEEP){
+				Dht11_start(&dht);
+			}
 
+			// when there is data on DHT, save it on flash
+			if(Dht11_hasData(&dht) == 1){
+				// pointer to the start of the flashBuffer
+				uint8_t *ptrFlash = flashRW.flashBuffer;
+				*(uint8_t*)(ptrFlash) = dht.DhtBuffer[0];
+				*(uint8_t*)(ptrFlash + 1) = clc1.days;
+				*(uint8_t*)(ptrFlash + 2) = clc1.hours;
+				*(uint8_t*)(ptrFlash + 3) = clc1.minutes;
+				*(uint8_t*)(ptrFlash + 4) = clc1.seconds;
+				*(uint8_t*)(ptrFlash + 5) = clc1.tick;
+				//*(uint8_t*)(ptrFlash + 6) = 0;
+				//*(uint8_t*)(ptrFlash + 7) = 0;
+
+				Flash_write(&flashRW);
+				printf("DHT saved on flash\r\n");
+			}
+		}
+		Flash_Task(&flashRW);
 	}
 }

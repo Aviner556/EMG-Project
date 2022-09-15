@@ -5,7 +5,7 @@
 #include <string.h>
 
 extern TIM_HandleTypeDef htim16;
-extern Dht11 TempHum;
+extern Dht11 dht;
 
 
 void Dht11_init(Dht11 * dht)
@@ -44,6 +44,7 @@ void Dht11_setGpioExti(Dht11 * dht)
 	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
+// first action when DHT start working
 void Dht11_start(Dht11 * dht)
 {
 	if(dht->DhtState == STATE_SLEEP){
@@ -112,13 +113,14 @@ int Dht11_returnedValue(Dht11 * dht)
 	return 0;
 }
 
-void Dht11_hasData(Dht11 * dht)
+int Dht11_hasData(Dht11 * dht)
 {
 	if(dht->DhtState == STATE_HAS_DATA){
 		//Dht11_print(dht);
-
 		dht->DhtState = STATE_SLEEP;
+		return 1;
 	}
+	return 0;
 }
 
 void Dht11_print(Dht11 * dht)

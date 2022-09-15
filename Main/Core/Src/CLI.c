@@ -11,7 +11,7 @@
 extern Led blue;
 extern Led red;
 extern Buzzer buzzer;
-extern Dht11 TempHum;
+extern Dht11 dht;
 extern Clock clc1;
 extern Flash flashRW;
 
@@ -80,8 +80,8 @@ void Cli_init()
 	RegisterCommand("blueledblink",Cli_cmdLedBlink,&blue);
 	RegisterCommand("buzzeron",Cli_cmdBuzzerOn,&buzzer);
 	RegisterCommand("buzzeroff",Cli_cmdBuzzerOff,&buzzer);
-	RegisterCommand("dhtstart",Cli_cmdDht11Start,&TempHum);
-	RegisterCommand("dhtprint",Cli_cmdDht11Print,&TempHum);
+	RegisterCommand("dhtstart",Cli_cmdDht11Start,&dht);
+	RegisterCommand("dhtprint",Cli_cmdDht11Print,&dht);
 	RegisterCommand("showtime",Cli_cmdClockShowTime,&clc1);
 	RegisterCommand("flash",Cli_cmdFlashEraseWrite,&flashRW);
 	RegisterCommand("help",Communication_printHelp,NULL);

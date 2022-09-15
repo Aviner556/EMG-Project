@@ -5,7 +5,7 @@
 
 typedef struct _Clock
 {
-	uint32_t tik;
+	uint32_t tick;
 	int seconds;
 	int minutes;
 	int hours;
