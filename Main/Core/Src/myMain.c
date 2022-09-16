@@ -163,7 +163,7 @@ void mainloop()
 	int secondPass = clc1.tick;
 
 	// erasing the flash on startup
-	//Flash_erase(&flashRW);
+	Flash_erase(&flashRW);
 
 	while(1){
 
@@ -171,26 +171,27 @@ void mainloop()
 			Communication_handleCommand();
 		}
 
-		if(secondPass - clc1.tick >= 3000){
+		if(clc1.tick - secondPass >= 50){
 			if(flashRW.flashState == STATE_INIT && dht.DhtState == STATE_SLEEP){
-				Dht11_start(&dht);
+				//Dht11_start(&dht); // noted to prevent memory overwrite
 			}
 
 			// when there is data on DHT, save it on flash
 			if(Dht11_hasData(&dht) == 1){
 				// pointer to the start of the flashBuffer
 				uint8_t *ptrFlash = flashRW.flashBuffer;
-				*(uint8_t*)(ptrFlash) = dht.DhtBuffer[0];
-				*(uint8_t*)(ptrFlash + 1) = clc1.days;
-				*(uint8_t*)(ptrFlash + 2) = clc1.hours;
-				*(uint8_t*)(ptrFlash + 3) = clc1.minutes;
-				*(uint8_t*)(ptrFlash + 4) = clc1.seconds;
-				*(uint8_t*)(ptrFlash + 5) = clc1.tick;
-				//*(uint8_t*)(ptrFlash + 6) = 0;
+				*(uint8_t*)(ptrFlash) = dht.DhtBuffer[2]; // temperature 1.x
+				*(uint8_t*)(ptrFlash + 1) = dht.DhtBuffer[3]; // temperature x.1
+				*(uint8_t*)(ptrFlash + 2) = clc1.days;
+				*(uint8_t*)(ptrFlash + 3) = clc1.hours;
+				*(uint8_t*)(ptrFlash + 4) = clc1.minutes;
+				*(uint8_t*)(ptrFlash + 5) = clc1.seconds;
+				*(uint8_t*)(ptrFlash + 6) = clc1.tick;
 				//*(uint8_t*)(ptrFlash + 7) = 0;
 
 				Flash_write(&flashRW);
-				printf("DHT saved on flash\r\n");
+				printf("DHT saved on flash\r\n\n");
+				secondPass = clc1.tick;
 			}
 		}
 		Flash_Task(&flashRW);

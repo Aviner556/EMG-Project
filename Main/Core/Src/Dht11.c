@@ -69,8 +69,8 @@ void Dht11_onGpioInterrupt(Dht11 * dht, uint16_t pin)
 		dht->DhtState = STATE_WAITING_RESPONSE_END;
 	}
 	else if(dht->DhtState == STATE_WAITING_RESPONSE_END){
-		dht->DhtState = STATE_RECIVING_BIT;
 		__HAL_TIM_SET_COUNTER(&htim16, 0);
+		dht->DhtState = STATE_RECIVING_BIT;
 	}
 	else if(dht->DhtState == STATE_RECIVING_BIT){
 		Dht11_startRead(dht);

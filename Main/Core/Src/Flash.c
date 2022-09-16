@@ -91,15 +91,15 @@ void Flash_write(Flash * flash)
 //	}
 	/////////////////////////////////
 	/////////////////////////////////
-	if(flash->pageOffset == PAGE_SIZE){
+	if(flash->pageOffset == PAGE_SIZE && flash->currentPage == 256){
 		flash->currentPage = 257;
-		flash->flashState = STATE_ERASE;
+		Flash_erase(flash);
 		printf("2048\r\n");
 	}
 	else if(flash->pageOffset >= PAGE_SIZE*2){
 		flash->pageOffset = 0;
 		flash->currentPage = 256;
-		flash->flashState = STATE_ERASE;
+		Flash_erase(flash);
 		printf("4096\r\n");
 	}
 }
