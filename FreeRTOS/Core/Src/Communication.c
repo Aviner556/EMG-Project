@@ -12,6 +12,8 @@ extern UART_HandleTypeDef huart2;
 extern Led blueLed;
 extern Led redLed;
 
+extern osMessageQueueId_t myQueue01Handle;
+
 /////////////////////////////////////////////////////////////////////////
 // Communication task definitions and functions
 /////////////////////////////////////////////////////////////////////////
@@ -101,6 +103,15 @@ void Communication_handleCommand()
 			  redLed.ledDelay = atoi(param);
 			  return;
 		  }
+	  }
+	  else if (strcmp(cmd1, "bright") == 0){
+		  int bright = atoi(cmd2);
+		  if(bright >= 0 && bright <= 10){
+			  osMessageQueuePut(myQueue01Handle, &bright, 0, osWaitForever);
+			  return;
+		  }
+		  printf("brightness most be 0-10\r\n\n");
+		  return;
 	  }
 
 	  printf("invalid command\r\n");

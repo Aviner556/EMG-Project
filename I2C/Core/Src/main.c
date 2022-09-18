@@ -93,13 +93,13 @@ int userWrite[7];
 
 void printTime(uint8_t* readBuff)
 {
-	T.second1 = readBuff[0]&15;
-	T.second10 = readBuff[0]>>4;
+	T.second1 = readBuff[0]&15; // take only the first 4 bits
+	T.second10 = readBuff[0]>>4; // move the last 4 bits to the right
 	T.minute1 = readBuff[1]&15;
 	T.minutes10 = readBuff[1]>>4;
 	T.hour1 = readBuff[2]&15;
-	T.hours10 = readBuff[2]>>4&3;
-	T.weekDay = readBuff[3]&7;
+	T.hours10 = readBuff[2]>>4&3; // move the last 4 bits to the right, and take the 2 first bits
+	T.weekDay = readBuff[3]&7; // take only the first 3 bits
 	T.day1 = readBuff[4]&15;
 	T.days10 = readBuff[4]>>4&3;
 	T.month1 = readBuff[5]&15;
@@ -116,12 +116,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 	printTime(readBuff);
 }
 
+//
 void decToBin(int* userWrite)
 {
 	for(int i=0; i<7; i++){
 		int right = userWrite[i] % 10;
 		int left = userWrite[i] / 10;
-		writeBuff[i] = (left<<4 | right);
+		writeBuff[i] = (left<<4 | right); // save the tens digit in the last 4 bits and the unity digit in the first 4 bits
 	}
 }
 

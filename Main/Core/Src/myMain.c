@@ -171,7 +171,7 @@ void mainloop()
 			Communication_handleCommand();
 		}
 
-		if(clc1.tick - secondPass >= 50){
+		if(clc1.tick - secondPass >= 1000){
 			if(flashRW.flashState == STATE_INIT && dht.DhtState == STATE_SLEEP){
 				//Dht11_start(&dht); // noted to prevent memory overwrite
 			}
