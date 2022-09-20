@@ -5,6 +5,7 @@
 // tim2 is the PWM clock that attached to blue led
 extern TIM_HandleTypeDef htim2;
 extern osMessageQueueId_t myQueue01Handle;
+extern QUEUE_MSG qMsgStruct; //queue message bright & delay
 
 void Led_init(Led * led,GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin)
 {
@@ -12,14 +13,19 @@ void Led_init(Led * led,GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin)
 	led->gpioPin = GPIO_Pin;
 	led->ledDelay = 100;
 	led->ledBright = 10;
+
+	// freeRTOS queue message - brightness and delay
+	qMsgStruct.bright = 5;
+	qMsgStruct.delay = 100;
 }
 
 void entry_BlueLedBlink(void * argument)
 {
   /* USER CODE BEGIN entry_BlueLedBlink */
-	int delay = 500;
-	uint16_t msg;
-	uint16_t brightness = 10;
+	//int delay = 500;
+	//uint16_t msg;
+	QUEUE_MSG msg;
+	//uint16_t brightness = 10;
 	osStatus_t status;
 
 	HAL_TIM_Base_Start(&htim2);
@@ -37,26 +43,27 @@ void entry_BlueLedBlink(void * argument)
 	  // checking if the queue not empty. waiting until the timeout
 	  status = osMessageQueueGet(myQueue01Handle, &msg, 0, 500);
 	  if(status == osOK){
-		  brightness = msg;
+		  qMsgStruct.bright = msg.bright;
+		  qMsgStruct.delay = msg.delay;
 	  }
-	  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, brightness*10);
-	  osDelay(delay);
+	  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, qMsgStruct.bright*10);
+	  osDelay(qMsgStruct.delay);
   }
   /* USER CODE END entry_BlueLedBlink */
 }
 
-void entry_RedLedBlink(void * argument)
-{
-  /* USER CODE BEGIN entry_RedLedBlink */
-	Led * redLed = (Led *)argument;
-  /* Infinite loop */
-  for(;;)
-  {
-	  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-	  osDelay(redLed->ledDelay);
-  }
-  /* USER CODE END entry_RedLedBlink */
-}
+//void entry_RedLedBlink(void * argument)
+//{
+//  /* USER CODE BEGIN entry_RedLedBlink */
+//	Led * redLed = (Led *)argument;
+//  /* Infinite loop */
+//  for(;;)
+//  {
+//	  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+//	  osDelay(redLed->ledDelay);
+//  }
+//  /* USER CODE END entry_RedLedBlink */
+//}
 
 
 

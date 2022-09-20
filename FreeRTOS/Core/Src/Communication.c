@@ -12,6 +12,8 @@ extern UART_HandleTypeDef huart2;
 extern Led blueLed;
 extern Led redLed;
 
+extern QUEUE_MSG qMsgStruct;
+
 extern osMessageQueueId_t myQueue01Handle;
 
 /////////////////////////////////////////////////////////////////////////
@@ -104,10 +106,23 @@ void Communication_handleCommand()
 			  return;
 		  }
 	  }
-	  else if (strcmp(cmd1, "bright") == 0){
+//	  // set the brightness
+//	  else if (strcmp(cmd1, "bright") == 0){
+//		  int bright = atoi(cmd2);
+//		  if(bright >= 0 && bright <= 10){
+//			  osMessageQueuePut(myQueue01Handle, &bright, 0, osWaitForever);
+//			  return;
+//		  }
+//		  printf("brightness most be 0-10\r\n\n");
+//		  return;
+//	  }
+	  // set the brightness and delay
+	  else if (strcmp(cmd1, "brightdelay") == 0){
 		  int bright = atoi(cmd2);
 		  if(bright >= 0 && bright <= 10){
-			  osMessageQueuePut(myQueue01Handle, &bright, 0, osWaitForever);
+			  qMsgStruct.bright = bright;
+			  qMsgStruct.delay = atoi(param);
+			  osMessageQueuePut(myQueue01Handle, &qMsgStruct, 0, osWaitForever);
 			  return;
 		  }
 		  printf("brightness most be 0-10\r\n\n");

@@ -22,8 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Led.h"
-#include "Communication.h"
+#include "Dht11.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,7 +41,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- TIM_HandleTypeDef htim2;
+ TIM_HandleTypeDef htim6;
 
 UART_HandleTypeDef huart2;
 
@@ -52,57 +52,59 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for BlueLedBlink */
-osThreadId_t BlueLedBlinkHandle;
-const osThreadAttr_t BlueLedBlink_attributes = {
-  .name = "BlueLedBlink",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for UART */
-osThreadId_t UARTHandle;
-const osThreadAttr_t UART_attributes = {
-  .name = "UART",
+/* Definitions for DHT */
+osThreadId_t DHTHandle;
+const osThreadAttr_t DHT_attributes = {
+  .name = "DHT",
   .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityHigh,
 };
-/* Definitions for RedLedBlink */
-osThreadId_t RedLedBlinkHandle;
-const osThreadAttr_t RedLedBlink_attributes = {
-  .name = "RedLedBlink",
+/* Definitions for Delay */
+osThreadId_t DelayHandle;
+const osThreadAttr_t Delay_attributes = {
+  .name = "Delay",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for BlueLedBrightne */
-osThreadId_t BlueLedBrightneHandle;
-const osThreadAttr_t BlueLedBrightne_attributes = {
-  .name = "BlueLedBrightne",
-  .stack_size = 128 * 4,
+/* Definitions for Print */
+osThreadId_t PrintHandle;
+const osThreadAttr_t Print_attributes = {
+  .name = "Print",
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for myQueue01 */
-osMessageQueueId_t myQueue01Handle;
-const osMessageQueueAttr_t myQueue01_attributes = {
-  .name = "myQueue01"
+/* Definitions for DhtSem */
+osSemaphoreId_t DhtSemHandle;
+const osSemaphoreAttr_t DhtSem_attributes = {
+  .name = "DhtSem"
+};
+/* Definitions for PrintSem */
+osSemaphoreId_t PrintSemHandle;
+const osSemaphoreAttr_t PrintSem_attributes = {
+  .name = "PrintSem"
 };
 /* USER CODE BEGIN PV */
+
 int _write(int fd, char* ptr, int len)
 {
 	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
 	return len;
 }
+
+
+Dht11 dht;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_TIM2_Init(void);
+static void MX_TIM6_Init(void);
 void StartDefaultTask(void *argument);
-void entry_BlueLedBlink(void *argument);
-void entry_UART(void *argument);
-void entry_RedLedBlink(void *argument);
-void entry_BlueLedBrightness(void *argument);
+extern void entry_DHT(void *argument);
+extern void entry_Delay(void *argument);
+extern void entry_Print(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -111,10 +113,46 @@ void entry_BlueLedBrightness(void *argument);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-Led blueLed;
-Led redLed;
+/* USER CODE END Header_entry_DHT */
+void entry_DHT(void *argument)
+{
+  /* USER CODE BEGIN entry_DHT */
+  /* Infinite loop */
+  for(;;)
+  {
+	osSemaphoreAcquire(DhtSemHandle, osWaitForever);
+	Dht11_Read(&dht);
+	osSemaphoreRelease(PrintSemHandle);
+  }
+  /* USER CODE END entry_DHT */
+}
 
-QUEUE_MSG qMsgStruct;
+/* USER CODE END Header_entry_Delay */
+void entry_Delay(void *argument)
+{
+  /* USER CODE BEGIN entry_Delay */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1000);
+    osSemaphoreRelease(DhtSemHandle);
+  }
+  /* USER CODE END entry_Delay */
+}
+
+/* USER CODE END Header_entry_Print */
+void entry_Print(void *argument)
+{
+  /* USER CODE BEGIN entry_Print */
+  /* Infinite loop */
+  for(;;)
+  {
+	  osSemaphoreAcquire(PrintSemHandle, osWaitForever);
+	  printf("Humidity - %.2f\r\nTemperature - %.2f\r\nChekSum - %d\r\n\n",dht.humidity,dht.temperature,dht.checkSum);
+  }
+  /* USER CODE END entry_Print */
+}
+
 
 /* USER CODE END 0 */
 
@@ -147,13 +185,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  MX_TIM2_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-
-  // when the led work on PWM it can work on GPIO
-  //Led_init(&blueLed,LD2_GPIO_Port, LD2_Pin);
-  //Led_init(&redLed,LD3_GPIO_Port, LD3_Pin);
-
+  __HAL_TIM_SET_COUNTER(&htim6, 0);
+  HAL_TIM_Base_Start(&htim6);
+  Dht11_init(&dht);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -163,6 +199,13 @@ int main(void)
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
 
+  /* Create the semaphores(s) */
+  /* creation of DhtSem */
+  DhtSemHandle = osSemaphoreNew(1, 1, &DhtSem_attributes);
+
+  /* creation of PrintSem */
+  PrintSemHandle = osSemaphoreNew(1, 1, &PrintSem_attributes);
+
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
@@ -170,10 +213,6 @@ int main(void)
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
-
-  /* Create the queue(s) */
-  /* creation of myQueue01 */
-  myQueue01Handle = osMessageQueueNew (5, sizeof(uint32_t), &myQueue01_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -183,17 +222,14 @@ int main(void)
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* creation of BlueLedBlink */
-  BlueLedBlinkHandle = osThreadNew(entry_BlueLedBlink, (void*) &blueLed, &BlueLedBlink_attributes);
+  /* creation of DHT */
+  DHTHandle = osThreadNew(entry_DHT, NULL, &DHT_attributes);
 
-  /* creation of UART */
-  UARTHandle = osThreadNew(entry_UART, NULL, &UART_attributes);
+  /* creation of Delay */
+  DelayHandle = osThreadNew(entry_Delay, NULL, &Delay_attributes);
 
-  /* creation of RedLedBlink */
-  RedLedBlinkHandle = osThreadNew(entry_RedLedBlink, (void*) &redLed, &RedLedBlink_attributes);
-
-  /* creation of BlueLedBrightne */
-  BlueLedBrightneHandle = osThreadNew(entry_BlueLedBrightness, NULL, &BlueLedBrightne_attributes);
+  /* creation of Print */
+  PrintHandle = osThreadNew(entry_Print, NULL, &Print_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -268,61 +304,40 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief TIM2 Initialization Function
+  * @brief TIM6 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_TIM2_Init(void)
+static void MX_TIM6_Init(void)
 {
 
-  /* USER CODE BEGIN TIM2_Init 0 */
+  /* USER CODE BEGIN TIM6_Init 0 */
 
-  /* USER CODE END TIM2_Init 0 */
+  /* USER CODE END TIM6_Init 0 */
 
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
 
-  /* USER CODE BEGIN TIM2_Init 1 */
+  /* USER CODE BEGIN TIM6_Init 1 */
 
-  /* USER CODE END TIM2_Init 1 */
-  htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 7999;
-  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 100;
-  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
+  /* USER CODE END TIM6_Init 1 */
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = 80;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 65535;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
     Error_Handler();
   }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 30;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM2_Init 2 */
+  /* USER CODE BEGIN TIM6_Init 2 */
 
-  /* USER CODE END TIM2_Init 2 */
-  HAL_TIM_MspPostInit(&htim2);
+  /* USER CODE END TIM6_Init 2 */
 
 }
 
@@ -377,7 +392,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(DHT11_GPIO_Port, DHT11_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -385,12 +403,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD3_Pin */
-  GPIO_InitStruct.Pin = LD3_Pin;
+  /*Configure GPIO pin : LD2_Pin */
+  GPIO_InitStruct.Pin = LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : DHT11_Pin */
+  GPIO_InitStruct.Pin = DHT11_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(DHT11_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -414,78 +439,6 @@ void StartDefaultTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_entry_BlueLedBlink */
-/**
-* @brief Function implementing the BlueLedBlink thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_entry_BlueLedBlink */
-__weak void entry_BlueLedBlink(void *argument)
-{
-  /* USER CODE BEGIN entry_BlueLedBlink */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END entry_BlueLedBlink */
-}
-
-/* USER CODE BEGIN Header_entry_UART */
-/**
-* @brief Function implementing the UART thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_entry_UART */
-__weak void entry_UART(void *argument)
-{
-  /* USER CODE BEGIN entry_UART */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END entry_UART */
-}
-
-/* USER CODE BEGIN Header_entry_RedLedBlink */
-/**
-* @brief Function implementing the RedLedBlink thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_entry_RedLedBlink */
-__weak void entry_RedLedBlink(void *argument)
-{
-  /* USER CODE BEGIN entry_RedLedBlink */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END entry_RedLedBlink */
-}
-
-/* USER CODE BEGIN Header_entry_BlueLedBrightness */
-/**
-* @brief Function implementing the BlueLedBrightne thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_entry_BlueLedBrightness */
-__weak void entry_BlueLedBrightness(void *argument)
-{
-  /* USER CODE BEGIN entry_BlueLedBrightness */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END entry_BlueLedBrightness */
 }
 
 /**

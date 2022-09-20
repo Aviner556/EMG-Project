@@ -3,6 +3,11 @@
 
 #include "main.h"
 
+typedef struct _QUEUE_MSG
+{
+	uint16_t bright;
+	uint16_t delay;
+}QUEUE_MSG;
 
 typedef struct _Led
 {

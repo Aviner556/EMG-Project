@@ -2,7 +2,6 @@
 #define _Communication_
 
 
-
 int Communication_commTask();
 void Communication_handleCommand();
 
