@@ -1,9 +1,9 @@
 #MicroXplorer Configuration settings - do not modify
-FREERTOS.BinarySemaphores01=DhtSem,Dynamic,NULL;PrintSem,Dynamic,NULL
+FREERTOS.Events01=DHT_PRINT,Dynamic,NULL;DELAY_PRINT,Dynamic,NULL
 FREERTOS.FootprintOK=true
-FREERTOS.IPParameters=Tasks01,FootprintOK,BinarySemaphores01,configTOTAL_HEAP_SIZE
-FREERTOS.Tasks01=defaultTask,24,128,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL;DHT,24,256,entry_DHT,As external,NULL,Dynamic,NULL,NULL;Delay,24,128,entry_Delay,As external,NULL,Dynamic,NULL,NULL;Print,24,256,entry_Print,As external,NULL,Dynamic,NULL,NULL;BlueLedBlink,8,128,entry_BlueLedBlink,As external,&led,Dynamic,NULL,NULL
-FREERTOS.configTOTAL_HEAP_SIZE=5000
+FREERTOS.IPParameters=Tasks01,FootprintOK,configTOTAL_HEAP_SIZE,Events01
+FREERTOS.Tasks01=defaultTask,24,128,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL;Delay1,24,128,entry_Delay1,As external,NULL,Dynamic,NULL,NULL;Print,24,256,entry_Print,As external,NULL,Dynamic,NULL,NULL;BlueLedBlink,24,128,entry_BlueLedBlink,As external,&led,Dynamic,NULL,NULL;Delay2,24,128,entry_Delay2,As external,NULL,Dynamic,NULL,NULL;Delay3,24,128,entry_Delay3,As external,NULL,Dynamic,NULL,NULL
+FREERTOS.configTOTAL_HEAP_SIZE=6000
 File.Version=6
 GPIO.groupedBy=Group By Peripherals
 KeepUserPlacement=false
@@ -134,8 +134,8 @@ ProjectManager.MainLocation=Core/Src
 ProjectManager.NoMain=false
 ProjectManager.PreviousToolchain=
 ProjectManager.ProjectBuild=false
-ProjectManager.ProjectFileName=FreeRTOS-Smaphores.ioc
-ProjectManager.ProjectName=FreeRTOS-Smaphores
+ProjectManager.ProjectFileName=FreeRTOS-EventFlags.ioc
+ProjectManager.ProjectName=FreeRTOS-EventFlags
 ProjectManager.RegisterCallBack=
 ProjectManager.StackSize=0x400
 ProjectManager.TargetToolchain=STM32CubeIDE

@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "Dht11.h"
 #include "LED.h"
+#include "Defines.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -53,17 +54,10 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for DHT */
-osThreadId_t DHTHandle;
-const osThreadAttr_t DHT_attributes = {
-  .name = "DHT",
-  .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for Delay */
-osThreadId_t DelayHandle;
-const osThreadAttr_t Delay_attributes = {
-  .name = "Delay",
+/* Definitions for Delay1 */
+osThreadId_t Delay1Handle;
+const osThreadAttr_t Delay1_attributes = {
+  .name = "Delay1",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
@@ -79,17 +73,31 @@ osThreadId_t BlueLedBlinkHandle;
 const osThreadAttr_t BlueLedBlink_attributes = {
   .name = "BlueLedBlink",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for DhtSem */
-osSemaphoreId_t DhtSemHandle;
-const osSemaphoreAttr_t DhtSem_attributes = {
-  .name = "DhtSem"
+/* Definitions for Delay2 */
+osThreadId_t Delay2Handle;
+const osThreadAttr_t Delay2_attributes = {
+  .name = "Delay2",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for PrintSem */
-osSemaphoreId_t PrintSemHandle;
-const osSemaphoreAttr_t PrintSem_attributes = {
-  .name = "PrintSem"
+/* Definitions for Delay3 */
+osThreadId_t Delay3Handle;
+const osThreadAttr_t Delay3_attributes = {
+  .name = "Delay3",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for DHT_PRINT */
+osEventFlagsId_t DHT_PRINTHandle;
+const osEventFlagsAttr_t DHT_PRINT_attributes = {
+  .name = "DHT_PRINT"
+};
+/* Definitions for DELAY_PRINT */
+osEventFlagsId_t DELAY_PRINTHandle;
+const osEventFlagsAttr_t DELAY_PRINT_attributes = {
+  .name = "DELAY_PRINT"
 };
 /* USER CODE BEGIN PV */
 
@@ -111,10 +119,11 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM6_Init(void);
 void StartDefaultTask(void *argument);
-extern void entry_DHT(void *argument);
-extern void entry_Delay(void *argument);
+extern void entry_Delay1(void *argument);
 extern void entry_Print(void *argument);
 extern void entry_BlueLedBlink(void *argument);
+extern void entry_Delay2(void *argument);
+extern void entry_Delay3(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -124,30 +133,57 @@ extern void entry_BlueLedBlink(void *argument);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END Header_entry_DHT */
-void entry_DHT(void *argument)
-{
-  /* USER CODE BEGIN entry_DHT */
-  /* Infinite loop */
-  for(;;)
-  {
-	osSemaphoreAcquire(DhtSemHandle, osWaitForever);
-	Dht11_Read(&dht);
-	osSemaphoreRelease(PrintSemHandle);
-  }
-  /* USER CODE END entry_DHT */
-}
+//void entry_DHT(void *argument)
+//{
+//  /* USER CODE BEGIN entry_DHT */
+//  /* Infinite loop */
+//  for(;;)
+//  {
+//	//waiting for all the flag that passed (here - FLAG_DHT only)
+//	//osEventFlagsWait(DHT_PRINTHandle, FLAG_DHT, osFlagsWaitAll, osWaitForever);
+//	//Dht11_Read(&dht);
+//  }
+//  /* USER CODE END entry_DHT */
+//}
 
 /* USER CODE END Header_entry_Delay */
-void entry_Delay(void *argument)
+void entry_Delay1(void *argument)
 {
   /* USER CODE BEGIN entry_Delay */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1000);
-    osSemaphoreRelease(DhtSemHandle);
+	//osEventFlagsSet(DHT_PRINTHandle, FLAG_DHT);
+    osDelay(500);
+    osEventFlagsSet(DELAY_PRINTHandle, FLAG_DELAY1);
   }
   /* USER CODE END entry_Delay */
+}
+
+/* USER CODE END Header_entry_Delay2 */
+void entry_Delay2(void *argument)
+{
+  /* USER CODE BEGIN entry_Delay2 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(700);
+    osEventFlagsSet(DELAY_PRINTHandle, FLAG_DELAY2);
+  }
+  /* USER CODE END entry_Delay2 */
+}
+
+/* USER CODE END Header_entry_Delay2 */
+void entry_Delay3(void *argument)
+{
+  /* USER CODE BEGIN entry_Delay2 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1100);
+    osEventFlagsSet(DELAY_PRINTHandle, FLAG_DELAY3);
+  }
+  /* USER CODE END entry_Delay2 */
 }
 
 /* USER CODE END Header_entry_Print */
@@ -157,8 +193,13 @@ void entry_Print(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	  osSemaphoreAcquire(PrintSemHandle, osWaitForever);
+	  osEventFlagsWait(DELAY_PRINTHandle, FLAG_DELAY1 | FLAG_DELAY2 | FLAG_DELAY3, osFlagsWaitAll, osWaitForever);
+	  printf("%ld\r\n",HAL_GetTick());
+	  /*
+	  //waiting for all the flag that passed (here - FLAG_Print only)
+	  osEventFlagsWait(DHT_PRINTHandle, FLAG_PRINT, osFlagsWaitAll, osWaitForever);
 	  printf("Humidity - %.2f\r\nTemperature - %.2f\r\nChekSum - %d\r\n\n",dht.humidity,dht.temperature,dht.checkSum);
+	  */
   }
   /* USER CODE END entry_Print */
 }
@@ -209,13 +250,6 @@ int main(void)
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
 
-  /* Create the semaphores(s) */
-  /* creation of DhtSem */
-  DhtSemHandle = osSemaphoreNew(1, 1, &DhtSem_attributes);
-
-  /* creation of PrintSem */
-  PrintSemHandle = osSemaphoreNew(1, 1, &PrintSem_attributes);
-
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
@@ -232,11 +266,8 @@ int main(void)
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* creation of DHT */
-  DHTHandle = osThreadNew(entry_DHT, NULL, &DHT_attributes);
-
-  /* creation of Delay */
-  DelayHandle = osThreadNew(entry_Delay, NULL, &Delay_attributes);
+  /* creation of Delay1 */
+  Delay1Handle = osThreadNew(entry_Delay1, NULL, &Delay1_attributes);
 
   /* creation of Print */
   PrintHandle = osThreadNew(entry_Print, NULL, &Print_attributes);
@@ -244,9 +275,22 @@ int main(void)
   /* creation of BlueLedBlink */
   BlueLedBlinkHandle = osThreadNew(entry_BlueLedBlink, (void*) &led, &BlueLedBlink_attributes);
 
+  /* creation of Delay2 */
+  Delay2Handle = osThreadNew(entry_Delay2, NULL, &Delay2_attributes);
+
+  /* creation of Delay3 */
+  Delay3Handle = osThreadNew(entry_Delay3, NULL, &Delay3_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+
+  /* Create the event(s) */
+  /* creation of DHT_PRINT */
+  DHT_PRINTHandle = osEventFlagsNew(&DHT_PRINT_attributes);
+
+  /* creation of DELAY_PRINT */
+  DELAY_PRINTHandle = osEventFlagsNew(&DELAY_PRINT_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
