@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+extern LinkedList myList;
+
 LinkedList* LinkedList_init()
 {
     LinkedList* list = (LinkedList*)malloc(sizeof(LinkedList));
@@ -82,11 +84,10 @@ void LinkedList_printAndDelete(LinkedList* list)
     }
     ListNode* pNode;
     pNode = list->head;
-    printf("nodes on the list: %d\n", LinkedList_count(list));
-    printf("List: ");
+    printf("List: \r\n");
     while (pNode != NULL) {
-        printf("[%s]->", pNode->message);
+        printf("[%s]->\r\n", pNode->message);
         pNode = pNode->next;
     }
-    printf("\n\n");
+    printf("\r\n\n");
 }

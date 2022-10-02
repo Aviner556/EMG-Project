@@ -17,13 +17,12 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <task44.h>
 #include "main.h"
-#include "LinkedList.h"
 #include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,9 +40,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
  UART_HandleTypeDef huart2;
- LinkedList * myList;
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -56,22 +53,27 @@ const osThreadAttr_t defaultTask_attributes = {
 osThreadId_t myTask01Handle;
 const osThreadAttr_t myTask01_attributes = {
   .name = "myTask01",
-  .stack_size = 256 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for myTask02 */
 osThreadId_t myTask02Handle;
 const osThreadAttr_t myTask02_attributes = {
   .name = "myTask02",
-  .stack_size = 256 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for Logger */
-osThreadId_t LoggerHandle;
-const osThreadAttr_t Logger_attributes = {
-  .name = "Logger",
-  .stack_size = 256 * 4,
+/* Definitions for myTask03 */
+osThreadId_t myTask03Handle;
+const osThreadAttr_t myTask03_attributes = {
+  .name = "myTask03",
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for myMutex01 */
+osMutexId_t myMutex01Handle;
+const osMutexAttr_t myMutex01_attributes = {
+  .name = "myMutex01"
 };
 /* USER CODE BEGIN PV */
 
@@ -82,9 +84,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void *argument);
-void entry_myTask01(void *argument);
-void entry_myTask02(void *argument);
-void entry_Logger(void *argument);
+extern void entry_Task(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -92,11 +92,17 @@ void entry_Logger(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 int _write(int fd, char* ptr, int len)
 {
 	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
 	return len;
 }
+
+PrintTask44 task1;
+PrintTask44 task2;
+PrintTask44 task3;
+
 /* USER CODE END 0 */
 
 /**
@@ -106,6 +112,15 @@ int _write(int fd, char* ptr, int len)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
+	task1.buff = "Task-1";
+	task1.delay = 47;
+
+	task2.buff = "Task-2";
+	task2.delay = 57;
+
+	task3.buff = "Task-3";
+	task3.delay = 89;
 
   /* USER CODE END 1 */
 
@@ -129,11 +144,14 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  myList = LinkedList_init();
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
   osKernelInitialize();
+  /* Create the mutex(es) */
+  /* creation of myMutex01 */
+  myMutex01Handle = osMutexNew(&myMutex01_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -156,13 +174,13 @@ int main(void)
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* creation of myTask01 */
-  myTask01Handle = osThreadNew(entry_myTask01, NULL, &myTask01_attributes);
+  myTask01Handle = osThreadNew(entry_Task, (void*) &task1, &myTask01_attributes);
 
   /* creation of myTask02 */
-  myTask02Handle = osThreadNew(entry_myTask02, NULL, &myTask02_attributes);
+  myTask02Handle = osThreadNew(entry_Task, (void*) &task2, &myTask02_attributes);
 
-  /* creation of Logger */
-  LoggerHandle = osThreadNew(entry_Logger, NULL, &Logger_attributes);
+  /* creation of myTask03 */
+  myTask03Handle = osThreadNew(entry_Task, (void*) &task3, &myTask03_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -326,58 +344,25 @@ void StartDefaultTask(void *argument)
   /* USER CODE END 5 */
 }
 
-/* USER CODE BEGIN Header_entry_myTask01 */
 /**
-* @brief Function implementing the myTask01 thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_entry_myTask01 */
-__weak void entry_myTask01(void *argument)
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM16 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  /* USER CODE BEGIN entry_myTask01 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END entry_myTask01 */
-}
+  /* USER CODE BEGIN Callback 0 */
 
-/* USER CODE BEGIN Header_entry_myTask02 */
-/**
-* @brief Function implementing the myTask02 thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_entry_myTask02 */
-__weak void entry_myTask02(void *argument)
-{
-  /* USER CODE BEGIN entry_myTask02 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM16) {
+    HAL_IncTick();
   }
-  /* USER CODE END entry_myTask02 */
-}
+  /* USER CODE BEGIN Callback 1 */
 
-/* USER CODE BEGIN Header_entry_Logger */
-/**
-* @brief Function implementing the Logger thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_entry_Logger */
-__weak void entry_Logger(void *argument)
-{
-  /* USER CODE BEGIN entry_Logger */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END entry_Logger */
+  /* USER CODE END Callback 1 */
 }
 
 /**
