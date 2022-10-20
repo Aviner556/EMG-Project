@@ -19,16 +19,23 @@ void AlarmManager_init(){
 
 void AlarmManager_add(char * name, int hour, int minutes, int stateRepeat)
 {
-	if (hour>24|| hour<1 || minutes>59){
+	/*
+	 * checking if the time is valid
+	 */
+	if (hour>24|| hour<1 || minutes>59){ //still need to check
 		printf("Invalid hour\r\n");
 		return;
 	}
 
+	/*
+	 * checking if there are free space for more alarms
+	 */
 	if(_cnt_alarms < MAX_ALARMS){
 		strcpy(alarms[_cnt_alarms].alarmName, name);
+		// converting to seconds
 		alarms[_cnt_alarms].time = (hour * 3600) + (minutes * 60);
 		alarms[_cnt_alarms].isActive = ON;
-		alarms[_cnt_alarms].isOnRepeat = stateRepeat;
+		alarms[_cnt_alarms].isOnRepeat = stateRepeat; // 0 = off, 1 = on
 		alarms[_cnt_alarms].alarmState = ALARM_STATE_OFF;
 		alarms[_cnt_alarms].cntTimerRing = 0;
 		alarms[_cnt_alarms].cntTimerWait = 0;
@@ -37,38 +44,47 @@ void AlarmManager_add(char * name, int hour, int minutes, int stateRepeat)
 		printf("added successfully\r\n");
 	}
 	else{
-		printf("no room for the alarm");
+		printf("no more room for the alarm\r\n");
 	}
 }
 
+/*
+ * received the name of the alarm we wish to delete. if there is more then one with the same name,
+ * the first in the list will be deleted.
+ */
 void AlarmManager_delete(char * name)
 {
 	if(_cnt_alarms == 0){
+		printf("there are no alarms");
 		return;
 	}
 	for(int i = 0; i < MAX_ALARMS; i++){
+		/*
+		 * if the name match, replacing the location of the last alarm in the list with the current location,
+		 * then deleting the last alarm.
+		 */
 		 if(strcmp(alarms[i].alarmName, name) == 0){
-			 if(i == _cnt_alarms-1){
-			 	memset(&alarms[i], 0, sizeof(alarms[i]));
-			 	_cnt_alarms--;
-			 	return;
-			 }
-			 else{
-				alarms[i] = alarms[_cnt_alarms-1];
-			 	memset(&alarms[_cnt_alarms-1], 0, sizeof(alarms[_cnt_alarms-1]));
-			 	_cnt_alarms--;
-				return;
-			}
+			alarms[i] = alarms[_cnt_alarms-1];
+			memset(&alarms[_cnt_alarms-1], 0, sizeof(alarms[_cnt_alarms-1]));
+			_cnt_alarms--;
+			printf("deleted successfully\r\n");
+			return;
 		 }
 	}
 	printf("alarm not exist\r\n");
 }
+
 void AlarmManager_edit(char * name, int hour, int minutes, int stateRepeat)
 {
 	if(_cnt_alarms == 0){
-			return;
+		printf("there are no alarms");
+		return;
 	}
 	for(int i = 0; i < MAX_ALARMS; i++){
+		/*
+		 * if the name match, setting all the parameters that received as the new values.
+		 * all the parameters must be send.
+		 */
 		if(strcmp(alarms[i].alarmName, name) == 0){
 			alarms[i].time = (hour * 3600) + (minutes * 60);
 			alarms[i].isActive = ON;
@@ -77,6 +93,7 @@ void AlarmManager_edit(char * name, int hour, int minutes, int stateRepeat)
 			alarms[i].cntTimerRing = 0;
 			alarms[i].cntTimerWait = 0;
 			alarms[i].cntSnooz = 0;
+			printf("edited successfully\r\n");
 			return;
 		}
 	}
@@ -136,6 +153,7 @@ void AlarmManager_ringOnTimerIntterupt()
 		}
 	}
 }
+
 void AlarmManager_stopRing()
 {
 	for(int i = 0; i < _cnt_alarms; i++){
@@ -148,13 +166,15 @@ void AlarmManager_stopRing()
 		}
 	}
 }
+
 void AlarmManager_printAllAlarms()
 {
 	if(_cnt_alarms == 0){
+		printf("help: no alarms\r\n");
 		return;
 	}
 	for(int i = 0; i < _cnt_alarms; i++){
-		printf("%d alarm:%s time: %d \r\n",i, alarms[i].alarmName ,alarms[i].time );
+		printf("%d| alarmName:%s |timeInSec: %d \r\n",(i+1), alarms[i].alarmName ,alarms[i].time );
 	}
 }
 

@@ -98,11 +98,9 @@ void Communication_handleCommand()
   }
   else if (strcmp(cmd, "delete") == 0){
 	  AlarmManager_delete(alarmName);
-	  printf("deleted successfully\r\n");
   }
   else if (strcmp(cmd, "edit") == 0){
 	  AlarmManager_edit(alarmName, alarmHour, alarmMinutes, alarmRepeat);
-  	  printf("edited successfully\r\n");
   }
   else if (strcmp(cmd, "print") == 0){
 	  HAL_I2C_Mem_Read(&hi2c1, 0xD0, 0, 1, readBuff, 7, 0Xff);

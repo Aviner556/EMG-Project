@@ -1,7 +1,9 @@
 #include "Clock.h"
 #include <stdio.h>
 
-//get time
+/*
+ * received the buffer from RTC and return the amount of seconds
+ */
 int Clock_getTime(uint8_t* readBuff)
 {
 	DateTime T;

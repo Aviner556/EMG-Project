@@ -4,7 +4,7 @@
 
 extern Button B2;
 
-static int delayTik = 0;
+//static int delayTik = 0; //unused
 
 void Button_init(Button * button,GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin)
 {
@@ -18,6 +18,7 @@ void Button_init(Button * button,GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin)
 
 void Button_interrupt(Button* button)
 {
+	// checking if the button pressed and counting
 	if(HAL_GPIO_ReadPin(button->gpioPort, button->gpioPin) == 0){
 		button->tik = HAL_GetTick();
 		button->countPress++;
@@ -28,7 +29,7 @@ void Button_interrupt(Button* button)
 			button->buttonState = STATE_LONG;
 			button->countPress = 0;
 			button->countTik = 0;
-			printf("long\r\n");
+			//printf("long\r\n");
 		}
 	}
 }
@@ -56,8 +57,3 @@ void Button_decision(Button* button)
 	button->countPress = 0;
 	button->countTik = 0;
 }
-
-//BUTT_STATE Button_checkState(BUTTON* butt)
-//{
-//	return butt->butt_state;
-//}
