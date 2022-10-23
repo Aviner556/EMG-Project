@@ -1,4 +1,3 @@
-#include "MyMain.h"
 #include "Buttons.h"
 #include "Buzzer.h"
 #include "Clock.h"
@@ -6,6 +5,7 @@
 #include "Communication.h"
 #include "main.h"
 #include <stdio.h>
+#include "cmsis_os.h"
 
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart2;
@@ -23,22 +23,15 @@ int _write(int fd, char* ptr, int len)
 	return len;
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
-{
-	if(htim == &htim6){
-		AlarmManager_onTimerIntterupt();
-		AlarmManager_ringOnTimerIntterupt();
-		Buzzer_onTimerInterrupt(&buzzer);
-	}
-}
-
 // button interrupt
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	AlarmManager_stopRing();
 }
 
-void mainloop()
+/* USER CODE END Header_entry_AlarmManager */
+void entry_AlarmManager(void *argument)
 {
+  /* USER CODE BEGIN entry_AlarmManager */
 	Button_init(&B2,B2_GPIO_Port,B2_Pin);
 
 	Buzzer_init(&buzzer);
@@ -50,13 +43,11 @@ void mainloop()
 
 	HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
 
-	AlarmManager_init();
-
-	while(1){
-
-		if (Communication_commTask()){
-			Communication_handleCommand();
-		}
-
-	}
+	AlarmManager_initArray();
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END entry_AlarmManager */
 }

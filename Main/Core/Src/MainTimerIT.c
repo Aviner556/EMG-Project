@@ -20,11 +20,13 @@ void MainTimerIT_init(){
 
 void MainTimerIT_registerCallback(TimerHandler funcPointer, void * obj)
 {
+	// checking if the command not exist already.
 	for(int i = 0; i < MAX_COMMANDS_IT_LENGTH; i++){
 		if(commandsIT[i].funcPointer == funcPointer && commandsIT[i].obj == obj){
 			return;
 		}
 	}
+	// if there is free space for the commands, add it.
 	if(_cnt_commandsIT < MAX_COMMANDS_IT_LENGTH){
 		commandsIT[_cnt_commandsIT].funcPointer = funcPointer;
 		commandsIT[_cnt_commandsIT].obj = obj;
@@ -35,9 +37,11 @@ void MainTimerIT_registerCallback(TimerHandler funcPointer, void * obj)
 
 void MainTimerIT_handleInterrupt()
 {
+	// if there is no commands - return.
 	if(_cnt_commandsIT == 0){
 		return;
 	}
+
 	for(int i = 0; i < _cnt_commandsIT; i++){
 		if(commandsIT[i].isOn == 1){
 			commandsIT[i].funcPointer(commandsIT[i].obj);

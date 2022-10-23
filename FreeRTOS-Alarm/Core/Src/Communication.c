@@ -1,15 +1,19 @@
 #include "Communication.h"
+#include "AlarmManager.h"
+#include "Clock.h"
 #include "main.h"
+#include "Cli.h"
 #include <stdio.h>
 #include <string.h>
+#include "cmsis_os.h"
 
 #define MAX_BUFFER_LENGTH 100
 #define MAX_COMMANDS_LENGTH 25
 
 extern UART_HandleTypeDef huart2;
-
+extern uint8_t readBuff[7];
+extern I2C_HandleTypeDef hi2c1;
 Command commands[MAX_COMMANDS_LENGTH];
-//char help[20][20];
 
 /////////////////////////////////////////////////////////////////////////
 // Communication task definitions and functions
@@ -79,26 +83,47 @@ int Communication_commTask()
 }
 
 
-
 void Communication_handleCommand()
 {
-  char cmd[25];
-  //uint32_t userCode;
-  char param[20];
+  char cmd[25] = {0};
+  int alarmHour = -1;
+  int alarmMinutes = -1;
+  int isOnRepeat = 0;
+  int isActive = 0;
+  Alarm alarm;
+  AlarmManager_initStruct(&alarm);
 
-  int params = sscanf((const char*)_cmdbuffer, "%s %s", cmd, param);
+  int params = sscanf((const char*)_cmdbuffer, "%s %s %d:%d %d %d", cmd, alarm.alarmName, &alarmHour, &alarmMinutes,
+		  &isOnRepeat, &isActive);
 
-  if (params == 0)
-  {
+  if (params == 0){
+	  printf("param = 0\r\n");
 	  return;
   }
+
+  //checking if the time is valid
+  if (strcmp(cmd, "add") == 0 || strcmp(cmd, "edit") == 0){
+	  if(alarmHour>23|| alarmHour<0 || alarmMinutes>59 || alarmMinutes<0){
+		  printf("Invalid time\r\n");
+		  return;
+	 }
+  }
+
+  // converting to seconds
+  if(alarmHour == 0){
+	  alarmHour = 24;
+  }
+  alarm.time = (alarmHour * 3600) + (alarmMinutes * 60);
+  alarm.isActive = isActive;
+  alarm.isOnRepeat = isOnRepeat;
+
   if(_cnt_commands != 0){
-	  for(int i=0; i<_cnt_commands; i++){
-	  	  if(strcmp(cmd, commands[i].commandName) == 0){
-	  		  commands[i].commandPointer(commands[i].obj, param);
-	  		  return;
-	  	  }
-	  }
+  	  for(int i=0; i<_cnt_commands; i++){
+  	  	  if(strcmp(cmd, commands[i].commandName) == 0){
+  	  		  commands[i].commandPointer(&alarm);
+  	  		  return;
+  	  	  }
+  	  }
   }
   else{
 	  printf("0 commands\r\n");
@@ -108,31 +133,31 @@ void Communication_handleCommand()
   printf("Invalid command\r\n");
 }
 
-void Communication_printHelp(){
-	printf("available commands:\r\n");
-	for(int i = 0; i < _cnt_commands; i++){
-		char* space;
-		if(i > 8){
-			space = " ";
-		}
-		else{
-			space = "  ";
-		}
-		printf("%d%s-  %s\r\n", i+1, space, commands[i].commandName);
-	}
-	printf("\r\n");
-}
-
-
-void RegisterCommand(char * commandName, HandlerFunc func, void * obj)
+void RegisterCommand(char * commandName, HandlerFunc func)
 {
 	if(_cnt_commands < MAX_COMMANDS_LENGTH){
 		commands[_cnt_commands].commandName = commandName;
 		commands[_cnt_commands].commandPointer = func;
-		commands[_cnt_commands].obj = obj;
 		_cnt_commands++;
 	}
 	else{
 		printf("error\r\n");
 	}
+}
+
+
+/* USER CODE END Header_entry_ComunicationTask */
+void entry_ComunicationTask(void *argument)
+{
+  /* USER CODE BEGIN entry_ComunicationTask */
+	Cli_init();
+  /* Infinite loop */
+  while(1)
+  {
+	  if (Communication_commTask()){
+		  Communication_handleCommand();
+	  }
+	  osDelay(1);
+  }
+  /* USER CODE END entry_ComunicationTask */
 }
