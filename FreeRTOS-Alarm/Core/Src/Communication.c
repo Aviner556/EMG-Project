@@ -94,7 +94,7 @@ void Communication_handleCommand()
   AlarmManager_initStruct(&alarm);
 
   int params = sscanf((const char*)_cmdbuffer, "%s %s %d:%d %d %d", cmd, alarm.alarmName, &alarmHour, &alarmMinutes,
-		  &isOnRepeat, &isActive);
+		                            &isActive ,&isOnRepeat);
 
   if (params == 0){
 	  printf("param = 0\r\n");

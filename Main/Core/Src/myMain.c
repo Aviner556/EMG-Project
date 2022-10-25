@@ -187,7 +187,6 @@ void mainloop()
 				*(uint8_t*)(ptrFlash + 4) = clc1.minutes;
 				*(uint8_t*)(ptrFlash + 5) = clc1.seconds;
 				*(uint8_t*)(ptrFlash + 6) = clc1.tick;
-				//*(uint8_t*)(ptrFlash + 7) = 0;
 
 				Flash_write(&flashRW);
 				printf("DHT saved on flash\r\n\n");

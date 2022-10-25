@@ -3,6 +3,7 @@
 #include "Clock.h"
 #include "AlarmManager.h"
 #include "Communication.h"
+#include "Flash.h"
 #include "main.h"
 #include <stdio.h>
 #include "cmsis_os.h"
@@ -16,6 +17,7 @@ extern TIM_HandleTypeDef htim16;
 
 Button B2;
 Buzzer buzzer;
+Flash flashRW;
 
 int _write(int fd, char* ptr, int len)
 {
@@ -27,6 +29,7 @@ int _write(int fd, char* ptr, int len)
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	AlarmManager_stopRing();
 }
+
 
 /* USER CODE END Header_entry_AlarmManager */
 void entry_AlarmManager(void *argument)
@@ -44,6 +47,8 @@ void entry_AlarmManager(void *argument)
 	HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
 
 	AlarmManager_initArray();
+	Flash_init(&flashRW);
+
   /* Infinite loop */
   for(;;)
   {

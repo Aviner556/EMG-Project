@@ -37,5 +37,5 @@ void Clock_printTime(uint8_t* readBuff)
 	T.year1 = readBuff[6]&15;
 	T.years10 = readBuff[6]>>4;
 
-	printf("%d%d/%d%d/20%d%d : DAY-%d : %d%d:%d%d:%d%d\r\n",T.days10,T.day1,T.months10,T.month1,T.years10,T.year1,T.weekDay,T.hours10,T.hour1,T.minutes10,T.minute1,T.second10,T.second1);
+	printf("%d%d/%d%d/20%d%d : DAY-%d : %d%d:%d%d:%d%d time= %d\r\n",T.days10,T.day1,T.months10,T.month1,T.years10,T.year1,T.weekDay,T.hours10,T.hour1,T.minutes10,T.minute1,T.second10,T.second1, Clock_getTime(readBuff));
 }

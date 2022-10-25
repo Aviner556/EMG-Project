@@ -1,6 +1,7 @@
 #include "AlarmManager.h"
 #include "Clock.h"
 #include "Buzzer.h"
+#include "Flash.h"
 #include <string.h>
 #include <stdio.h>
 #include "main.h"
@@ -10,13 +11,22 @@
 
 extern Buzzer buzzer;
 extern I2C_HandleTypeDef hi2c1;
+extern Flash flashRW;
+extern uint32_t* page_256_addr;
+
 Alarm alarms[MAX_ALARMS];
 static int _cnt_alarms = 0;
 uint8_t readBuff[7];
 
+
 void AlarmManager_initArray()
 {
 	memset(alarms, 0, sizeof(alarms));
+	Alarm * pFlash = (Alarm *)page_256_addr;
+	for(int i = 0; i < MAX_ALARMS; i++){
+		alarms[i] = *(pFlash + i);
+	}
+
 }
 
 void AlarmManager_initStruct(Alarm * alarm)
@@ -40,6 +50,8 @@ void AlarmManager_add(Alarm * alarm)
 		alarms[_cnt_alarms].isOnRepeat = alarm->isOnRepeat;
 		alarms[_cnt_alarms].isActive = alarm->isActive;
 		_cnt_alarms++;
+		Flash_erase(&flashRW);
+		Flash_write(&flashRW, &alarms, sizeof(Alarm)*MAX_ALARMS);
 		printf("added successfully\r\n");
 	}
 	else{
@@ -165,13 +177,13 @@ void AlarmManager_stopRing()
 
 void AlarmManager_printAllAlarms()
 {
-	if(_cnt_alarms == 0){
-		printf("no alarms exist\r\n");
-		return;
-	}
-	printf(" | alarmName    |timeInSec   \r\n");
-	for(int i = 0; i < _cnt_alarms; i++){
-		printf("%d|%s            |%d \r\n",(i+1), alarms[i].alarmName ,alarms[i].time );
+//	if(_cnt_alarms == 0){
+//		printf("no alarms exist\r\n");
+//		return;
+//	}
+	printf(" | alarmName    |timeInSec        |active\r\n");
+	for(int i = 0; i < MAX_ALARMS; i++){
+		printf("%d|%s            |%d       |%d\r\n",(i+1), alarms[i].alarmName ,alarms[i].time,alarms[i].isActive);
 	}
 }
 
