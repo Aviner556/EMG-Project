@@ -1,4 +1,5 @@
 #include "MainTimerIT.h"
+#include "TimerTask.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -6,8 +7,7 @@
 
 typedef struct _MainTimerIT
 {
-	TimerHandler funcPointer;
-	void * obj;
+	TimerTask * timerTask;
 	int isOn;
 }MainTimerIT;
 
@@ -18,18 +18,17 @@ void MainTimerIT_init(){
 	memset(commandsIT, 0, sizeof(commandsIT));
 }
 
-void MainTimerIT_registerCallback(TimerHandler funcPointer, void * obj)
+void MainTimerIT_registerCallback(TimerTask * timerTask)
 {
 	// checking if the command not exist already.
 	for(int i = 0; i < MAX_COMMANDS_IT_LENGTH; i++){
-		if(commandsIT[i].funcPointer == funcPointer && commandsIT[i].obj == obj){
+		if(commandsIT[i].timerTask == timerTask){
 			return;
 		}
 	}
 	// if there is free space for the commands, add it.
 	if(_cnt_commandsIT < MAX_COMMANDS_IT_LENGTH){
-		commandsIT[_cnt_commandsIT].funcPointer = funcPointer;
-		commandsIT[_cnt_commandsIT].obj = obj;
+		commandsIT[_cnt_commandsIT].timerTask = timerTask;
 		commandsIT[_cnt_commandsIT].isOn = 1;
 		_cnt_commandsIT++;
 	}
@@ -44,21 +43,21 @@ void MainTimerIT_handleInterrupt()
 
 	for(int i = 0; i < _cnt_commandsIT; i++){
 		if(commandsIT[i].isOn == 1){
-			commandsIT[i].funcPointer(commandsIT[i].obj);
+			commandsIT[i].timerTask->timerFunc();
 		}
-		if(commandsIT[i].funcPointer == 0){
+		if(commandsIT[i].timerTask == 0){
 			return;
 		}
 	}
 }
 
-void MainTimerIT_registerCallbackRemove(TimerHandler funcPointer, void * obj)
+void MainTimerIT_registerCallbackRemove(TimerTask * timerTask)
 {
 	if(_cnt_commandsIT == 0){
 		return;
 	}
 	for(int i = 0; i < MAX_COMMANDS_IT_LENGTH; i++){
-		if(commandsIT[i].funcPointer == funcPointer && commandsIT[i].obj == obj){
+		if(commandsIT[i].timerTask == timerTask){
 			if(i == _cnt_commandsIT-1){
 				memset(&commandsIT[i], 0, sizeof(commandsIT[i]));
 				_cnt_commandsIT--;
