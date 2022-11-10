@@ -7,6 +7,18 @@ LedState LED::ledGetState()
 	return _state;
 }
 
+
+void LED::ledBlink(int maxPeriod)
+{
+	_maxPeriod = maxPeriod;
+	if(_state == STATE_LED_BLINK){
+		return;
+	}
+	_state = STATE_LED_BLINK;
+	MainTimerIT_registerCallback(this);
+}
+
+
 /*
 void LED::ledOn()
 {

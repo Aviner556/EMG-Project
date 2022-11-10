@@ -2,8 +2,6 @@
 #include "main.h"
 
 
-
-
 void LedGpio::ledOn()
 {
 	if(_state == STATE_LED_ON){
@@ -21,17 +19,6 @@ void LedGpio::ledOff()
 	}
 	this->_state = STATE_LED_OFF;
 	HAL_GPIO_WritePin(_port, _pin, GPIO_PIN_RESET);
-}
-
-
-void LedGpio::ledBlink(int maxPeriod)
-{
-	_maxPeriod = maxPeriod;
-	if(_state == STATE_LED_BLINK){
-		return;
-	}
-	_state = STATE_LED_BLINK;
-	MainTimerIT_registerCallback(this);
 }
 
 

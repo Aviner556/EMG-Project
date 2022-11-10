@@ -15,9 +15,11 @@ class LED : public TimerTask{
 private:
 	GPIO_TypeDef * _port;
 	uint32_t _pin;
-	LedState _state;
 	int _counter;
 	int _maxPeriod;
+
+protected:
+	LedState _state;
 
 public:
 	// default constructor
@@ -34,10 +36,11 @@ public:
 
 	virtual void ledOn() = 0;
 	virtual void ledOff() = 0;
-	virtual void ledBlink(int maxPeriod) = 0;
 	virtual void ledBrightness(int bright) = 0;
 
+	void ledBlink(int maxPeriod);
 	LedState ledGetState();
+
 };
 
 

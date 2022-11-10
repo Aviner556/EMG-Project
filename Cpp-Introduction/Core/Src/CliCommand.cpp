@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-extern LED blueLed; //working on htim4
-extern LED redLed; //working on gpio
+extern LED * blueLed; //working on htim4
+extern LED * redLed; //working on gpio
 
 class ledon : public CliCommand
 {
@@ -77,11 +77,14 @@ public:
 
 void CliCommand_init()
 {
-	RegisterCommand("blueon", new ledon(&blueLed));
-	RegisterCommand("redon", new ledon(&redLed));
-	RegisterCommand("ledoff",new ledoff(&blueLed));
-	RegisterCommand("ledblink",new ledBlink(&blueLed));
-	RegisterCommand("ledbright",new ledBright(&blueLed));
+	RegisterCommand("blueon", new ledon(blueLed));
+	RegisterCommand("redon", new ledon(redLed));
+	RegisterCommand("blueoff",new ledoff(blueLed));
+	RegisterCommand("redoff",new ledoff(redLed));
+	RegisterCommand("blueblink",new ledBlink(blueLed));
+	RegisterCommand("redblink",new ledBlink(redLed));
+	RegisterCommand("bluebright",new ledBright(blueLed));
+	RegisterCommand("redbright",new ledBright(redLed));
 	RegisterCommand("help",NULL);
 }
 

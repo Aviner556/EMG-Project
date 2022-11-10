@@ -8,7 +8,6 @@ class LedPWM : public LED{
 private:
 	TIM_HandleTypeDef * _htim;
 	unsigned int _timChannel;
-	LedState _state;
 	int _counter;
 	int _maxPeriod;
 	int _blink;
@@ -33,7 +32,6 @@ public:
 
 	void ledOn();
 	void ledOff();
-	void ledBlink(int maxPeriod){};
 	void ledBrightness(int bright);
 };
 

@@ -3,13 +3,12 @@
 
 #include "Led.h"
 #include "main.h"
-
+#include <cstdio>
 
 class LedGpio : public LED{
 private:
 	GPIO_TypeDef * _port;
 	uint32_t _pin;
-	LedState _state;
 	int _counter;
 	int _maxPeriod;
 
@@ -33,8 +32,9 @@ public:
 
 	void ledOn();
 	void ledOff();
-	void ledBlink(int maxPeriod);
-	void ledBrightness(int bright){};
+	void ledBrightness(int bright){
+		printf("try 'bluebright'\r\n");
+	};
 };
 
 

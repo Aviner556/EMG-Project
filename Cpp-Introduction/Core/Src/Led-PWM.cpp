@@ -12,8 +12,6 @@ void LedPWM::ledOn()
 		return;
 	}
 	_state = STATE_LED_ON;
-	HAL_TIM_Base_Start_IT(&htim2);
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 10);
 }
 
@@ -24,21 +22,18 @@ void LedPWM::ledOff()
 		return;
 	}
 	_state = STATE_LED_OFF;
-	HAL_TIM_Base_Start_IT(&htim2);
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 0);
 }
 
 
 void LedPWM::ledBrightness(int bright)
 {
-	if(bright > 10 || bright < 0){
-		printf("invalid command\r\n");
+	_state = STATE_LED_BRIGHT;
+	if(bright <= 10 && bright >= 1){
+		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, bright);
 		return;
 	}
-	HAL_TIM_Base_Start_IT(&htim2);
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, bright);
+	printf("bright most be 1-10\r\n");
 }
 
 
