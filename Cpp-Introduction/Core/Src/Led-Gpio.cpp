@@ -1,14 +1,10 @@
-#include "Led.h"
+#include "Led-Gpio.h"
 #include "main.h"
-#include "stdio.h"
 
-LedState LED::ledGetState()
-{
-	return _state;
-}
 
-/*
-void LED::ledOn()
+
+
+void LedGpio::ledOn()
 {
 	if(_state == STATE_LED_ON){
 		return;
@@ -18,17 +14,17 @@ void LED::ledOn()
 }
 
 
-void LED::ledOff()
+void LedGpio::ledOff()
 {
 	if(_state == STATE_LED_OFF){
 		return;
 	}
-	_state = STATE_LED_OFF;
+	this->_state = STATE_LED_OFF;
 	HAL_GPIO_WritePin(_port, _pin, GPIO_PIN_RESET);
 }
 
 
-void LED::ledBlink(int maxPeriod)
+void LedGpio::ledBlink(int maxPeriod)
 {
 	_maxPeriod = maxPeriod;
 	if(_state == STATE_LED_BLINK){
@@ -40,7 +36,7 @@ void LED::ledBlink(int maxPeriod)
 
 
 //replacing "onTimerIntterupt"
-void LED::timerFunc()
+void LedGpio::timerFunc()
 {
 	if(_state == STATE_LED_BLINK){
 		_counter++;
@@ -50,18 +46,3 @@ void LED::timerFunc()
 		}
 	}
 }
-
-
-void LED::ledBrightness(int bright)
-{
-	if(bright > 10 || bright < 0){
-		printf("invalid command\r\n");
-		return;
-	}
-	HAL_TIM_Base_Start_IT(&htim2);
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, bright);
-}
-
-*/
-

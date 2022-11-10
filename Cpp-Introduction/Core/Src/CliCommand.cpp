@@ -1,10 +1,12 @@
 #include "CliCommand.h"
 #include "Communication.h"
-#include "Led.h"
+#include "Led-PWM.h"
+#include "Led-Gpio.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-extern LED blueLed;
+extern LED blueLed; //working on htim4
+extern LED redLed; //working on gpio
 
 class ledon : public CliCommand
 {
@@ -75,7 +77,8 @@ public:
 
 void CliCommand_init()
 {
-	RegisterCommand("ledon", new ledon(&blueLed));
+	RegisterCommand("blueon", new ledon(&blueLed));
+	RegisterCommand("redon", new ledon(&redLed));
 	RegisterCommand("ledoff",new ledoff(&blueLed));
 	RegisterCommand("ledblink",new ledBlink(&blueLed));
 	RegisterCommand("ledbright",new ledBright(&blueLed));
