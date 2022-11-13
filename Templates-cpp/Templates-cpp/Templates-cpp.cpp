@@ -2,10 +2,28 @@
 #include <iostream>
 
 
-
 int main()
 {
-    std::cout << "Hello World!\n";
+    Deque<int> dInt;
+    Deque<int> dInt2;
+    if (dInt2.isEmpty()) {
+        printf("empty\n");
+    }
+
+    dInt.pushFront(5);
+    dInt.pushFront(6);
+    dInt.pushFront(6);
+
+    dInt2.pushFront(5);
+    dInt2.pushFront(6);
+    dInt2.pushFront(6);
+
+    if (dInt == dInt2) {
+        printf("equal\n");
+    }
+    else {
+        printf("not equal\n");
+    }
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
