@@ -10,6 +10,13 @@ private:
 		Type _value;
 		struct ListNode* next;
 		struct ListNode* prev;
+
+		ListNode(const Type& value)
+		{
+			_value = value;
+			next = nullptr;
+			prev = nullptr;
+		}
 	};
 	ListNode* head = nullptr;
 	ListNode* tail = head;
@@ -19,13 +26,29 @@ public:
 	Deque() {};
 	Deque(const Deque<Type>& other) //copy constructor
 	{
-		
+		head = nullptr;
+		tail = head;
+		_size = 0;
+		ListNode* tempNode = other.head;
+		while (tempNode != nullptr) {
+			pushBack(tempNode->_value);
+			tempNode = tempNode->next;
+		}
+		delete tempNode;
 	};
 	~Deque() {};
 
 	void operator = (const Deque<Type>& other) //copy assignments
 	{
-		
+		while (_size > 0) {
+			popBack();
+		}
+		ListNode* tempNode = other.head;
+		while (tempNode != nullptr) {
+			pushBack(tempNode->_value);
+			tempNode = tempNode->next;
+		}
+		delete tempNode;
 	}; 
 
 	bool isEmpty() const //checks whether the deque is empty
@@ -43,7 +66,7 @@ public:
 
 	void pushFront(const Type& elem)
 	{
-		ListNode* node = new ListNode;
+		ListNode* node = new ListNode(elem);
 		if (_size != 0) {
 			node->_value = elem;
 			node->next = head;
@@ -53,7 +76,6 @@ public:
 		}
 		else {
 			node->_value = elem;
-			node->next = nullptr;
 			head = node;
 			tail = node;
 		}
@@ -62,12 +84,19 @@ public:
 
 	void pushBack(const Type& elem)
 	{
-		ListNode* node = new ListNode;
-		node->_value = elem;
-		node->next = nullptr;
-		node->prev = tail;
-		tail->next = node;
-		tail = node;
+		ListNode* node = new ListNode(elem);
+		if (_size != 0) {
+			node->_value = elem;
+			node->next = nullptr;
+			node->prev = tail;
+			tail->next = node;
+			tail = node;
+		}
+		else {
+			node->_value = elem;
+			head = node;
+			tail = node;
+		}
 		_size++;
 	};
 
@@ -89,10 +118,19 @@ public:
 
 	void popBack() // extract elements from the deque’s back
 	{
-		tail = tail->prev;
-		delete tail->next;
-		tail->next = nullptr;
-		_size--;
+		if (isEmpty()) {
+			return;
+		}
+		if (head != tail) {
+			tail = tail->prev;
+			delete tail->next;
+			tail->next = nullptr;
+			_size--;
+		}
+		else {
+			delete tail;
+			_size--;
+		}
 	};
 
 	void popFront() // extract elements from the deque’s front
@@ -111,10 +149,8 @@ public:
 		if (_size == 0) {
 			return true;
 		}
-		ListNode* node = new ListNode;
-		ListNode* otherNode = new ListNode;
-		node = head;
-		otherNode = other.head;
+		ListNode* node = head;
+		ListNode* otherNode = other.head;
 		for (int i = 0; i < _size; i++) {
 			if (node->_value != otherNode->_value) {
 				return false;
@@ -134,8 +170,7 @@ public:
 			printf("index out of range");
 			throw _EXCEPTION_;
 		}
-		ListNode * node = new ListNode;
-		node = head;
+		ListNode* node = head;
 		for (int i = 0; i < index; i++) {
 			node = node->next;
 		}

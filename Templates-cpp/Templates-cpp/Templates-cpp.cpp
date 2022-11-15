@@ -5,25 +5,22 @@
 int main()
 {
     Deque<int> dInt;
-    Deque<int> dInt2;
-    if (dInt2.isEmpty()) {
-        printf("empty\n");
-    }
-
-    dInt.pushFront(5);
-    dInt.pushFront(6);
-    dInt.pushFront(6);
-
-    dInt2.pushFront(5);
-    dInt2.pushFront(6);
-    dInt2.pushFront(6);
-
-    if (dInt == dInt2) {
-        printf("equal\n");
-    }
-    else {
-        printf("not equal\n");
-    }
+    dInt.pushBack(3);
+    dInt.pushBack(4);
+    dInt.pushBack(5);
+    printf("%d->", dInt[0]);
+    printf("%d->", dInt[1]);
+    printf("%d->", dInt[2]);
+    Deque<int> dInt2 = dInt;
+    printf("\n%d->", dInt2[0]);
+    printf("%d->", dInt2[1]);
+    printf("%d->", dInt2[2]);
+    dInt.pushFront(8);
+    dInt2 = dInt; 
+    printf("\n%d->",dInt2[0]);
+    printf("%d->", dInt2[1]);
+    printf("%d->", dInt2[2]);
+    printf("%d->", dInt2[3]);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
