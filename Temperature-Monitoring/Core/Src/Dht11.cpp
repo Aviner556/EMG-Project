@@ -15,6 +15,7 @@ void DHT::Dht11_setInput()
 	HAL_GPIO_Init(_gpioPort, &GPIO_InitStruct);
 }
 
+
 void DHT::Dht11_setGpioOutput()
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
@@ -26,6 +27,7 @@ void DHT::Dht11_setGpioOutput()
 	HAL_GPIO_Init(_gpioPort, &GPIO_InitStruct);
 }
 
+
 void DHT::waitTime(GPIO_PinState pinState, uint32_t timeOut)
 {
 	__HAL_TIM_SET_COUNTER(&htim16, 0);
@@ -35,6 +37,7 @@ void DHT::waitTime(GPIO_PinState pinState, uint32_t timeOut)
 		}
 	}
 }
+
 
 void DHT::Dht11_Read()
 {
@@ -57,6 +60,7 @@ void DHT::Dht11_Read()
 
 	Dht11_reciveData();
 }
+
 
 void DHT::Dht11_reciveData()
 {
@@ -83,4 +87,8 @@ void DHT::Dht11_reciveData()
 }
 
 
+void DHT::timerFunc()
+{
+	Dht11_Read();
+}
 

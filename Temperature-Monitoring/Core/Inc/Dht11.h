@@ -2,6 +2,7 @@
 #define _Dht11_
 
 #include "main.h"
+#include "TimerTask.h"
 #include <string.h>
 
 typedef enum _Dht11State
@@ -15,20 +16,7 @@ typedef enum _Dht11State
 	STATE_HAS_DATA,
 }Dht11State;
 
-typedef struct Dht11_
-{
-	Dht11State DhtState;
-	GPIO_TypeDef * gpioPort;
-	uint16_t gpioPin;
-	uint8_t DhtBuffer[5];
-	double temperature;
-	double humidity;
-	int checkSum;
-	int bitCount;
-	int msCount;
-}Dht11;
-
-class DHT
+class DHT : public TimerTask
 {
 private:
 		Dht11State _DhtState;
@@ -51,6 +39,8 @@ public:
 			_msCount = 0;
 		};
 		~DHT(){};
+
+		void timerFunc();
 
 		void Dht11_Read();
 		void Dht11_reciveData();
