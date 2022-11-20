@@ -31,6 +31,7 @@ void Buzzer::Buzzer_Stop()
 void Buzzer::timerFunc()
 {
 	if(_state == STATE_MUSIC_ON){
+		HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
 		Buzzer_playNextNote();
 	}
 }

@@ -2,6 +2,7 @@
 #define SRC_LED_GPIO_H_
 
 #include "TimerTask.h"
+#include "MainTimerIT.h"
 #include "main.h"
 #include <cstdio>
 
@@ -25,9 +26,11 @@ public:
 		_port = LD3_GPIO_Port;
 		_pin = LD3_Pin;
 		_state = STATE_LED_OFF;
+		MainTimerIT_registerCallback(this);
 	}
 	LED(GPIO_TypeDef * port, uint16_t pin):_port(port),_pin(pin){
 		_state = STATE_LED_OFF;
+		MainTimerIT_registerCallback(this);
 	}
 	~LED(){} // destructor
 
@@ -35,7 +38,10 @@ public:
 
 	void ledOn();
 	void ledOff();
-	void ledBlink();
+	void ledBlink()
+	{
+		_state = STATE_LED_BLINK;
+	};
 };
 
 

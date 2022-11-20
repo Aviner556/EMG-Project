@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#define MAX_COMMANDS_IT_LENGTH 25
+#define MAX_COMMANDS_IT_LENGTH 10
 
 MainTimerIT commandsIT[MAX_COMMANDS_IT_LENGTH];
 static int _cnt_commandsIT = 0;

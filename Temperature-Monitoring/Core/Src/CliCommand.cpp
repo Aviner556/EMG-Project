@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-extern DateTime * time;
+extern DateTime time;
+extern Rtc * rtc;
 
 class setTime : public CliCommand
 {
@@ -13,9 +14,11 @@ private:
 
 public:
 
+	setTime(Rtc * rtc):_rtc(rtc){};
+
 	void doCommand(const char * param) override
 	{
-		_rtc->rtcSetTime(time);
+		_rtc->rtcSetTime(&time);
 	}
 };
 
@@ -27,9 +30,11 @@ private:
 
 public:
 
+	getTime(Rtc * rtc):_rtc(rtc){};
+
 	void doCommand(const char * param) override
 	{
-		_rtc->rtcGetTime(time);
+		_rtc->rtcGetTime(&time);
 	}
 };
 
@@ -37,8 +42,8 @@ public:
 
 void CliCommand_init()
 {
-	RegisterCommand("settime", NULL);
-	RegisterCommand("gettime", NULL);
+	RegisterCommand("settime", new setTime(rtc));
+	RegisterCommand("gettime", new getTime(rtc));
 	RegisterCommand("help",NULL);
 }
 

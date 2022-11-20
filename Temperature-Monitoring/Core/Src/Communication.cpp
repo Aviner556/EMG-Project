@@ -10,7 +10,7 @@
 
 extern UART_HandleTypeDef huart2;
 
-extern DateTime * time;
+extern DateTime time;
 
 Command commands[MAX_COMMANDS_LENGTH];
 
@@ -89,19 +89,20 @@ void Communication_handleCommand()
   //uint32_t userCode;
   char param[20], param1[20], param2[20], param3[20], param4[20], param5[20];
 
-  int params = sscanf((const char*)_cmdbuffer, "%s %s/%s/%s %s %s:%s", cmd, param, param1, param2, param3, param4, param5);
+  int params = sscanf((const char*)_cmdbuffer, "%s %s %s %s %s %s %s", cmd, param, param1, param2, param3, param4, param5);
 
   if (params == 0)
   {
 	  return;
   }
   if(strcmp(cmd, "settime") == 0){
-	  time->day = atoi(param);
-	  time->month = atoi(param1);
-	  time->year = atoi(param2);
-	  time->weekDay = atoi(param3);
-	  time->hours = atoi(param4);
-	  time->min = atoi(param5);
+	  time.day = atoi(param);
+	  time.month = atoi(param1);
+	  time.year = atoi(param2);
+	  time.weekDay = atoi(param3);
+	  time.hours = atoi(param4);
+	  time.min = atoi(param5);
+	  time.sec = 0;
   }
   if(strcmp(cmd, "help") == 0){
 	  Communication_printHelp();

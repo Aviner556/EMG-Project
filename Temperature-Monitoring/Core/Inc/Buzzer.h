@@ -2,6 +2,7 @@
 #define INC_BUZZER_H_
 
 #include "TimerTask.h"
+#include "MainTimerIT.h"
 #include <stdio.h>
 
 typedef enum BUTT_STATE_
@@ -23,6 +24,7 @@ public:
 		_currentNote = 0;
 		_size = sizeof(_note)/sizeof(_note[0]);
 		_state = STATE_MUSIC_OFF;
+		MainTimerIT_registerCallback(this);
 	}
 	~Buzzer(){}
 
@@ -31,6 +33,11 @@ public:
 	void Buzzer_playNote(int noteIdx);
 	void Buzzer_playNextNote();
 	void Buzzer_Stop();
+
+	void Buzzer_stateOn()
+	{
+		_state =STATE_MUSIC_ON;
+	};
 };
 
 #endif /* INC_BUZZER_H_ */

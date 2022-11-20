@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "TimerTask.h"
+#include "MainTimerIT.h"
 #include <string.h>
 
 typedef enum _Dht11State
@@ -37,6 +38,7 @@ public:
 			_humidity = 0.0;
 			_bitCount = 0;
 			_msCount = 0;
+			MainTimerIT_registerCallback(this);
 		};
 		~DHT(){};
 
@@ -47,6 +49,14 @@ public:
 		void Dht11_setInput();
 		void Dht11_setGpioOutput();
 		void waitTime(GPIO_PinState pinState, uint32_t timeOut);
+
+		double Dht11_getTemp()
+		{
+			/****
+			 * need to be _temperature!!!
+			 ****/
+			return _humidity;
+		};
 };
 
 
