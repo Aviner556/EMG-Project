@@ -1,11 +1,17 @@
 #include "CliCommand.h"
 #include "Communication.h"
+#include "Flash.h"
 #include "Rtc.h"
+#include "myMain.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-extern DateTime time;
-extern Rtc * rtc;
+DateTime time;
+Rtc * rtc = new Rtc();
+Flash * flash;
+
+extern TEMPLIMIT tempLim;
+
 
 class setTime : public CliCommand
 {
@@ -38,12 +44,28 @@ public:
 	}
 };
 
+class setWarning : public CliCommand
+{
+private:
+	Flash * _flash;
+
+public:
+
+	setWarning(Flash * flash):_flash(flash){}
+
+	void doCommand(const char * param) override
+	{
+		tempLim.warning = atof(param);
+		_flash->Flash_write(&tempLim);
+	}
+};
 
 
 void CliCommand_init()
 {
 	RegisterCommand("settime", new setTime(rtc));
 	RegisterCommand("gettime", new getTime(rtc));
+	RegisterCommand("setwarining",new setWarning(flash));
 	RegisterCommand("help",NULL);
 }
 

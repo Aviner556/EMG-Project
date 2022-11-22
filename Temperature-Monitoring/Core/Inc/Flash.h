@@ -3,39 +3,24 @@
 
 #include <stdio.h>
 
-
-typedef enum _FlashState
-{
-	STATE_INIT,
-	STATE_ERASE,
-	STATE_ERASE_END,
-	STATE_PROGRAM,
-	STATE_PROGRAM_END,
-}FlashState;
-
-
 class Flash
 {
 private:
-	FlashState flashState;
-	uint32_t* page_256_addr;
-	int bufferSize;
-	int bufferCnt;
-	int lenght;
-	uint8_t  flashBuffer[8];
+	uint32_t* _page_256_addr;
+	uint8_t _flashBuffer[8];
+	int _pageOffset;
 
 public:
 	Flash()
 	{
-		flashState = STATE_INIT;
-		page_256_addr = (uint32_t *)(0x08080000);
-		bufferSize = 8;
-		bufferCnt = 0;
+		_page_256_addr = (uint32_t *)(0x08080000);
+		_pageOffset = 0;
 	}
 	~Flash(){}
 
-	void Flash_erase(Flash * flash);
-	void Flash_write(Flash * flash);
+	void Flash_write(void * data);
+	void Flash_erase();
+	bool Flash_Read();
 };
 
 

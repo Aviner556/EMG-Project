@@ -2,6 +2,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -28,6 +29,48 @@ TIM_HandleTypeDef htim16;
 
 UART_HandleTypeDef huart2;
 
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for LED */
+osThreadId_t LEDHandle;
+const osThreadAttr_t LED_attributes = {
+  .name = "LED",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for UART */
+osThreadId_t UARTHandle;
+const osThreadAttr_t UART_attributes = {
+  .name = "UART",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for DHT */
+osThreadId_t DHTHandle;
+const osThreadAttr_t DHT_attributes = {
+  .name = "DHT",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
+/* Definitions for Buzzer */
+osThreadId_t BuzzerHandle;
+const osThreadAttr_t Buzzer_attributes = {
+  .name = "Buzzer",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for myMain */
+osThreadId_t myMainHandle;
+const osThreadAttr_t myMain_attributes = {
+  .name = "myMain",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE BEGIN PV */
 /* USER CODE END PV */
 
@@ -39,6 +82,13 @@ static void MX_I2C1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM6_Init(void);
 static void MX_TIM16_Init(void);
+void StartDefaultTask(void *argument);
+extern void Entry_LED(void *argument);
+extern void Entry_UART(void *argument);
+extern void Entry_DHT(void *argument);
+extern void Entry_Buzzer(void *argument);
+extern void Entry_myMain(void *argument);
+
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -50,7 +100,9 @@ int _write(int fd, char* ptr, int len)
 	return len;
 }
 
-void mainloop();
+//void mainloop();
+
+
 /* USER CODE END 0 */
 
 /**
@@ -88,9 +140,60 @@ int main(void)
   __HAL_TIM_SET_COUNTER(&htim16, 0);
   HAL_TIM_Base_Start_IT(&htim16);
 
-  mainloop();
+  //mainloop();
+
   /* USER CODE END 2 */
 
+  /* Init scheduler */
+  osKernelInitialize();
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* creation of defaultTask */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* creation of LED */
+  LEDHandle = osThreadNew(Entry_LED, NULL, &LED_attributes);
+
+  /* creation of UART */
+  UARTHandle = osThreadNew(Entry_UART, NULL, &UART_attributes);
+
+  /* creation of DHT */
+  DHTHandle = osThreadNew(Entry_DHT, NULL, &DHT_attributes);
+
+  /* creation of Buzzer */
+  BuzzerHandle = osThreadNew(Entry_Buzzer, NULL, &Buzzer_attributes);
+
+  /* creation of myMain */
+  myMainHandle = osThreadNew(Entry_myMain, NULL, &myMain_attributes);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -392,13 +495,31 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(DHT11_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 
 /* USER CODE BEGIN 4 */
 /* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void *argument)
+{
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END 5 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

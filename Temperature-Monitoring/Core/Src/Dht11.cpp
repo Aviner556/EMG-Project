@@ -1,8 +1,22 @@
 #include "Dht11.h"
 #include "main.h"
 #include <stdio.h>
+#include "cmsis_os.h"
 
 extern TIM_HandleTypeDef htim16; // 1us
+extern DHT * dht;
+
+extern "C" void Entry_DHT(void *argument)
+{
+  /* USER CODE BEGIN Entry_DHT */
+  /* Infinite loop */
+  for(;;)
+  {
+	  dht->Dht11_Read();
+    osDelay(900);
+  }
+  /* USER CODE END Entry_DHT */
+}
 
 
 void DHT::Dht11_setInput()
@@ -46,7 +60,7 @@ void DHT::Dht11_Read()
 	HAL_GPIO_WritePin(_gpioPort, _gpioPin, GPIO_PIN_RESET);
 	__HAL_TIM_SET_COUNTER(&htim16, 0);
 	//MCU lowering the signal for 18ms
-	while(__HAL_TIM_GET_COUNTER(&htim16) < 18000){}
+	osDelay(18);
 	HAL_GPIO_WritePin(_gpioPort, _gpioPin, GPIO_PIN_SET);
 	Dht11_setInput();
 
@@ -86,11 +100,5 @@ void DHT::Dht11_reciveData()
 		_temperature = _DhtBuffer[2] + (_DhtBuffer[3]*0.1);
 		//printf("humidity: %f\r\ntemperature: %f\r\n\n",_humidity,_temperature);
 	}
-}
-
-
-void DHT::timerFunc()
-{
-	Dht11_Read();
 }
 

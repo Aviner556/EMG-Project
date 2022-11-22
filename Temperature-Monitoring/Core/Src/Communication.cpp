@@ -1,9 +1,13 @@
 #include "Communication.h"
+#include "CliCommand.h"
 #include "Rtc.h"
+#include "Dht11.h"
+#include "LED.h"
 #include "main.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "cmsis_os.h"
 
 #define MAX_BUFFER_LENGTH 100
 #define MAX_COMMANDS_LENGTH 25
@@ -149,4 +153,22 @@ void RegisterCommand(const char * commandName, CliCommand * command)
 	else{
 		printf("error\r\n");
 	}
+}
+
+
+/* USER CODE END Header_entry_UART */
+extern "C" void Entry_UART(void *argument)
+{
+  /* USER CODE BEGIN entry_UART */
+
+	CliCommand_init();
+  /* Infinite loop */
+  for(;;)
+  {
+	if(Communication_commTask() == 1){
+		Communication_handleCommand();
+	}
+    osDelay(1);
+  }
+  /* USER CODE END entry_UART */
 }

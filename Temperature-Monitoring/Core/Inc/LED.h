@@ -13,7 +13,7 @@ enum LedState
 	STATE_LED_BLINK
 };
 
-class LED : public TimerTask
+class LED
 {
 private:
 	GPIO_TypeDef * _port;
@@ -26,16 +26,21 @@ public:
 		_port = LD3_GPIO_Port;
 		_pin = LD3_Pin;
 		_state = STATE_LED_OFF;
-		MainTimerIT_registerCallback(this);
 	}
 	LED(GPIO_TypeDef * port, uint16_t pin):_port(port),_pin(pin){
 		_state = STATE_LED_OFF;
-		MainTimerIT_registerCallback(this);
 	}
 	~LED(){} // destructor
 
-	void timerFunc();
-
+	uint32_t getPin(){
+		return _pin;
+	}
+	GPIO_TypeDef * getPort(){
+		return _port;
+	}
+	LedState getState(){
+		return _state;
+	}
 	void ledOn();
 	void ledOff();
 	void ledBlink()

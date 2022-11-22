@@ -9,9 +9,10 @@ typedef enum BUTT_STATE_
 {
 	STATE_MUSIC_ON,
 	STATE_MUSIC_OFF,
+	STATE_MUSIC_STOP
 }BUTT_STATE;
 
-class Buzzer : public TimerTask
+class Buzzer
 {
 private:
 	int _note[2] = {390, 202};
@@ -24,20 +25,18 @@ public:
 		_currentNote = 0;
 		_size = sizeof(_note)/sizeof(_note[0]);
 		_state = STATE_MUSIC_OFF;
-		MainTimerIT_registerCallback(this);
 	}
 	~Buzzer(){}
 
-	void timerFunc();
-
 	void Buzzer_playNote(int noteIdx);
 	void Buzzer_playNextNote();
-	void Buzzer_Stop();
-
-	void Buzzer_stateOn()
+	void Buzzer_Stop(BUTT_STATE buttState);
+	void Buzzer_stateOn();
+	BUTT_STATE Buzzer_getState()
 	{
-		_state =STATE_MUSIC_ON;
-	};
+		return _state;
+	}
+
 };
 
 #endif /* INC_BUZZER_H_ */

@@ -17,7 +17,7 @@ typedef enum _Dht11State
 	STATE_HAS_DATA,
 }Dht11State;
 
-class DHT : public TimerTask
+class DHT
 {
 private:
 		Dht11State _DhtState;
@@ -38,11 +38,8 @@ public:
 			_humidity = 0.0;
 			_bitCount = 0;
 			_msCount = 0;
-			MainTimerIT_registerCallback(this);
 		};
 		~DHT(){};
-
-		void timerFunc();
 
 		void Dht11_Read();
 		void Dht11_reciveData();
