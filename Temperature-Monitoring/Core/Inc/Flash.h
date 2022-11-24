@@ -6,21 +6,21 @@
 class Flash
 {
 private:
-	uint32_t* _page_256_addr;
+	uint32_t _page_256_addr;
 	uint8_t _flashBuffer[8];
 	int _pageOffset;
 
 public:
 	Flash()
 	{
-		_page_256_addr = (uint32_t *)(0x08080000);
+		_page_256_addr = 0x08080000UL;
 		_pageOffset = 0;
 	}
 	~Flash(){}
 
 	void Flash_write(void * data);
 	void Flash_erase();
-	bool Flash_Read();
+	void Flash_Read();
 };
 
 

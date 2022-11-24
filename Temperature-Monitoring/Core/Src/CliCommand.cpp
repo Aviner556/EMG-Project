@@ -8,7 +8,7 @@
 
 DateTime time;
 Rtc * rtc = new Rtc();
-Flash * flash;
+Flash * flash = new Flash();
 
 extern TEMPLIMIT tempLim;
 
@@ -55,8 +55,34 @@ public:
 
 	void doCommand(const char * param) override
 	{
-		tempLim.warning = atof(param);
-		_flash->Flash_write(&tempLim);
+		if(atof(param) < tempLim.critical){
+			tempLim.warning = atof(param);
+			_flash->Flash_write(&tempLim);
+		}
+		else{
+			printf("Warning must be less then %f\r\n",tempLim.critical);
+		}
+	}
+};
+
+class setCritical : public CliCommand
+{
+private:
+	Flash * _flash;
+
+public:
+
+	setCritical(Flash * flash):_flash(flash){}
+
+	void doCommand(const char * param) override
+	{
+		if(atof(param) > tempLim.warning){
+			tempLim.critical = atof(param);
+			_flash->Flash_write(&tempLim);
+		}
+		else{
+			printf("Critical must be more then %f\r\n",tempLim.warning);
+		}
 	}
 };
 
@@ -65,7 +91,8 @@ void CliCommand_init()
 {
 	RegisterCommand("settime", new setTime(rtc));
 	RegisterCommand("gettime", new getTime(rtc));
-	RegisterCommand("setwarining",new setWarning(flash));
+	RegisterCommand("setwarning",new setWarning(flash));
+	RegisterCommand("setcritical",new setCritical(flash));
 	RegisterCommand("help",NULL);
 }
 

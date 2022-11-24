@@ -9,28 +9,26 @@ FLASH_EraseInitTypeDef basicFlash;
 extern TEMPLIMIT tempLim;
 
 
-bool Flash::Flash_Read()
+void Flash::Flash_Read()
 {
 	HAL_FLASH_Unlock();
 	TEMPLIMIT * data = (TEMPLIMIT *)_page_256_addr;
-	memcpy(&tempLim, data, sizeof(TEMPLIMIT));
-	if(tempLim.magicNum == 0X5A5A){
-		return true;
+	if(data->magicNum != 0X5A5A){
+		return;
 	}
-	return false;
-}
+	tempLim = *data;
+ }
 
 
-void Flash::Flash_write(void * data)
+void Flash::Flash_write(void * memory)
 {
 	// unlock the flash
 	HAL_FLASH_Unlock();
 	Flash_erase();
 
-	int size = sizeof(data);
-	for(int i = 0; i < size; i += sizeof(uint64_t)){
-		uint64_t Data = *(uint64_t *)(data+i);
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (uint32_t)_page_256_addr+i,Data);
+	uint64_t * Data = (uint64_t*)(memory);
+	for(uint64_t i = 0; i <= 18; i++){
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,_page_256_addr+(i*8),*(Data+i) );
 	}
 }
 
