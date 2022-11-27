@@ -66,10 +66,10 @@ void Error_Handler(void);
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
-#define LD2_Pin GPIO_PIN_5
-#define LD2_GPIO_Port GPIOA
-#define LD3_Pin GPIO_PIN_6
-#define LD3_GPIO_Port GPIOA
+#define LD13_Pin GPIO_PIN_13
+#define LD13_GPIO_Port GPIOB
+#define LD14_Pin GPIO_PIN_14
+#define LD14_GPIO_Port GPIOB
 #define B2_Pin GPIO_PIN_10
 #define B2_GPIO_Port GPIOA
 #define B2_EXTI_IRQn EXTI15_10_IRQn
@@ -84,7 +84,7 @@ void Error_Handler(void);
 #define SD_CS_Pin GPIO_PIN_6
 #define SD_CS_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-
+#define SD_SPI_HANDLE hspi1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

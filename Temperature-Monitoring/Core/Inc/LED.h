@@ -23,8 +23,8 @@ private:
 public:
 	// default constructor
 	LED(){
-		_port = LD3_GPIO_Port;
-		_pin = LD3_Pin;
+		_port = LD14_GPIO_Port;
+		_pin = LD14_Pin;
 		_state = STATE_LED_OFF;
 	}
 	LED(GPIO_TypeDef * port, uint16_t pin):_port(port),_pin(pin){
