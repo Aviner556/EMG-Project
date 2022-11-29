@@ -71,6 +71,16 @@ void myprintf(const char *fmt, ...) {
   int len = strlen(buffer);
   HAL_UART_Transmit(&huart2, (uint8_t*)buffer, len, -1);
 }
+
+int _write(int fd, char* ptr, int len)
+{
+	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
+	return len;
+}
+
+
+void mainloop();
+
 /* USER CODE END 0 */
 
 /**
@@ -105,6 +115,10 @@ int main(void)
   MX_SPI1_Init();
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
+
+  mainloop();
+
+  /*
   myprintf("\r\n~ SD card demo by Aviner ~\r\n\r\n");
 
     HAL_Delay(1000); //a short delay is important to let the SD card settle
@@ -187,6 +201,7 @@ int main(void)
 
     //We're done, so de-mount the drive
     f_mount(NULL, "", 0);
+    */
   /* USER CODE END 2 */
 
   /* Infinite loop */

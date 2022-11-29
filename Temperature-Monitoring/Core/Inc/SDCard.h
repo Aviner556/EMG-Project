@@ -19,7 +19,7 @@ public:
 	~SDCARD(){};
 
 	void readSDLog();
-	void writeSDLog();
+	void writeSDLog(char * bufferLog);
 };
 
 //void myprintf(const char *fmt, ...);

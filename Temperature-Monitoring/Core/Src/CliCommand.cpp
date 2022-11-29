@@ -6,9 +6,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-DateTime time;
-Rtc * rtc = new Rtc();
-Flash * flash = new Flash();
+extern DateTime dateTime;
+extern Rtc * rtc;
+extern Flash * flash;
 
 extern TEMPLIMIT tempLim;
 
@@ -24,7 +24,7 @@ public:
 
 	void doCommand(const char * param) override
 	{
-		_rtc->rtcSetTime(&time);
+		_rtc->rtcSetTime(&dateTime);
 	}
 };
 
@@ -40,7 +40,7 @@ public:
 
 	void doCommand(const char * param) override
 	{
-		_rtc->rtcGetTime(&time);
+		_rtc->rtcGetTime(&dateTime);
 	}
 };
 

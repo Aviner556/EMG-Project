@@ -10,8 +10,12 @@ typedef struct _TEMPLIMIT
 
 typedef enum _ALERT
 {
-
+	NORMAL_STATE,
+	WARNING_STATE,
+	CRITICAL_STATE,
 }ALERT;
+
+
 
 
 

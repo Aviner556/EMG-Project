@@ -14,7 +14,7 @@
 
 extern UART_HandleTypeDef huart2;
 
-extern DateTime time;
+extern DateTime dateTime;
 
 Command commands[MAX_COMMANDS_LENGTH];
 
@@ -100,13 +100,13 @@ void Communication_handleCommand()
 	  return;
   }
   if(strcmp(cmd, "settime") == 0){
-	  time.day = atoi(param);
-	  time.month = atoi(param1);
-	  time.year = atoi(param2);
-	  time.weekDay = atoi(param3);
-	  time.hours = atoi(param4);
-	  time.min = atoi(param5);
-	  time.sec = 0;
+	  dateTime.day = atoi(param);
+	  dateTime.month = atoi(param1);
+	  dateTime.year = atoi(param2);
+	  dateTime.weekDay = atoi(param3);
+	  dateTime.hours = atoi(param4);
+	  dateTime.min = atoi(param5);
+	  dateTime.sec = 0;
   }
   if(strcmp(cmd, "help") == 0){
 	  Communication_printHelp();

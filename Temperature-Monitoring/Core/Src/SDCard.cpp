@@ -52,7 +52,7 @@ void SDCARD::readSDLog()
 }
 
 
-void SDCARD::writeSDLog()
+void SDCARD::writeSDLog(char * bufferLog)
 {
 	//Open the file system
 	_fres = f_mount(&_FatFs, "", 1); //1=mount now
@@ -72,9 +72,9 @@ void SDCARD::writeSDLog()
 	}
 
 	//Copy in a string
-	strncpy((char*)_readBuf, "her will be the log info\r\n", 27);
+	//strncpy((char*)_readBuf, "her will be the log info\r\n", 27);
 	UINT bytesWrote;
-	_fres = f_write(&_fil, _readBuf, 26, &bytesWrote);
+	_fres = f_write(&_fil, bufferLog, 50, &bytesWrote);
 	if(_fres == FR_OK) {
 		//printf("Wrote %i bytes to 'log.txt'!\r\n", bytesWrote);
 	}
@@ -89,19 +89,19 @@ void SDCARD::writeSDLog()
 }
 
 
-extern "C" void mainloop()
-{
-	SDCARD * SDC = new SDCARD();
-
-	HAL_Delay(1000);
-
-	SDC->writeSDLog();
-	SDC->writeSDLog();
-	SDC->writeSDLog();
-	SDC->readSDLog();
-
-	while(1){}
-}
+//extern "C" void mainloop()
+//{
+//	SDCARD * SDC = new SDCARD();
+//
+//	HAL_Delay(1000);
+//
+//	SDC->writeSDLog();
+//	SDC->writeSDLog();
+//	SDC->writeSDLog();
+//	SDC->readSDLog();
+//
+//	while(1){}
+//}
 
 
 

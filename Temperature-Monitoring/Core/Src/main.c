@@ -71,7 +71,7 @@ const osThreadAttr_t Buzzer_attributes = {
 osThreadId_t myMainHandle;
 const osThreadAttr_t myMain_attributes = {
   .name = "myMain",
-  .stack_size = 256 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
