@@ -177,7 +177,7 @@ int main(void)
     f_close(&fil);
 
     //Now let's try and write a file "write.txt"
-    fres = f_open(&fil, "write.txt", FA_WRITE | FA_OPEN_ALWAYS | FA_CREATE_ALWAYS);//FA_CREATE_NEW / FA_CREATE_ALWAYS
+    fres = f_open(&fil, "write.txt", FA_WRITE | FA_OPEN_ALWAYS | FA_CREATE_ALWAYS);
     if(fres == FR_OK) {
     	myprintf("I was able to open 'write.txt' for writing\r\n");
     }

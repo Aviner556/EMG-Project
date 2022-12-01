@@ -6,19 +6,6 @@
 extern TIM_HandleTypeDef htim16; // 1us
 extern DHT * dht;
 
-extern "C" void Entry_DHT(void *argument)
-{
-  /* USER CODE BEGIN Entry_DHT */
-  /* Infinite loop */
-  for(;;)
-  {
-	  dht->Dht11_Read();
-    osDelay(900);
-  }
-  /* USER CODE END Entry_DHT */
-}
-
-
 void DHT::Dht11_setInput()
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
@@ -102,3 +89,15 @@ void DHT::Dht11_reciveData()
 	}
 }
 
+
+extern "C" void Entry_DHT(void *argument)
+{
+  /* USER CODE BEGIN Entry_DHT */
+  /* Infinite loop */
+  for(;;)
+  {
+	  dht->Dht11_Read();
+	  osDelay(900);
+  }
+  /* USER CODE END Entry_DHT */
+}

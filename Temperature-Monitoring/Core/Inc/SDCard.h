@@ -18,8 +18,9 @@ public:
 	SDCARD(){};
 	~SDCARD(){};
 
-	void readSDLog();
-	void writeSDLog(char * bufferLog);
+	void readSDLog(char * fileName);
+	void writeSDLog(char * bufferLog, char * fileName);
+	void clearSDLog();
 };
 
 //void myprintf(const char *fmt, ...);

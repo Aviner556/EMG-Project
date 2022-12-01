@@ -108,9 +108,10 @@ void Communication_handleCommand()
 	  dateTime.min = atoi(param5);
 	  dateTime.sec = 0;
   }
-  if(strcmp(cmd, "help") == 0){
-	  Communication_printHelp();
-  }
+//  if(strcmp(cmd, "help") == 0){
+//	  Communication_printHelp();
+//	  return;
+//  }
   else if(_cnt_commands != 0){
 	  for(int i=0; i<_cnt_commands; i++){
 	  	  if(strcmp(cmd, commands[i].commandName) == 0){
@@ -162,6 +163,7 @@ extern "C" void Entry_UART(void *argument)
   /* USER CODE BEGIN entry_UART */
 
 	CliCommand_init();
+	Communication_printHelp();
   /* Infinite loop */
   for(;;)
   {

@@ -35,7 +35,7 @@ public:
 			/****
 			 * need to be _temperature!!!
 			 ****/
-			return _humidity;
+			return _temperature;
 		};
 };
 

@@ -1,7 +1,8 @@
 #MicroXplorer Configuration settings - do not modify
+FREERTOS.BinarySemaphores01=SDC_SEM,Dynamic,NULL
 FREERTOS.FootprintOK=true
-FREERTOS.IPParameters=Tasks01,configTOTAL_HEAP_SIZE,FootprintOK
-FREERTOS.Tasks01=defaultTask,24,128,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL;LED,24,128,Entry_LED,As external,NULL,Dynamic,NULL,NULL;UART,24,256,Entry_UART,As external,NULL,Dynamic,NULL,NULL;DHT,40,256,Entry_DHT,As external,NULL,Dynamic,NULL,NULL;Buzzer,24,128,Entry_Buzzer,As external,NULL,Dynamic,NULL,NULL;myMain,24,512,Entry_myMain,As external,NULL,Dynamic,NULL,NULL
+FREERTOS.IPParameters=Tasks01,configTOTAL_HEAP_SIZE,FootprintOK,BinarySemaphores01
+FREERTOS.Tasks01=defaultTask,24,128,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL;LED,24,128,Entry_LED,As external,NULL,Dynamic,NULL,NULL;UART,24,256,Entry_UART,As external,NULL,Dynamic,NULL,NULL;DHT,40,256,Entry_DHT,As external,NULL,Dynamic,NULL,NULL;Buzzer,24,128,Entry_Buzzer,As external,NULL,Dynamic,NULL,NULL;myMain,24,512,Entry_myMain,As external,NULL,Dynamic,NULL,NULL;temperature,24,256,Entry_temperature,As external,NULL,Dynamic,NULL,NULL
 FREERTOS.configTOTAL_HEAP_SIZE=10000
 File.Version=6
 GPIO.groupedBy=Group By Peripherals

@@ -28,7 +28,7 @@ void SDCARD::readSDLog()
 		return;
 	}
 
-	_fres = f_open(&_fil, "log.txt", FA_READ | FA_OPEN_EXISTING);
+	_fres = f_open(&_fil, "temp.txt", FA_READ | FA_OPEN_EXISTING);
 	if (_fres != FR_OK) {
 		printf("f_open error (%i)\r\n",_fres);
 		return;
@@ -62,7 +62,7 @@ void SDCARD::writeSDLog()
 	}
 
 	//Now let's try and write a file "write.txt"
-	_fres = f_open(&_fil, "log.txt", FA_WRITE | FA_OPEN_EXISTING | FA_OPEN_APPEND);
+	_fres = f_open(&_fil, "temp.txt", FA_WRITE | FA_OPEN_EXISTING | FA_OPEN_APPEND);
 	if(_fres == FR_OK) {
 		//printf("'log.txt' is open for writing\r\n");
 	}

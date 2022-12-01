@@ -36,8 +36,8 @@ void Rtc::rtcGetTime(DateTime * dateTime)
 	dateTime->day = bcdToInt(buffer[4]);
 	dateTime->month = bcdToInt(buffer[5]);
 	dateTime->year = bcdToInt(buffer[6]);
-	printf("output: %d/%d/%d %d %d:%d:%d\r\n",dateTime->day,dateTime->month,dateTime->year,dateTime->weekDay,
-			dateTime->hours,dateTime->min,dateTime->sec);
+//	printf("output: %d/%d/%d %d %d:%d:%d\r\n",dateTime->day,dateTime->month,dateTime->year,dateTime->weekDay,
+//			dateTime->hours,dateTime->min,dateTime->sec);
 }
 
 

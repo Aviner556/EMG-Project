@@ -74,6 +74,18 @@ const osThreadAttr_t myMain_attributes = {
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for temperature */
+osThreadId_t temperatureHandle;
+const osThreadAttr_t temperature_attributes = {
+  .name = "temperature",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for SDC_SEM */
+osSemaphoreId_t SDC_SEMHandle;
+const osSemaphoreAttr_t SDC_SEM_attributes = {
+  .name = "SDC_SEM"
+};
 /* USER CODE BEGIN PV */
 /* USER CODE END PV */
 
@@ -92,6 +104,7 @@ extern void Entry_UART(void *argument);
 extern void Entry_DHT(void *argument);
 extern void Entry_Buzzer(void *argument);
 extern void Entry_myMain(void *argument);
+extern void Entry_temperature(void *argument);
 
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
@@ -103,8 +116,6 @@ int _write(int fd, char* ptr, int len)
 	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
 	return len;
 }
-
-//void mainloop();
 
 
 /* USER CODE END 0 */
@@ -146,8 +157,6 @@ int main(void)
   __HAL_TIM_SET_COUNTER(&htim16, 0);
   HAL_TIM_Base_Start_IT(&htim16);
 
-  //mainloop();
-
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -156,6 +165,10 @@ int main(void)
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
+
+  /* Create the semaphores(s) */
+  /* creation of SDC_SEM */
+  SDC_SEMHandle = osSemaphoreNew(1, 1, &SDC_SEM_attributes);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
@@ -187,6 +200,9 @@ int main(void)
 
   /* creation of myMain */
   myMainHandle = osThreadNew(Entry_myMain, NULL, &myMain_attributes);
+
+  /* creation of temperature */
+  temperatureHandle = osThreadNew(Entry_temperature, NULL, &temperature_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
