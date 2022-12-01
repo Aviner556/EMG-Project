@@ -29,10 +29,13 @@ void DHT::Dht11_setGpioOutput()
 	HAL_GPIO_Init(_gpioPort, &GPIO_InitStruct);
 }
 
-
+/*
+ * waiting time in 1ms, for DHT signals
+ */
 void DHT::waitTime(GPIO_PinState pinState, uint32_t timeOut)
 {
 	__HAL_TIM_SET_COUNTER(&htim16, 0);
+	// while there is no change is the signal state
 	while(HAL_GPIO_ReadPin(_gpioPort, _gpioPin) == pinState){
 		if(__HAL_TIM_GET_COUNTER(&htim16) > timeOut){
 			return;
@@ -60,12 +63,14 @@ void DHT::Dht11_Read()
 	//DHT11 raising the signal for 80us
 	waitTime(GPIO_PIN_SET, 90);
 
+	// DHT ready to receive the data
 	Dht11_reciveData();
 }
 
 
 void DHT::Dht11_reciveData()
 {
+	// reads 40 bits
 	for(int i = 0; i < 5; i++){
 		for(int j = 0; j < 8; j++){
 			//lowering the signal for 50us before sending
@@ -89,7 +94,9 @@ void DHT::Dht11_reciveData()
 	}
 }
 
-
+/*
+ * taking temperature every 1s
+ */
 extern "C" void Entry_DHT(void *argument)
 {
   /* USER CODE BEGIN Entry_DHT */
@@ -97,7 +104,7 @@ extern "C" void Entry_DHT(void *argument)
   for(;;)
   {
 	  dht->Dht11_Read();
-	  osDelay(900);
+	  osDelay(950);
   }
   /* USER CODE END Entry_DHT */
 }

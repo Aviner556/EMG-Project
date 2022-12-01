@@ -81,10 +81,10 @@ const osThreadAttr_t temperature_attributes = {
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for SDC_SEM */
-osSemaphoreId_t SDC_SEMHandle;
-const osSemaphoreAttr_t SDC_SEM_attributes = {
-  .name = "SDC_SEM"
+/* Definitions for SDC_Mutex */
+osMutexId_t SDC_MutexHandle;
+const osMutexAttr_t SDC_Mutex_attributes = {
+  .name = "SDC_Mutex"
 };
 /* USER CODE BEGIN PV */
 /* USER CODE END PV */
@@ -161,14 +161,13 @@ int main(void)
 
   /* Init scheduler */
   osKernelInitialize();
+  /* Create the mutex(es) */
+  /* creation of SDC_Mutex */
+  SDC_MutexHandle = osMutexNew(&SDC_Mutex_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
-
-  /* Create the semaphores(s) */
-  /* creation of SDC_SEM */
-  SDC_SEMHandle = osSemaphoreNew(1, 1, &SDC_SEM_attributes);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */

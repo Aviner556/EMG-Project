@@ -14,7 +14,7 @@ typedef enum BUTT_STATE_
 class Buzzer
 {
 private:
-	int _note[2] = {390, 202};
+	int _notes[2] = {390, 202};
 	int _currentNote;
 	size_t _size;
 	BUTT_STATE _state;
@@ -22,7 +22,7 @@ private:
 public:
 	Buzzer(){
 		_currentNote = 0;
-		_size = sizeof(_note)/sizeof(_note[0]);
+		_size = sizeof(_notes)/sizeof(_notes[0]);
 		_state = STATE_MUSIC_OFF;
 	}
 	~Buzzer(){}

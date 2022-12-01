@@ -33,6 +33,7 @@ public:
 		double Dht11_getTemp()
 		{
 			/****
+			 * using _humidity for easy checking
 			 * need to be _temperature!!!
 			 ****/
 			return _temperature;

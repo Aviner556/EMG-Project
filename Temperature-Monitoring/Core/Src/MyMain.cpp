@@ -1,5 +1,5 @@
-#include "main.h"
 #include "MyMain.h"
+#include "main.h"
 #include "LED.h"
 #include "Buttons.h"
 #include "Buzzer.h"
@@ -16,8 +16,11 @@ extern TIM_HandleTypeDef htim6; // 1s
 extern TIM_HandleTypeDef htim3; // pwm for buzzer
 extern TIM_HandleTypeDef htim16; // 1us
 extern I2C_HandleTypeDef hi2c1; // rtc
+extern osMutexId_t SDC_MutexHandle; // Mutex for SD-Card
 
 DateTime dateTime;
+LOG logMSG;
+
 DHT * dht = new DHT();
 LED * led = new LED();
 Buzzer * buzz = new Buzzer();
@@ -29,12 +32,19 @@ Flash * flash = new Flash();
 TEMPLIMIT tempLim; //struct that holding the temperature limits
 ALERT sysState = NORMAL_STATE; //system state
 
-static char bufferLog[100];
 
 
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	buzz->Buzzer_Stop(STATE_MUSIC_STOP);
+}
+
+
+void createLog(char * bufferLog, LOG log){
+	rtc->rtcGetTime(&dateTime);
+	sprintf(bufferLog,"%02d/%02d/%02d Day-%d %02d:%02d:%02d	- severity: %s! - %s. temperature: %.2f%%\r\n",
+			dateTime.day, dateTime.month, dateTime.year, dateTime.weekDay, dateTime.hours, dateTime.min,
+			dateTime.sec, log.severity, log.message, dht->Dht11_getTemp());
 }
 
 
@@ -60,48 +70,67 @@ extern "C" void Entry_myMain(void *argument)
   /* Infinite loop */
   for(;;)
   {
+	  /************** NORMAL STATE **************/
 	  if(dht->Dht11_getTemp() < tempLim.warning){
 		  if(sysState != NORMAL_STATE && dht->Dht11_getTemp() < (tempLim.warning - 3)){
 			  led->ledOff();
 			  buzz->Buzzer_Stop(STATE_MUSIC_OFF);
-			  rtc->rtcGetTime(&dateTime);
-			  sprintf(bufferLog,"%02d/%02d/%02d Day-%d %02d:%02d:%02d - returning to normal temperature! %.2f%%\r\n",
-					  dateTime.day,dateTime.month,dateTime.year,dateTime.weekDay,dateTime.hours,dateTime.min,
-					  dateTime.sec,dht->Dht11_getTemp());
-			  SDC->writeSDLog(bufferLog,logName);
+
+			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
+			  	  strcpy(logMSG.severity,"NORMAL");
+			  	  strcpy(logMSG.message,"returned to normal level");
+			  	  createLog(SDC->getBufferLog(),logMSG);
+			  	  SDC->writeSDLog(logName);
+			  osMutexRelease(SDC_MutexHandle);
+
 			  sysState = NORMAL_STATE;
 		  }
+		  else if(sysState == CRITICAL_STATE){
+			  led->ledOff();
+			  buzz->Buzzer_Stop(STATE_MUSIC_OFF);
+		  }
 	  }
+	  /************** CRITICAL STATE **************/
 	  else if(dht->Dht11_getTemp() >= tempLim.critical){
 		  if(sysState != CRITICAL_STATE){
 			  led->ledBlink();
 			  buzz->Buzzer_stateOn();
-			  rtc->rtcGetTime(&dateTime);
-			  sprintf(bufferLog,"%02d/%02d/%02d Day-%d %02d:%02d:%02d - critical temperature! %.2f%%\r\n",
-					  dateTime.day,dateTime.month,dateTime.year,dateTime.weekDay,dateTime.hours,dateTime.min,
-					  dateTime.sec,dht->Dht11_getTemp());
-			  SDC->writeSDLog(bufferLog,logName);
+
+			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
+			  	  strcpy(logMSG.severity,"CRITICAL");
+			  	  strcpy(logMSG.message,"reached critical level!");
+			  	  createLog(SDC->getBufferLog(),logMSG);
+			  	  SDC->writeSDLog(logName);
+			  osMutexRelease(SDC_MutexHandle);
+
 			  sysState = CRITICAL_STATE;
 		  }
 	  }
+	  /************** WARNING STATE **************/
 	  else if(dht->Dht11_getTemp() >= tempLim.warning){
 		  if(sysState == NORMAL_STATE){
 			  led->ledOn();
-			  rtc->rtcGetTime(&dateTime);
-			  sprintf(bufferLog,"%02d/%02d/%02d Day-%d %02d:%02d:%02d - reaching warning temperature! %.2f%%\r\n",
-					  dateTime.day,dateTime.month,dateTime.year,dateTime.weekDay,dateTime.hours,dateTime.min,
-					  dateTime.sec,dht->Dht11_getTemp());
-			  SDC->writeSDLog(bufferLog,logName);
+
+			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
+			  	  strcpy(logMSG.severity,"WARNING");
+			  	  strcpy(logMSG.message,"reached warning level");
+			  	  createLog(SDC->getBufferLog(),logMSG);
+			  	  SDC->writeSDLog(logName);
+			  osMutexRelease(SDC_MutexHandle);
+
 			  sysState = WARNING_STATE;
 		  }
 		  else if(sysState == CRITICAL_STATE && dht->Dht11_getTemp() < (tempLim.critical - 3)){
 			  led->ledOn();
 			  buzz->Buzzer_Stop(STATE_MUSIC_OFF);
-			  rtc->rtcGetTime(&dateTime);
-			  sprintf(bufferLog,"%02d/%02d/%02d Day-%d %02d:%02d:%02d - down to warning temperature! %.2f%%\r\n",
-					  dateTime.day,dateTime.month,dateTime.year,dateTime.weekDay,dateTime.hours,dateTime.min,
-					  dateTime.sec,dht->Dht11_getTemp());
-			  SDC->writeSDLog(bufferLog,logName);
+
+			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
+			  	  strcpy(logMSG.severity,"WARNING");
+			  	  strcpy(logMSG.message,"down to warning level");
+			  	  createLog(SDC->getBufferLog(),logMSG);
+			  	  SDC->writeSDLog(logName);
+			  osMutexRelease(SDC_MutexHandle);
+
 			  sysState = WARNING_STATE;
 		  }
 	  }

@@ -25,6 +25,7 @@ void SDCARD::readSDLog(char * fileName)
 	TCHAR* rres = f_gets((TCHAR*)_readBuf, 256, &_fil);
 	if(rres == 0){
 		printf("f_gets error (%i)\r\n", _fres);
+		printf("file is empty or missing\r\n");
 	}
 	while(rres != 0) {
 		rres = f_gets((TCHAR*)_readBuf, 256, &_fil);
@@ -38,7 +39,7 @@ void SDCARD::readSDLog(char * fileName)
 }
 
 
-void SDCARD::writeSDLog(char * bufferLog, char * fileName)
+void SDCARD::writeSDLog(char * fileName)
 {
 	//Open the file system
 	_fres = f_mount(&_FatFs, "", 1); //1=mount now
@@ -52,15 +53,17 @@ void SDCARD::writeSDLog(char * bufferLog, char * fileName)
 	if(_fres == FR_OK) {
 		//printf("'log.txt' is open for writing\r\n");
 	}
-	else {
+	else{
 		printf("f_open error (%i) on writeSDLog\r\n", _fres);
+		_fres = f_open(&_fil, fileName, FA_CREATE_ALWAYS);
+		if(_fres == FR_OK) {
+			printf("%s was created!\r\n",fileName);
+		}
 		return;
 	}
 
-	//Copy in a string
-	//strncpy((char*)_readBuf, "her will be the log info\r\n", 27);
 	UINT bytesWrote;
-	_fres = f_write(&_fil, bufferLog, strlen(bufferLog), &bytesWrote);
+	_fres = f_write(&_fil, _bufferLog, strlen(_bufferLog), &bytesWrote);
 	if(_fres == FR_OK) {
 		//printf("Wrote %i bytes to 'log.txt'!\r\n", bytesWrote);
 	}
@@ -83,10 +86,18 @@ void SDCARD::clearSDLog()
 		printf("f_mount error (%i) on clearSDLog\r\n", _fres);
 		return;
 	}
-	std::fstream f;
-	f.open("file", std::fstream::out | std::fstream::trunc);
+	//Now let's try and write a file "write.txt"
+	_fres = f_open(&_fil, "log.txt", FA_CREATE_ALWAYS);
+	if(_fres == FR_OK) {
+		//printf("'log.txt' is open for writing\r\n");
+	}
+	else {
+		printf("f_open error (%i) on writeSDLog\r\n", _fres);
+		return;
+	}
 
-	f.close();
+	f_close(&_fil);
 
 	f_mount(NULL, "", 0);
 }
+
