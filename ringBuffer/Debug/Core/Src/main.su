@@ -1,0 +1,16 @@
+../Core/Src/main.c:77:5:UART_Transmit	24	static
+../Core/Src/main.c:87:6:HAL_UART_TxCpltCallback	24	static
+../Core/Src/main.c:95:6:printMessages	8	static
+../Core/Src/main.c:103:6:printMessages2	8	static
+../Core/Src/main.c:125:6:ledTask	8	static
+../Core/Src/main.c:141:6:ledStart	16	static
+../Core/Src/main.c:147:6:ledStop	8	static
+../Core/Src/main.c:164:6:HAL_UART_RxCpltCallback	16	static
+../Core/Src/main.c:196:5:Communication_commTask	8	static
+../Core/Src/main.c:219:6:Communication_handleCommand	40	static
+../Core/Src/main.c:248:5:_write	24	static
+../Core/Src/main.c:260:5:main	8	static
+../Core/Src/main.c:337:6:SystemClock_Config	96	static
+../Core/Src/main.c:387:13:MX_USART2_UART_Init	8	static
+../Core/Src/main.c:422:13:MX_GPIO_Init	48	static
+../Core/Src/main.c:458:6:Error_Handler	4	static,ignoring_inline_asm

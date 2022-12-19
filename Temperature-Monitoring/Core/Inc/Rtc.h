@@ -5,16 +5,16 @@
 
 extern I2C_HandleTypeDef hi2c1;
 
-typedef struct DateTime_
-	{
-		int sec;
-		int min;
-		int hours;
-		int weekDay;
-		int day;
-		int month;
-		int year;
-	}DateTime;
+struct DateTime
+{
+	int sec;
+	int min;
+	int hours;
+	int weekDay;
+	int day;
+	int month;
+	int year;
+};
 
 class Rtc
 {

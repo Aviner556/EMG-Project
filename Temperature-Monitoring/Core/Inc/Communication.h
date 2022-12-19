@@ -4,11 +4,11 @@
 #include "CliCommand.h"
 
 
-typedef struct _Command
+struct Command
 {
 	const char * commandName;
 	CliCommand * command;
-}Command;
+};
 
 
 int Communication_commTask();

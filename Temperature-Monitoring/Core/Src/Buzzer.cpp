@@ -15,7 +15,7 @@ extern "C" void Entry_Buzzer(void *argument)
   for(;;)
   {
 	  if(buzz->Buzzer_getState() == STATE_MUSIC_ON){
-		  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
+		  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 		  buzz->Buzzer_playNextNote();
 		  osDelay(990);
 	  }

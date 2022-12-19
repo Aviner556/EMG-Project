@@ -6,7 +6,7 @@
 extern TIM_HandleTypeDef htim16; // 1us
 extern DHT * dht;
 
-void DHT::Dht11_setInput()
+void DHT::setInput()
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
 
@@ -18,7 +18,7 @@ void DHT::Dht11_setInput()
 }
 
 
-void DHT::Dht11_setGpioOutput()
+void DHT::setGpioOutput()
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
 
@@ -44,15 +44,15 @@ void DHT::waitTime(GPIO_PinState pinState, uint32_t timeOut)
 }
 
 
-void DHT::Dht11_Read()
+void DHT::read()
 {
-	Dht11_setGpioOutput();
+	setGpioOutput();
 	HAL_GPIO_WritePin(_gpioPort, _gpioPin, GPIO_PIN_RESET);
 	__HAL_TIM_SET_COUNTER(&htim16, 0);
 	//MCU lowering the signal for 18ms
 	osDelay(18);
 	HAL_GPIO_WritePin(_gpioPort, _gpioPin, GPIO_PIN_SET);
-	Dht11_setInput();
+	setInput();
 
 	//MCU raising the signal for 40us
 	waitTime(GPIO_PIN_SET, 60);
@@ -64,11 +64,11 @@ void DHT::Dht11_Read()
 	waitTime(GPIO_PIN_SET, 90);
 
 	// DHT ready to receive the data
-	Dht11_reciveData();
+	reciveData();
 }
 
 
-void DHT::Dht11_reciveData()
+void DHT::reciveData()
 {
 	// reads 40 bits
 	for(int i = 0; i < 5; i++){
@@ -103,7 +103,7 @@ extern "C" void Entry_DHT(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	  dht->Dht11_Read();
+	  dht->read();
 	  osDelay(950);
   }
   /* USER CODE END Entry_DHT */

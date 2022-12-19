@@ -3,11 +3,11 @@
 
 #include "main.h"
 
-typedef enum Butt_State_
+enum Button_State
 {
 	STATE_NONE,
 	STATE_PRESS
-}Button_State;
+};
 
 class Button
 {

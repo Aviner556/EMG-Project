@@ -1,15 +1,14 @@
 #ifndef INC_BUZZER_H_
 #define INC_BUZZER_H_
 
-#include "TimerTask.h"
 #include <stdio.h>
 
-typedef enum BUTT_STATE_
+enum BUTT_STATE
 {
 	STATE_MUSIC_ON,
 	STATE_MUSIC_OFF,
 	STATE_MUSIC_STOP
-}BUTT_STATE;
+};
 
 class Buzzer
 {

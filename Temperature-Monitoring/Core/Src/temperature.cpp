@@ -27,7 +27,7 @@ extern "C" void Entry_temperature(void *argument)
 	  osMutexAcquire(SDC_MutexHandle, osWaitForever);
 	  	  rtc->rtcGetTime(&dateTime);
 	  	  sprintf(SDC->getBufferLog(),"%02d/%02d/%02d Day-%d %02d:%02d:%02d - Temperature: %.2f%%\r\n",dateTime.day,dateTime.month,
-	  			  dateTime.year,dateTime.weekDay,dateTime.hours,dateTime.min,dateTime.sec,dht->Dht11_getTemp());
+	  			  dateTime.year,dateTime.weekDay,dateTime.hours,dateTime.min,dateTime.sec,dht->getTemp());
 	  	  SDC->writeSDLog(logName);
 	  osMutexRelease(SDC_MutexHandle);
   }

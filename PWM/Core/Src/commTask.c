@@ -1,6 +1,10 @@
 #include "commTask.h"
+#include "LED.h"
 #include "main.h"
-extern huart2;
+#include <stdio.h>
+#include <string.h>
+
+extern UART_HandleTypeDef huart2;
 
 /////////////////////////////////////////////////////////////////////////
 // Communication task definitions and functions

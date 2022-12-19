@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -78,7 +78,7 @@ int cnt = 0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
 {
 	cnt++;
-	if(cnt >= 700){
+	if(cnt >= 1000){
 		cnt = 0;
 		printf("potentiometer = %lu\r\n",potentiometer);
 		printf("light sensor = %lu\r\n\r\n",lightSensor);

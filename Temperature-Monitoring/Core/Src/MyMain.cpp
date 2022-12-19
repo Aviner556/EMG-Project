@@ -44,7 +44,7 @@ void createLog(char * bufferLog, LOG log){
 	rtc->rtcGetTime(&dateTime);
 	sprintf(bufferLog,"%02d/%02d/%02d Day-%d %02d:%02d:%02d	- severity: %s! - %s. temperature: %.2f%%\r\n",
 			dateTime.day, dateTime.month, dateTime.year, dateTime.weekDay, dateTime.hours, dateTime.min,
-			dateTime.sec, log.severity, log.message, dht->Dht11_getTemp());
+			dateTime.sec, log.severity, log.message, dht->getTemp());
 }
 
 
@@ -59,9 +59,9 @@ extern "C" void Entry_myMain(void *argument)
 	HAL_TIM_Base_Start(&htim16);
 
 	__HAL_TIM_SET_COUNTER(&htim3, 0);
-	HAL_TIM_Base_Start_IT(&htim3);
+	HAL_TIM_Base_Start(&htim3);
 
-	flash->Flash_Read();
+	flash->read();
 
 	HAL_Delay(1000);//For SD Card
 
@@ -71,13 +71,13 @@ extern "C" void Entry_myMain(void *argument)
   for(;;)
   {
 	  /************** NORMAL STATE **************/
-	  if(dht->Dht11_getTemp() < tempLim.warning){
-		  if(sysState != NORMAL_STATE && dht->Dht11_getTemp() < (tempLim.warning - 3)){
+	  if(dht->getTemp() < tempLim.warning){
+		  if(sysState != NORMAL_STATE && dht->getTemp() < (tempLim.warning - 3)){
 			  led->ledOff();
 			  buzz->Buzzer_Stop(STATE_MUSIC_OFF);
 
 			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
-			  	  strcpy(logMSG.severity,"NORMAL");
+			  	  strcpy(logMSG.severity,"NORMAL  ");
 			  	  strcpy(logMSG.message,"returned to normal level");
 			  	  createLog(SDC->getBufferLog(),logMSG);
 			  	  SDC->writeSDLog(logName);
@@ -91,7 +91,7 @@ extern "C" void Entry_myMain(void *argument)
 		  }
 	  }
 	  /************** CRITICAL STATE **************/
-	  else if(dht->Dht11_getTemp() >= tempLim.critical){
+	  else if(dht->getTemp() >= tempLim.critical){
 		  if(sysState != CRITICAL_STATE){
 			  led->ledBlink();
 			  buzz->Buzzer_stateOn();
@@ -107,7 +107,7 @@ extern "C" void Entry_myMain(void *argument)
 		  }
 	  }
 	  /************** WARNING STATE **************/
-	  else if(dht->Dht11_getTemp() >= tempLim.warning){
+	  else if(dht->getTemp() >= tempLim.warning){
 		  if(sysState == NORMAL_STATE){
 			  led->ledOn();
 
@@ -120,12 +120,12 @@ extern "C" void Entry_myMain(void *argument)
 
 			  sysState = WARNING_STATE;
 		  }
-		  else if(sysState == CRITICAL_STATE && dht->Dht11_getTemp() < (tempLim.critical - 3)){
+		  else if(sysState == CRITICAL_STATE && dht->getTemp() < (tempLim.critical - 3)){
 			  led->ledOn();
 			  buzz->Buzzer_Stop(STATE_MUSIC_OFF);
 
 			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
-			  	  strcpy(logMSG.severity,"WARNING");
+			  	  strcpy(logMSG.severity,"WARNING ");
 			  	  strcpy(logMSG.message,"down to warning level");
 			  	  createLog(SDC->getBufferLog(),logMSG);
 			  	  SDC->writeSDLog(logName);

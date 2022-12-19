@@ -160,10 +160,11 @@ void ledStop()
 uint8_t cmdbuffer[MAX_BUFFER_LENGTH];
 int cmdcount = 0;
 int cmdprint = 0;
+uint8_t ch;
 
 int Communication_commTask()
 {
-	uint8_t ch;
+	//uint8_t ch;
 
 	HAL_StatusTypeDef Status = HAL_UART_Receive(&huart2, &ch, 1, 10);
 	if (Status != HAL_OK)

@@ -1,4 +1,7 @@
 #include "LED.h"
+#include <stdio.h>
+
+extern TIM_HandleTypeDef htim4;
 
 void ledInit(LED* led,GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {

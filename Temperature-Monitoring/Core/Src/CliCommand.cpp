@@ -61,7 +61,7 @@ public:
 	{
 		if(atof(param) < tempLim.critical){
 			tempLim.warning = atof(param);
-			_flash->Flash_write(&tempLim);
+			_flash->write(&tempLim);
 		}
 		else{
 			printf("Warning must be less then %f\r\n",tempLim.critical);
@@ -82,7 +82,7 @@ public:
 	{
 		if(atof(param) > tempLim.warning){
 			tempLim.critical = atof(param);
-			_flash->Flash_write(&tempLim);
+			_flash->write(&tempLim);
 		}
 		else{
 			printf("Critical must be more then %f\r\n",tempLim.warning);

@@ -1,0 +1,2 @@
+../Core/Src/commTask.c:19:5:commTask	16	static
+../Core/Src/commTask.c:69:6:handleCommand	40	static

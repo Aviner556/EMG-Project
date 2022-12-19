@@ -311,17 +311,17 @@ int main(void)
 
 	  switch (currentState)
 	  {
-	  case STATE_OFF:
-		  if (isButtonPressed) {
-			  currentState = STATE_ON;
-		  }
-		  break;
-
-	  case STATE_ON:
-		  if (!isButtonPressed) {
-			  currentState = STATE_OFF;
-		  }
-		  break;
+//	  case STATE_OFF:
+//		  if (isButtonPressed) {
+//			  currentState = STATE_ON;
+//		  }
+//		  break;
+//
+//	  case STATE_ON:
+//		  if (!isButtonPressed) {
+//			  currentState = STATE_OFF;
+//		  }
+//		  break;
 	  default:
 		  // invalid state:
 		  break;
