@@ -13,8 +13,9 @@
 #define MAX_COMMANDS_LENGTH 25
 
 extern UART_HandleTypeDef huart2;
-
 extern DateTime dateTime;
+
+//Communication * CT = new Communication;
 
 Command commands[MAX_COMMANDS_LENGTH];
 
@@ -27,6 +28,8 @@ static int _cnt_commands = 0;
 static int _cmdcount = 0;
 static int _cmdprint = 0;
 
+
+//int Communication::commTask()
 int Communication_commTask()
 {
 	uint8_t ch;
@@ -49,86 +52,85 @@ int Communication_commTask()
 	}
 
 	if (ch == '\r' || ch == '\n')
+	{
+		// here we have a time to print the command
+		while (_cmdprint < _cmdcount)
 		{
-			// here we have a time to print the command
-			while (_cmdprint < _cmdcount)
-			{
-				HAL_UART_Transmit(&huart2, &_cmdbuffer[_cmdprint++], 1, 0xFFFF);
-			}
+			HAL_UART_Transmit(&huart2, &_cmdbuffer[_cmdprint++], 1, 0xFFFF);
+		}
 
-			HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 0xFFFF);
+		HAL_UART_Transmit(&huart2, (uint8_t*)"\r\n", 2, 0xFFFF);
 
-			_cmdbuffer[_cmdcount] = 0;
+		_cmdbuffer[_cmdcount] = 0;
+		_cmdcount = 0;
+		_cmdprint = 0;
+
+		// command is ready
+		return 1;
+	}
+	else if (ch == '\b')
+	{
+		char bs[] = "\b \b";
+		_cmdcount--;
+		_cmdprint--;
+		HAL_UART_Transmit(&huart2, (uint8_t*)bs, strlen(bs), 0xFFFF);
+	}
+	else
+	{
+		if (_cmdcount >= MAX_BUFFER_LENGTH)
+		{
 			_cmdcount = 0;
 			_cmdprint = 0;
+		}
 
-			// command is ready
-			return 1;
-		}
-	else if (ch == '\b')
-		{
-			char bs[] = "\b \b";
-			_cmdcount--;
-			_cmdprint--;
-			HAL_UART_Transmit(&huart2, (uint8_t*)bs, strlen(bs), 0xFFFF);
-		}
-		else
-		{
-			if (_cmdcount >= MAX_BUFFER_LENGTH)
-			{
-				_cmdcount = 0;
-				_cmdprint = 0;
-			}
-
-			_cmdbuffer[_cmdcount++] = ch;
-		}
+		_cmdbuffer[_cmdcount++] = ch;
+	}
 	return 0;
 }
 
 
-
+//void Communication::handleCommand()
 void Communication_handleCommand()
 {
-  char cmd[25];
-  //uint32_t userCode;
-  char param[20], param1[20], param2[20], param3[20], param4[20], param5[20];
+	char cmd[25];
+	//uint32_t userCode;
+	char param[20], param1[20], param2[20], param3[20], param4[20], param5[20];
 
-  int params = sscanf((const char*)_cmdbuffer, "%s %s %s %s %s %s %s", cmd, param, param1, param2, param3, param4, param5);
+	int params = sscanf((const char*)_cmdbuffer, "%s %s %s %s %s %s %s", cmd, param, param1, param2, param3, param4, param5);
 
-  if (params == 0)
-  {
-	  return;
-  }
-  if(strcmp(cmd, "settime") == 0){
-	  dateTime.day = atoi(param);
-	  dateTime.month = atoi(param1);
-	  dateTime.year = atoi(param2);
-	  dateTime.weekDay = atoi(param3);
-	  dateTime.hours = atoi(param4);
-	  dateTime.min = atoi(param5);
-	  dateTime.sec = 0;
-  }
-//  if(strcmp(cmd, "help") == 0){
-//	  Communication_printHelp();
-//	  return;
-//  }
-  else if(_cnt_commands != 0){
-	  for(int i=0; i<_cnt_commands; i++){
-	  	  if(strcmp(cmd, commands[i].commandName) == 0){
-	  		  commands[i].command->doCommand(param);
-	  		  return;
-	  	  }
-	  }
-  }
-  else{
-	  printf("0 commands\r\n");
-	  return;
-  }
+	if (params == 0)
+	{
+		return;
+	}
+	if(strcmp(cmd, "settime") == 0){
+		dateTime.day = atoi(param);
+		dateTime.month = atoi(param1);
+		dateTime.year = atoi(param2);
+		dateTime.weekDay = atoi(param3);
+		dateTime.hours = atoi(param4);
+		dateTime.min = atoi(param5);
+		dateTime.sec = 0;
+	}
+	if(_cnt_commands != 0){
+		for(int i=0; i<_cnt_commands; i++){
+			if(strcmp(cmd, commands[i].commandName) == 0){
+				commands[i].command->doCommand(param);
+				return;
+			}
+		}
+	}
+	else{
+		printf("0 commands\r\n");
+		return;
+	}
 
-  printf("Invalid command\r\n");
+	printf("Invalid command\r\n");
 }
 
-void Communication_printHelp(){
+
+//void Communication::printHelp()
+void Communication_printHelp()
+{
 	printf("available commands:\r\n");
 	for(int i = 0; i < _cnt_commands; i++){
 		const char* space;
@@ -144,6 +146,7 @@ void Communication_printHelp(){
 }
 
 
+//void Communication::RegisterCommand(const char * commandName, CliCommand * command)
 void RegisterCommand(const char * commandName, CliCommand * command)
 {
 	if(_cnt_commands < MAX_COMMANDS_LENGTH){

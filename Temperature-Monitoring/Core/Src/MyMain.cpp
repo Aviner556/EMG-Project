@@ -33,7 +33,6 @@ TEMPLIMIT tempLim; //struct that holding the temperature limits
 ALERT sysState = NORMAL_STATE; //system state
 
 
-
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	buzz->Buzzer_Stop(STATE_MUSIC_STOP);
@@ -42,7 +41,7 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void createLog(char * bufferLog, LOG log){
 	rtc->rtcGetTime(&dateTime);
-	sprintf(bufferLog,"%02d/%02d/%02d Day-%d %02d:%02d:%02d	- severity: %s! - %s. temperature: %.2f%%\r\n",
+	sprintf(bufferLog,"%02d/%02d/%02d Day-%d %02d:%02d:%02d	- severity: %s! - %s  temperature: %.2f%%\r\n",
 			dateTime.day, dateTime.month, dateTime.year, dateTime.weekDay, dateTime.hours, dateTime.min,
 			dateTime.sec, log.severity, log.message, dht->getTemp());
 }
@@ -93,12 +92,12 @@ extern "C" void Entry_myMain(void *argument)
 	  /************** CRITICAL STATE **************/
 	  else if(dht->getTemp() >= tempLim.critical){
 		  if(sysState != CRITICAL_STATE){
-			  led->ledBlink();
+			  led->setLedBlink();
 			  buzz->Buzzer_stateOn();
 
 			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
 			  	  strcpy(logMSG.severity,"CRITICAL");
-			  	  strcpy(logMSG.message,"reached critical level!");
+			  	  strcpy(logMSG.message,"reached critical level! ");
 			  	  createLog(SDC->getBufferLog(),logMSG);
 			  	  SDC->writeSDLog(logName);
 			  osMutexRelease(SDC_MutexHandle);
@@ -112,8 +111,8 @@ extern "C" void Entry_myMain(void *argument)
 			  led->ledOn();
 
 			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
-			  	  strcpy(logMSG.severity,"WARNING");
-			  	  strcpy(logMSG.message,"reached warning level");
+			  	  strcpy(logMSG.severity,"WARNING ");
+			  	  strcpy(logMSG.message,"reached warning level   ");
 			  	  createLog(SDC->getBufferLog(),logMSG);
 			  	  SDC->writeSDLog(logName);
 			  osMutexRelease(SDC_MutexHandle);
@@ -126,7 +125,7 @@ extern "C" void Entry_myMain(void *argument)
 
 			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
 			  	  strcpy(logMSG.severity,"WARNING ");
-			  	  strcpy(logMSG.message,"down to warning level");
+			  	  strcpy(logMSG.message,"down to warning level   ");
 			  	  createLog(SDC->getBufferLog(),logMSG);
 			  	  SDC->writeSDLog(logName);
 			  osMutexRelease(SDC_MutexHandle);

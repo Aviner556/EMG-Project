@@ -19,8 +19,6 @@ void SDCARD::readSDLog(char * fileName)
 		printf("f_open error (%i) on readSDLog\r\n",_fres);
 		return;
 	}
-	//printf("'log.txt' is open for reading\r\n");
-
 
 	TCHAR* rres = f_gets((TCHAR*)_readBuf, 256, &_fil);
 	if(rres == 0){
@@ -35,12 +33,13 @@ void SDCARD::readSDLog(char * fileName)
 	f_close(&_fil);
 
 	f_mount(NULL, "", 0);
-
 }
 
 
 void SDCARD::writeSDLog(char * fileName)
 {
+	UINT bytesWrote;
+
 	//Open the file system
 	_fres = f_mount(&_FatFs, "", 1); //1=mount now
 	if(_fres != FR_OK) {
@@ -50,10 +49,7 @@ void SDCARD::writeSDLog(char * fileName)
 
 	//Now let's try and write a file "write.txt"
 	_fres = f_open(&_fil, fileName, FA_WRITE | FA_OPEN_EXISTING | FA_OPEN_APPEND);
-	if(_fres == FR_OK) {
-		//printf("'log.txt' is open for writing\r\n");
-	}
-	else{
+	if(_fres != FR_OK) {
 		printf("f_open error (%i) on writeSDLog\r\n", _fres);
 		_fres = f_open(&_fil, fileName, FA_CREATE_ALWAYS);
 		if(_fres == FR_OK) {
@@ -62,19 +58,14 @@ void SDCARD::writeSDLog(char * fileName)
 		return;
 	}
 
-	UINT bytesWrote;
 	_fres = f_write(&_fil, _bufferLog, strlen(_bufferLog), &bytesWrote);
-	if(_fres == FR_OK) {
-		//printf("Wrote %i bytes to 'log.txt'!\r\n", bytesWrote);
-	}
-	else {
+	if(_fres != FR_OK) {
 		printf("f_write error (%i)\r\n",_fres);
 	}
 
 	f_close(&_fil);
 
 	f_mount(NULL, "", 0);
-
 }
 
 
@@ -88,10 +79,7 @@ void SDCARD::clearSDLog()
 	}
 	//Now let's try and write a file "write.txt"
 	_fres = f_open(&_fil, "log.txt", FA_CREATE_ALWAYS);
-	if(_fres == FR_OK) {
-		//printf("'log.txt' is open for writing\r\n");
-	}
-	else {
+	if(_fres != FR_OK) {
 		printf("f_open error (%i) on writeSDLog\r\n", _fres);
 		return;
 	}

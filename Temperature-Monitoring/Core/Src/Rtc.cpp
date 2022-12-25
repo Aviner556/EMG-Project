@@ -17,7 +17,6 @@ static uint8_t intToBcd(int value, int minVal, int maxVal)
 	if (value < minVal || value > maxVal) {
 		return 0;
 	}
-
 	return ((value / 10) << 4) | (value % 10);
 }
 
@@ -25,7 +24,11 @@ static uint8_t intToBcd(int value, int minVal, int maxVal)
 void Rtc::rtcGetTime(DateTime * dateTime)
 {
 	uint8_t buffer[RTC_DATE_TIME_SIZE];
-	HAL_I2C_Mem_Read(_hi2c, _devAddr, 0, 1, buffer, RTC_DATE_TIME_SIZE, 0xFF);
+	_HAL_STATUS_RTC = HAL_I2C_Mem_Read(_hi2c, _devAddr, 0, 1, buffer, RTC_DATE_TIME_SIZE, 0xFF);
+	if(_HAL_STATUS_RTC != HAL_OK){
+		printf("HAL_I2C_Mem_Read not OK\r\n");
+		return;
+	}
 
 	// remove stop bit if set
 	buffer[0] &= ~RTC_START_STOP;
@@ -36,8 +39,6 @@ void Rtc::rtcGetTime(DateTime * dateTime)
 	dateTime->day = bcdToInt(buffer[4]);
 	dateTime->month = bcdToInt(buffer[5]);
 	dateTime->year = bcdToInt(buffer[6]);
-//	printf("output: %d/%d/%d %d %d:%d:%d\r\n",dateTime->day,dateTime->month,dateTime->year,dateTime->weekDay,
-//			dateTime->hours,dateTime->min,dateTime->sec);
 }
 
 
@@ -53,5 +54,10 @@ void Rtc::rtcSetTime(DateTime * dateTime)
 	buffer[5] = intToBcd(dateTime->month, 1, 12);
 	buffer[6] = intToBcd(dateTime->year, 1, 99);
 
-	HAL_I2C_Mem_Write(_hi2c, _devAddr, 0, 1, buffer, RTC_DATE_TIME_SIZE, 0xFF);
+	_HAL_STATUS_RTC = HAL_I2C_Mem_Write(_hi2c, _devAddr, 0, 1, buffer, RTC_DATE_TIME_SIZE, 0xFF);
+	if(_HAL_STATUS_RTC != HAL_OK){
+		printf("HAL_I2C_Mem_Write not OK\r\n");
+		return;
+	}
+	printf("Time has set successfully!\r\n");
 }

@@ -19,11 +19,14 @@ struct DateTime
 class Rtc
 {
 private:
+	HAL_StatusTypeDef _HAL_STATUS_RTC;
 	I2C_HandleTypeDef * _hi2c;
 	uint8_t _devAddr;
 
 public:
-	Rtc(){
+	Rtc()
+	{
+		_HAL_STATUS_RTC = HAL_OK;
 		_hi2c = &hi2c1;
 		_devAddr = 0xD0;
 	}

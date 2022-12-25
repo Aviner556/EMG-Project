@@ -16,7 +16,8 @@ private:
 	GPIO_TypeDef * _gpioPort;
 	uint16_t _gpioPin;
 public:
-	Button(){
+	Button()
+	{
 		_gpioPort = B2_GPIO_Port;
 		_gpioPin = B2_Pin;
 		_state = STATE_NONE;

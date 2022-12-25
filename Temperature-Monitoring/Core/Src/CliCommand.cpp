@@ -11,6 +11,7 @@ extern DateTime dateTime;
 extern Rtc * rtc;
 extern Flash * flash;
 extern SDCARD * SDC;
+//extern Communication * CT;
 
 extern TEMPLIMIT tempLim;
 

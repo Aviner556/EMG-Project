@@ -90,7 +90,6 @@ void DHT::reciveData()
 	if(checkSum == _DhtBuffer[4]){
 		_humidity = _DhtBuffer[0] + (_DhtBuffer[1]*0.1);
 		_temperature = _DhtBuffer[2] + (_DhtBuffer[3]*0.1);
-		//printf("humidity: %f\r\ntemperature: %f\r\n\n",_humidity,_temperature);
 	}
 }
 

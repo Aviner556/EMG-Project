@@ -19,7 +19,8 @@ private:
 	BUTT_STATE _state;
 
 public:
-	Buzzer(){
+	Buzzer()
+	{
 		_currentNote = 0;
 		_size = sizeof(_notes)/sizeof(_notes[0]);
 		_state = STATE_MUSIC_OFF;

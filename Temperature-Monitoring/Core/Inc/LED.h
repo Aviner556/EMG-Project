@@ -20,28 +20,34 @@ private:
 
 public:
 	// default constructor
-	LED(){
+	LED()
+	{
 		_port = LD14_GPIO_Port;
 		_pin = LD14_Pin;
 		_state = STATE_LED_OFF;
 	}
-	LED(GPIO_TypeDef * port, uint16_t pin):_port(port),_pin(pin){
+	LED(GPIO_TypeDef * port, uint16_t pin):_port(port),_pin(pin)
+	{
 		_state = STATE_LED_OFF;
 	}
 	~LED(){} // destructor
 
-	uint32_t getPin(){
+	uint32_t getPin()
+	{
 		return _pin;
 	}
-	GPIO_TypeDef * getPort(){
+	GPIO_TypeDef * getPort()
+	{
 		return _port;
 	}
-	LedState getState(){
+	LedState getState()
+	{
 		return _state;
 	}
 	void ledOn();
 	void ledOff();
-	void ledBlink()
+	void ledBlink();
+	void setLedBlink()
 	{
 		_state = STATE_LED_BLINK;
 	};

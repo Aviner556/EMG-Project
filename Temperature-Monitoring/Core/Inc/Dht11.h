@@ -15,7 +15,8 @@ private:
 	double _humidity;
 
 public:
-	DHT(){
+	DHT()
+	{
 		_gpioPort = DHT11_GPIO_Port;
 		_gpioPin = DHT11_Pin;
 		memset(_DhtBuffer, 0, sizeof(_DhtBuffer));
@@ -37,7 +38,7 @@ public:
 		 * using _humidity for easy checking
 		 * need to be _temperature!!!
 		 ****/
-		return _temperature;
+		return _humidity;
 	};
 };
 
