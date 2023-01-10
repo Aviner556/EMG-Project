@@ -6,7 +6,7 @@
 
 struct Command
 {
-	const char * commandName;
+	char commandName[15];
 	CliCommand * command;
 };
 

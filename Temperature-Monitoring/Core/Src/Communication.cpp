@@ -150,7 +150,7 @@ void Communication_printHelp()
 void RegisterCommand(const char * commandName, CliCommand * command)
 {
 	if(_cnt_commands < MAX_COMMANDS_LENGTH){
-		commands[_cnt_commands].commandName = commandName;
+		strcpy(commands[_cnt_commands].commandName, commandName);
 		commands[_cnt_commands].command = command;
 		_cnt_commands++;
 	}

@@ -13,16 +13,16 @@ extern Rtc * rtc;
 extern DHT * dht;
 
 
-
 /* USER CODE END Header_Entry_temperature */
 extern "C" void Entry_temperature(void *argument)
 {
   /* USER CODE BEGIN Entry_temperature */
 	char logName[9] = "temp.txt";
+	uint32_t ticks = xTaskGetTickCount();
   /* Infinite loop */
   for(;;)
   {
-	  osDelay(59800);
+	  ticks += 1000;
 
 	  osMutexAcquire(SDC_MutexHandle, osWaitForever);
 	  	  rtc->rtcGetTime(&dateTime);
@@ -30,6 +30,8 @@ extern "C" void Entry_temperature(void *argument)
 	  			  dateTime.year,dateTime.weekDay,dateTime.hours,dateTime.min,dateTime.sec,dht->getTemp());
 	  	  SDC->writeSDLog(logName);
 	  osMutexRelease(SDC_MutexHandle);
+
+	  osDelayUntil(ticks);
   }
   /* USER CODE END Entry_temperature */
 }

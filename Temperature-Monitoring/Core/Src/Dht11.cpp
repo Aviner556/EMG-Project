@@ -99,11 +99,13 @@ void DHT::reciveData()
 extern "C" void Entry_DHT(void *argument)
 {
   /* USER CODE BEGIN Entry_DHT */
+	uint32_t ticks = xTaskGetTickCount();
   /* Infinite loop */
   for(;;)
   {
+	  ticks += 1000;
 	  dht->read();
-	  osDelay(950);
+	  osDelayUntil(ticks);
   }
   /* USER CODE END Entry_DHT */
 }

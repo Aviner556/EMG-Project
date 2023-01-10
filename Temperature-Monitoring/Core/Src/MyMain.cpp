@@ -66,6 +66,7 @@ extern "C" void Entry_myMain(void *argument)
 
 	char logName[8] = "log.txt";
 
+	xTaskGetTickCount();
   /* Infinite loop */
   for(;;)
   {
@@ -112,7 +113,7 @@ extern "C" void Entry_myMain(void *argument)
 
 			  osMutexAcquire(SDC_MutexHandle, osWaitForever);
 			  	  strcpy(logMSG.severity,"WARNING ");
-			  	  strcpy(logMSG.message,"reached warning level   ");
+			  	  strcpy(logMSG.message,"reached warning level!  ");
 			  	  createLog(SDC->getBufferLog(),logMSG);
 			  	  SDC->writeSDLog(logName);
 			  osMutexRelease(SDC_MutexHandle);

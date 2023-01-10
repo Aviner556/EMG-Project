@@ -4,6 +4,8 @@
 #include <stdarg.h>
 #include <fstream>
 
+extern osMutexId_t SDC_MutexHandle;
+
 
 void SDCARD::readSDLog(char * fileName)
 {
@@ -25,10 +27,13 @@ void SDCARD::readSDLog(char * fileName)
 		printf("f_gets error (%i)\r\n", _fres);
 		printf("file is empty or missing\r\n");
 	}
+
+	osMutexAcquire(SDC_MutexHandle, osWaitForever);
 	while(rres != 0) {
 		rres = f_gets((TCHAR*)_readBuf, 256, &_fil);
 		printf("%s\r\n", _readBuf);
 	}
+	osMutexRelease(SDC_MutexHandle);
 
 	f_close(&_fil);
 
